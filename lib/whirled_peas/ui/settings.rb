@@ -1,9 +1,18 @@
 module WhirledPeas
   module UI
     module TextAlign
-      LEFT = 1
-      CENTER = 2
-      RIGHT = 3
+      LEFT = :left
+      CENTER = :center
+      RIGHT = :right
+
+      def self.validate!(align)
+        return unless align
+        if [TextAlign::LEFT, TextAlign::CENTER, TextAlign::RIGHT].include?(align)
+          align
+        else
+          raise ArgumentError, "Invalid alignment: #{align}"
+        end
+      end
     end
 
     class Spacing
@@ -131,21 +140,11 @@ module WhirledPeas
       attr_writer :bold, :underline
 
       def color=(color)
-        if color.is_a?(Symbol)
-          raise ArgumentError, "Unsupported color #{color}" unless TextColor::SHORTCUTS.key?(color)
-          @color = TextColor::SHORTCUTS[color]
-        else
-          @color = color
-        end
+        @color = TextColor.validate!(color)
       end
 
       def bg_color=(color)
-        if color.is_a?(Symbol)
-          raise ArgumentError, "Unsupported bg_color #{color}" unless BgColor::SHORTCUTS.key?(color)
-          @bg_color = BgColor::SHORTCUTS[color]
-        else
-          @bg_color = color
-        end
+        @bg_color = BgColor.validate!(color)
       end
 
       def bold?
@@ -182,10 +181,12 @@ module WhirledPeas
     end
 
     module AlignSetting
-      attr_writer :align
-
       def align
         @align || TextAlign::LEFT
+      end
+
+      def align=(align)
+        @align = TextAlign.validate!(align)
       end
 
       def merge(parent)
@@ -230,10 +231,6 @@ module WhirledPeas
       def set_border(
         left: nil, top: nil, right: nil, bottom: nil, inner_horiz: nil, inner_vert: nil, style: nil, color: nil
       )
-        if color.is_a?(Symbol)
-          raise ArgumentError, "Unsupported border color #{color}" unless TextColor::SHORTCUTS.key?(color)
-          color = TextColor::SHORTCUTS[color]
-        end
         @border = Border.new unless @border
         @border.left = left unless left.nil?
         @border.top = top unless top.nil?
@@ -243,7 +240,7 @@ module WhirledPeas
         @border.inner_vert = inner_vert unless inner_vert.nil?
         @border.style = style unless style.nil?
 
-        @border.color = color unless color.nil?
+        @border.color = TextColor.validate!(color) unless color.nil?
       end
 
       def no_border

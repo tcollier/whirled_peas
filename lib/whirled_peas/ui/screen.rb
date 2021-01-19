@@ -21,7 +21,7 @@ module WhirledPeas
 
       def finalize
         print UI::Ansi.clear
-        print "\n"
+        print cursor.move_to(0, height - 1)
         print cursor.show
         STDOUT.flush
       end

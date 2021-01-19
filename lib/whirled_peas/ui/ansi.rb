@@ -59,6 +59,28 @@ module WhirledPeas
       BRIGHT_OFFSET = 60
       private_constant :BRIGHT_OFFSET
 
+      def self.validate!(color)
+        return unless color
+        if color.is_a?(Symbol)
+          error_message = "Unsupported #{self.name.split('::').last}: #{color}"
+          match = color.to_s.match(/^(bright_)?(\w+)$/)
+          begin
+            color = self.const_get(match[2].upcase)
+            raise ArgumentError, error_message unless color.is_a?(Color)
+            if match[1]
+              raise ArgumentError, error_message if color.bright?
+              color.bright
+            else
+              color
+            end
+          rescue NameError
+            raise ArgumentError, error_message
+          end
+        else
+          color
+        end
+      end
+
       def initialize(code, bright=false)
         @code = code
         @bright = bright
@@ -91,25 +113,6 @@ module WhirledPeas
       CYAN = new(Ansi::CYAN + BG_OFFSET)
       WHITE = new(Ansi::WHITE + BG_OFFSET)
       GRAY = BLACK.bright
-
-      SHORTCUTS = {
-        black: BLACK,
-        red: RED,
-        bright_red: RED.bright,
-        green: GREEN,
-        bright_green: GREEN.bright,
-        yellow: YELLOW,
-        bright_yellow: YELLOW.bright,
-        blue: BLUE,
-        bright_blue: BLUE.bright,
-        magenta: MAGENTA,
-        bright_magenta: MAGENTA.bright,
-        cyan: CYAN,
-        bright_cyan: CYAN.bright,
-        white: WHITE,
-        bright_white: WHITE.bright,
-        gray: GRAY
-      }
     end
 
     class TextColor < Color
