@@ -36,7 +36,7 @@ module WhirledPeas
 
       def add_text(&block)
         element = TextElement.new(settings)
-        element.value = yield element, element.settings
+        element.value = yield nil, element.settings
         children << element
         nil
       end
@@ -69,7 +69,7 @@ module WhirledPeas
         settings.margin.left +
           (settings.border.left? ? 1 : 0) +
           settings.padding.left +
-          elements.map(&:preferred_width).sum +
+          (children.map(&:preferred_width).sum || 0) +
           settings.padding.right +
           (settings.border.right? ? 1 : 0) +
           settings.margin.right
@@ -79,7 +79,7 @@ module WhirledPeas
         settings.margin.top +
           (settings.border.top? ? 1 : 0) +
           settings.padding.top +
-          elements.map(&:preferred_height).max +
+          (children.map(&:preferred_height).max || 0) +
           settings.padding.bottom +
           (settings.border.bottom? ? 1 : 0) +
           settings.margin.bottom
@@ -91,25 +91,34 @@ module WhirledPeas
         super(GridSettings.new.merge(settings))
       end
 
-      def cell_width
-        return @cell_width if @cell_width
-        @cell_width = 0
+      def col_width
+        return @col_width if @col_width
+        @col_width = 0
         children.each do |child|
-          @cell_width = child.preferred_width if child.preferred_width > cell_width
+          @col_width = child.preferred_width if child.preferred_width > @col_width
         end
-        @cell_width
+        @col_width
       end
 
+      def row_height
+        return @row_height if @row_height
+        @row_height = 0
+        children.each do |child|
+          @row_height = child.preferred_height if child.preferred_height > @row_height
+        end
+        @row_height
+      end
+
+
       def preferred_width
-        return unless settings.num_cols
         settings.margin.left +
           (settings.border.left? ? 1 : 0) +
           settings.num_cols * (
             settings.padding.left +
-            cell_width +
+            col_width +
             settings.padding.right
           ) +
-          (settings.num_cols - 1) * (settings.border.inner_vert? ? 1 : 0)
+          (settings.num_cols - 1) * (settings.border.inner_vert? ? 1 : 0) +
           (settings.border.right? ? 1 : 0) +
           settings.margin.right
       end

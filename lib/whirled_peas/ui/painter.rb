@@ -9,156 +9,6 @@ module WhirledPeas
 
     Stroke = Struct.new(:top, :left, :chars)
 
-    class MarginPainter
-      MARGIN = DEBUG_SPACING ? 'm' : ' '
-
-      def initialize(margin, bg_color, container_width, contained_width)
-        @margin = margin
-        @bg_color = bg_color
-        @container_width = container_width
-        @contained_width = contained_width
-      end
-
-      def paint_top(&block)
-        margin.top.times { draw_empty_margin(&block) }
-      end
-
-      def left
-        format(left_margin_size)
-      end
-
-      def right
-        format(right_margin_size)
-      end
-
-      def paint_bottom(&block)
-        margin.top.times { draw_empty_margin(&block) }
-      end
-
-      private
-
-      attr_reader :margin, :bg_color, :container_width, :contained_width
-
-      def paint_empty_margin(&block)
-        yield format(left_margin_size + contained_width + right_margin_size)
-      end
-
-      def format(width)
-        Ansi.format(MARGIN * width, [*bg_color])
-      end
-
-      def left_margin_size
-        if margin.auto?
-          (container_width - contained_width) / 2
-        else
-          margin.left
-        end
-      end
-
-      def right_margin_size
-        if margin.auto?
-          container_width - contained_width - left_margin
-        else
-          margin.right
-        end
-      end
-    end
-    private_constant :MarginPainter
-
-    class BorderPainter
-      attr_reader :width
-
-      def initialize(border, bg_color, contained_width)
-        @border = border
-        @bg_color = bg_color
-        @contained_width = contained_width
-        @width = contained_width + (border.left? ? 1 : 0) + (border.right? ? 1 : 0)
-      end
-
-      def paint_top(&block)
-        if border.top?
-          yield horizontal_border(
-            border.left? ? border.style.top_left : '',
-            border.style.top_horiz,
-            border.right? ? border.style.top_right : '',
-          )
-        end
-      end
-
-      def left
-        border.left? ? format(border.style.left_vert) : ''
-      end
-
-      def right
-        border.right? ? format(border.style.right_vert) : ''
-      end
-
-      def paint_bottom(&block)
-        if border.bottom?
-          yield horizontal_border(
-            border.left? ? border.style.bottom_left : '',
-            border.style.bottom_horiz,
-            border.right? ? border.style.bottom_right : ''
-          )
-        end
-      end
-
-      private
-
-      attr_reader :border, :bg_color, :contained_width
-
-      def horizontal_border(start_corner, horizontal, end_corner)
-        format(start_corner + horizontal * contained_width + end_corner)
-      end
-
-      def format(str)
-        Ansi.format(str, [*bg_color, *border.color])
-      end
-    end
-    private_constant :BorderPainter
-
-    class PaddingPainter
-      PADDING = DEBUG_SPACING ? 'p' : ' '
-
-      attr_reader :width
-
-      def initialize(padding, bg_color, contained_width)
-        @padding = padding
-        @bg_color = bg_color
-        @contained_width = contained_width
-        @width = contained_width + padding.left + padding.right
-      end
-
-      def paint_top(&block)
-        padding.top.times do
-          yield format(padding.left + contained_width + padding.right)
-        end
-      end
-
-      def left
-        format(padding.left)
-      end
-
-      def right
-        format(padding.right)
-      end
-
-      def paint_bottom(&block)
-        padding.bottom.times do
-          yield format(padding.left + contained_width + padding.right)
-        end
-      end
-
-      private
-
-      attr_reader :padding, :bg_color, :contained_width
-
-      def format(width)
-        Ansi.format(PADDING * width, [*bg_color])
-      end
-    end
-    private_constant :PaddingPainter
-
     class TextPainter
       JUSTIFICATION = DEBUG_SPACING ? 'j' : ' '
 
@@ -211,19 +61,110 @@ module WhirledPeas
     end
     private_constant :TextPainter
 
+    class ContainerPainter
+      def initialize(container, canvas)
+        @container = container
+        @settings = container.settings
+        @canvas = canvas
+      end
+
+      def paint(&block)
+        return if container.num_rows == 0 || container.num_cols == 0
+        top = canvas.top + settings.margin.top
+        left = canvas.left + settings.margin.left
+        if settings.border.top?
+          yield Stroke.new(top, left, top_border)
+          top += 1
+        end
+        container.num_rows.times do |row_num|
+          if row_num > 0 && settings.border.inner_horiz?
+            yield Stroke.new(top, left, middle_border)
+            top += 1
+          end
+          (settings.padding.top + container.row_height + settings.padding.bottom).times do
+            yield Stroke.new(top, left, content_line)
+            top += 1
+          end
+        end
+        if settings.border.bottom?
+          yield Stroke.new(top, left, bottom_border)
+          top += 1
+        end
+      end
+
+      private
+
+      attr_reader :container, :settings, :canvas
+
+      def line_stroke(left_border, horiz_border, junc_border, right_border)
+        stroke = ''
+        stroke += left_border if settings.border.left?
+        container.num_cols.times do |col_num|
+          stroke += junc_border if col_num > 0 && settings.border.inner_horiz?
+          stroke += horiz_border * (container.col_width + settings.padding.left + settings.padding.right)
+        end
+        stroke += right_border if settings.border.right?
+        Ansi.format(stroke, [*settings.border.color, *settings.bg_color])
+      end
+
+      def top_border
+        line_stroke(
+          settings.border.style.top_left,
+          settings.border.style.top_horiz,
+          settings.border.style.top_junc,
+          settings.border.style.top_right
+        )
+      end
+
+      def content_line
+        line_stroke(
+          settings.border.style.left_vert,
+          ' ',
+          settings.border.style.middle_vert,
+          settings.border.style.right_vert
+        )
+      end
+
+      def middle_border
+        line_stroke(
+          settings.border.style.left_junc,
+          settings.border.style.middle_horiz,
+          settings.border.style.cross_junc,
+          settings.border.style.right_junc
+        )
+      end
+
+      def bottom_border
+        line_stroke(
+          settings.border.style.bottom_left,
+          settings.border.style.bottom_horiz,
+          settings.border.style.bottom_junc,
+          settings.border.style.bottom_right
+        )
+      end
+    end
+
+    class BoxContainer
+      attr_reader :settings, :num_cols, :num_rows, :col_width, :row_height
+
+      def initialize(box)
+        @settings = ContainerSettings.new.merge(box.settings)
+        @num_cols = 1
+        @num_rows = 1
+        @col_width = box.preferred_width
+        @row_height = box.preferred_height
+      end
+    end
+
     class BoxPainter
       def initialize(box, canvas)
         @box = box
         @canvas = canvas
-        # @padding = PaddingPainter.new(box.settings.padding, box.settings.bg_color, box.width)
-        # @border = BorderPainter.new(box.settings.border, box.settings.bg_color, @padding.width)
-        # @margin = MarginPainter.new(box.settings.margin, box.settings.bg_color, canvas.width, @border.width)
       end
 
       def paint(&block)
-        # margin.paint_top(&block)
-        # border.paint_top { |line| yield margin.left + line + margin.right }
-        # padding.paint_top { |line| yield margin.left + border.left + line + border.right + margin.right }
+        container = BoxContainer.new(box)
+        ContainerPainter.new(container, canvas).paint(&block)
         left = canvas.left
         box.children.each do |child|
           child_canvas = Canvas.new(
@@ -235,24 +176,22 @@ module WhirledPeas
           Painter.paint(child, child_canvas, &block)
           left += child.preferred_width
         end
-        # box.content.paint(box.width, box.settings) { |line| draw_content_line(line, &block) }
-        # padding.paint_bottom { |line| yield margin.left + border.left + line + border.right + margin.right }
-        # border.paint_bottom { |line| yield margin.left + line + margin.right }
-        # margin.paint_bottom(&block)
       end
 
       private
 
-      attr_reader :box, :canvas, :padding, :border, :margin
+      attr_reader :box, :canvas
+    end
 
-      def paint_content_line(line, &block)
-        yield margin.left +
-          border.left +
-          padding.left +
-          justify(line) +
-          padding.right +
-          border.right +
-          margin.right
+    class GridContainer
+      attr_reader :settings, :num_cols, :num_rows, :col_width, :row_height
+
+      def initialize(grid, num_cols, num_rows)
+        @settings = ContainerSettings.new.merge(grid.settings)
+        @num_cols = num_cols
+        @num_rows = num_rows
+        @col_width = grid.col_width
+        @row_height = grid.row_height
       end
     end
 
@@ -261,14 +200,15 @@ module WhirledPeas
         @grid = grid
         @canvas = canvas
         available_width = grid.preferred_width - (grid.settings.margin.left || 0) - (grid.settings.margin.right || 0)
-        @num_cols = grid.settings.num_cols || (available_width - (grid.settings.border.left? ? 1 : 0) - (grid.settings.border.right? ? 1 : 0) + (grid.border.inner_vert ? 1 : 0)) / (cell_width + grid.settings.padding.left + grid.settings.right + (grid.border.inner_vert ? 1 : 0))
-        # @padding = PaddingPainter.new(grid.settings.padding, grid.settings.bg_color, grid.cell_width)
-        # @border = BorderPainter.new(grid.settings.border, grid.settings.bg_color, @padding.width)
-        # @margin = MarginPainter.new(grid.settings.margin, grid.settings.bg_color, container_width, available_width)
+        @num_cols = grid.settings.num_cols || (available_width - (grid.settings.border.left? ? 1 : 0) - (grid.settings.border.right? ? 1 : 0) + (grid.border.inner_vert ? 1 : 0)) / (col_width + grid.settings.padding.left + grid.settings.right + (grid.border.inner_vert ? 1 : 0))
       end
 
       def paint(&block)
         return if grid.children.empty?
+
+        container = GridContainer.new(grid, num_cols, (grid.children.length.to_f / num_cols).ceil)
+        ContainerPainter.new(container, canvas).paint(&block)
+
         children = grid.children
         # children = if grid.settings.transpose
         #   grid.children.length.times.map do |i|
@@ -278,13 +218,19 @@ module WhirledPeas
         #   grid.children
         # end
 
+        top = canvas.top + grid.settings.margin.top + (grid.settings.border.top? ? 1 : 0) + grid.settings.padding.top
+        left = canvas.left + grid.settings.margin.left + (grid.settings.border.left? ? 1 : 0) + grid.settings.padding.left
+        grid_height = grid.settings.padding.top + grid.row_height + grid.settings.padding.bottom + (grid.settings.border.inner_horiz? ? 1 : 0)
+        grid_width = grid.settings.padding.left + grid.col_width + grid.settings.padding.right + (grid.settings.border.inner_vert? ? 1 : 0)
         children.each_slice(num_cols).each.with_index do |row, row_num|
+          row_top = top + row_num * grid_height
           row.each.with_index do |element, col_num|
+            col_left = left + col_num * grid_width
             child_canvas = Canvas.new(
-              canvas.left + (col_num * grid.cell_width),
-              canvas.top + row_num,
-              grid.cell_width,
-              1
+              row_top,
+              col_left,
+              element.preferred_width,
+              element.preferred_height
             )
             Painter.paint(element, child_canvas, &block)
           end
@@ -293,7 +239,7 @@ module WhirledPeas
 
       private
 
-      attr_reader :grid, :canvas, :num_cols, :padding, :border, :margin
+      attr_reader :grid, :canvas, :num_cols
     end
 
     module Painter

@@ -15,22 +15,23 @@ module WhirledPeas
       end
 
       def paint(template)
-        buffered(template).each(&method(:print))
+        strokes(template).each(&method(:print))
         STDOUT.flush
       end
 
       def finalize
         print UI::Ansi.clear
+        print "\n"
         print cursor.show
         STDOUT.flush
       end
 
       protected
 
-      def buffered(template, &block)
+      def strokes(template)
         buffer = [cursor.hide, cursor.move_to(0, 0), cursor.clear_screen_down]
         Painter.paint(template, Canvas.new(0, 0, width, height)) do |stroke|
-          buffer << cursor.move_to(stroke.top, stroke.left)
+          buffer << cursor.move_to(stroke.left, stroke.top)
           buffer << stroke.chars
         end
         buffer

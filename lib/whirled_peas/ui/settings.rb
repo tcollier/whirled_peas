@@ -24,6 +24,15 @@ module WhirledPeas
       def bottom
         @bottom || 0
       end
+
+      def merge(parent)
+        merged = Spacing.new
+        merged.left = @left || parent.left
+        merged.top = @top || parent.top
+        merged.right = @right || parent.right
+        merged.bottom = @bottom || parent.bottom
+        merged
+      end
     end
     private_constant :Spacing
 
@@ -31,43 +40,12 @@ module WhirledPeas
     end
 
     class Margin < Spacing
-      def auto?
-        false
-      end
     end
-
-    class AutoMargin
-      def initialize(top: nil, bottom: nil)
-        @top = top
-        @bottom = bottom
-      end
-
-      def auto?
-        true
-      end
-
-      def top
-        @top || 0
-      end
-
-      def bottom
-        @bottom || 0
-      end
-
-      def left
-        0
-      end
-
-      def right
-        0
-      end
-    end
-
 
     BorderStyle = Struct.new(
       :top_left, :top_horiz, :top_junc, :top_right,
       :left_vert, :left_junc,
-      :cross,
+      :middle_vert, :cross_junc, :middle_horiz,
       :right_vert, :right_junc,
       :bottom_left, :bottom_horiz, :bottom_junc, :bottom_right
     )
@@ -76,21 +54,21 @@ module WhirledPeas
       BOLD = BorderStyle.new(
         '┏', '━', '┳', '┓',
         '┃', '┣',
-        '╋',
+        '┃', '╋', '━',
         '┃', '┫',
         '┗', '━', '┻', '┛'
       )
       SOFT = BorderStyle.new(
         '╭', '─', '┬', '╮',
         '│', '┤',
-        '┼',
+        '│', '┼', '─',
         '│', '┤',
         '╰', '─', '┴', '╯'
       )
       DOUBLE = BorderStyle.new(
         '╔', '═', '╦', '╗',
         '║', '╠',
-        '╬',
+        '║', '╬', '═',
         '║', '╣',
         '╚', '═', '╩', '╝'
       )
@@ -132,11 +110,43 @@ module WhirledPeas
       def inner_vert?
         @inner_vert == true
       end
+
+      def merge(parent)
+        merged = Border.new
+        merged.left = @left.nil? ? parent.left? : @left
+        merged.top = @top.nil? ? parent.top? : @top
+        merged.right = @right.nil? ? parent.right? : @right
+        merged.bottom = @bottom.nil? ? parent.bottom? : @bottom
+        merged.inner_horiz = @inner_horiz.nil? ? parent.inner_horiz? : @inner_horiz
+        merged.inner_vert = @inner_vert.nil? ? parent.inner_vert? : @inner_vert
+        merged.style = @style || parent.style
+        merged.color = @color || parent.color
+        puts merged.color.inspect
+        merged
+      end
     end
 
     class ElementSettings
-      attr_accessor :color, :bg_color
+      attr_reader :color, :bg_color
       attr_writer :bold, :underline
+
+      def color=(color)
+        if color.is_a?(Symbol)
+          raise ArgumentError, "Unsupported color #{color}" unless TextColor::SHORTCUTS.key?(color)
+          @color = TextColor::SHORTCUTS[color]
+        else
+          @color = color
+        end
+      end
+
+      def bg_color=(color)
+        if color.is_a?(Symbol)
+          raise ArgumentError, "Unsupported bg_color #{color}" unless BgColor::SHORTCUTS.key?(color)
+          @bg_color = BgColor::SHORTCUTS[color]
+        else
+          @bg_color = color
+        end
+      end
 
       def bold?
         @bold || false
@@ -190,14 +200,8 @@ module WhirledPeas
     end
 
     module MarginSettings
-      def set_auto_margin(top: nil, bottom: nil)
-        @margin = AutoMargin.new unless @margin && @margin.auto?
-        @margin.top = top if top
-        @margin.bottom = bottom if bottom
-      end
-
       def set_margin(left: nil, top: nil, right: nil, bottom: nil)
-        @margin = Margin.new unless @margin && !@margin.auto?
+        @margin = Margin.new unless @margin
         @margin.left = left if left
         @margin.top = top if top
         @margin.right = right if right
@@ -209,20 +213,49 @@ module WhirledPeas
       end
 
       def merge(parent)
-        super
+        merged = super
+        merged_margin = parent.respond_to?(:margin) ? margin.merge(parent.margin) : margin
+        merged.set_margin(
+          left: merged_margin.left,
+          top: merged_margin.top,
+          right: merged_margin.right,
+          bottom: merged_margin.bottom
+        )
+        merged
       end
     end
     private_constant :MarginSettings
 
     module BorderSettings
-      def set_border(left: nil, top: nil, right: nil, bottom: nil, style: nil, color: nil)
+      def set_border(
+        left: nil, top: nil, right: nil, bottom: nil, inner_horiz: nil, inner_vert: nil, style: nil, color: nil
+      )
+        if color.is_a?(Symbol)
+          raise ArgumentError, "Unsupported border color #{color}" unless TextColor::SHORTCUTS.key?(color)
+          color = TextColor::SHORTCUTS[color]
+        end
         @border = Border.new unless @border
         @border.left = left unless left.nil?
         @border.top = top unless top.nil?
         @border.right = right unless right.nil?
         @border.bottom = bottom unless bottom.nil?
+        @border.inner_horiz = inner_horiz unless inner_horiz.nil?
+        @border.inner_vert = inner_vert unless inner_vert.nil?
         @border.style = style unless style.nil?
+
         @border.color = color unless color.nil?
+      end
+
+      def no_border
+        set_border(
+          left: false, top: false, right: false, bottom: false, inner_horiz: false, inner_vert: false
+        )
+      end
+
+      def full_border(style: nil, color: nil)
+        set_border(
+          left: true, top: true, right: true, bottom: true, inner_horiz: true, inner_vert: true, style: style, color: color
+        )
       end
 
       def border
@@ -230,7 +263,19 @@ module WhirledPeas
       end
 
       def merge(parent)
-        super
+        merged = super
+        merged_border = parent.respond_to?(:border) ? border.merge(parent.border) : border
+        merged.set_border(
+          left: merged_border.left?,
+          top: merged_border.top?,
+          right: merged_border.right?,
+          bottom: merged_border.bottom?,
+          inner_horiz: merged_border.inner_horiz?,
+          inner_vert: merged_border.inner_vert?,
+          style: merged_border.style,
+          color: merged_border.color
+        )
+        merged
       end
     end
     private_constant :BorderSettings
@@ -249,7 +294,15 @@ module WhirledPeas
       end
 
       def merge(parent)
-        super
+        merged = super
+        merged_padding = parent.respond_to?(:padding) ? padding.merge(parent.padding) : padding
+        merged.set_padding(
+          left: merged_padding.left,
+          top: merged_padding.top,
+          right: merged_padding.right,
+          bottom: merged_padding.bottom
+        )
+        merged
       end
     end
     private_constant :PaddingSettings
@@ -262,20 +315,20 @@ module WhirledPeas
       include AlignSetting
     end
 
-    class BoxSettings < ElementSettings
-      include WidthSetting
-      include AlignSetting
+    class ContainerSettings < ElementSettings
       include MarginSettings
       include BorderSettings
       include PaddingSettings
     end
 
-    class GridSettings < ElementSettings
+    class BoxSettings < ContainerSettings
       include WidthSetting
       include AlignSetting
-      include MarginSettings
-      include BorderSettings
-      include PaddingSettings
+    end
+
+    class GridSettings < ContainerSettings
+      include WidthSetting
+      include AlignSetting
 
       attr_accessor :num_cols
       attr_reader :transpose
