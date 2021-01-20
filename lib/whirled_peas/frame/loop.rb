@@ -5,8 +5,6 @@ module WhirledPeas
         @template_builder = template_builder
         @queue = Queue.new
         @refresh_rate_fps = refresh_rate_fps
-        @running = false
-        @mutex = Mutex.new
       end
 
       def enqueue(name, duration, args)
@@ -14,7 +12,6 @@ module WhirledPeas
       end
 
       def start
-        @mutex.synchronize { @running = true }
         screen = UI::Screen.new
         sleep(0.01) while queue.empty?  # Wait for the first event
         remaining_frames = 1
@@ -26,17 +23,13 @@ module WhirledPeas
             name, remaining_frames, args = queue.pop
             screen.paint(template_builder.build(name, args))
           end
-          sleep(next_frame_at - Time.now) if @running
+          sleep(next_frame_at - Time.now)
         end
       rescue => e
         puts e.message
         puts e.backtrace.join("\n")
       ensure
         screen.finalize if screen
-      end
-
-      def stop
-        @mutex.synchronize { @running = false }
       end
 
       private

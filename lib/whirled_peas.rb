@@ -14,6 +14,7 @@ module WhirledPeas
 
     Frame::Producer.start(host: host, port: port) do |producer|
       application.start(producer)
+      producer.stop
     end
 
     consumer_thread.join

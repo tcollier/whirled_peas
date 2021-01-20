@@ -37,7 +37,6 @@ module WhirledPeas
         puts e.backtrace.join("\n")
       ensure
         socket.close if socket
-        @loop.stop
         loop_thread.join
       end
 
