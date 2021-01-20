@@ -24,20 +24,21 @@ module WhirledPeas
           end
           args = JSON.parse(line)
           name = args.delete('name')
-          if name == Frame::TERMINATE
+          if [Frame::EOF, Frame::TERMINATE].include?(name)
+            @loop.stop if name == Frame::TERMINATE
             @running = false
-            break
           else
             duration = args.delete('duration')
             @loop.enqueue(name, duration, args)
           end
         end
       rescue => e
+        @loop.stop
         puts e.message
         puts e.backtrace.join("\n")
       ensure
-        socket.close if socket
         loop_thread.join
+        socket.close if socket
       end
 
       def stop

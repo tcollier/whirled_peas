@@ -37,6 +37,10 @@ module WhirledPeas
       end
 
       def stop
+        send(Frame::EOF)
+      end
+
+      def terminate
         send(Frame::TERMINATE)
       end
 

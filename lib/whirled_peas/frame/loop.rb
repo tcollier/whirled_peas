@@ -12,11 +12,12 @@ module WhirledPeas
       end
 
       def start
+        @running = true
         screen = UI::Screen.new
         sleep(0.01) while queue.empty?  # Wait for the first event
         remaining_frames = 1
         template = nil
-        while remaining_frames > 0
+        while @running && remaining_frames > 0
           frame_at = Time.now
           next_frame_at = frame_at + 1.0 / refresh_rate_fps
           remaining_frames -= 1
@@ -35,6 +36,10 @@ module WhirledPeas
         puts e.backtrace.join("\n")
       ensure
         screen.finalize if screen
+      end
+
+      def stop
+        @running = false
       end
 
       private

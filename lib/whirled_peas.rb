@@ -14,8 +14,13 @@ module WhirledPeas
     consumer_thread = Thread.new { consumer.start(host: host, port: port) }
 
     Frame::Producer.start(host: host, port: port) do |producer|
-      driver.start(producer)
-      producer.stop
+      begin
+        driver.start(producer)
+        producer.stop
+      rescue
+        producer.terminate
+        raise
+      end
     end
 
     consumer_thread.join
