@@ -275,11 +275,7 @@ module WhirledPeas
 
       def self.paint(element, canvas, &block)
         if element.is_a?(Template)
-          new_element = BoxElement.new(BoxSettings.merge(element.settings))
-          element.children.each do |child|
-            new_element.children << child
-          end
-          element = new_element
+          element = BoxElement.from_template(element, canvas.width, canvas.height)
         end
         PAINTERS[element.class].new(element, canvas).paint(&block)
       end

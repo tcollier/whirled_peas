@@ -3,7 +3,8 @@ require_relative 'settings'
 module WhirledPeas
   module UI
     class Element
-      attr_reader :settings, :preferred_width, :preferred_height
+      attr_accessor :preferred_width, :preferred_height
+      attr_reader :settings
 
       def initialize(settings)
         @settings = settings
@@ -93,18 +94,30 @@ module WhirledPeas
     end
 
     class BoxElement < ComposableElement
+      attr_writer :content_width, :content_height
+
       def initialize(settings)
         super(BoxSettings.merge(settings))
       end
 
+      def self.from_template(template, width, height)
+        box = new(template.settings)
+        template.children.each { |c| box.children << c }
+        box.content_width = box.preferred_width = width
+        box.content_height = box.preferred_height = height
+        box
+      end
+
       def content_width
-        child_widths = children.map(&:preferred_width)
-        width = settings.display_flow == :inline ? child_widths.sum : (child_widths.max || 0)
-        [width, *settings.width].max
+        @content_width ||= begin
+          child_widths = children.map(&:preferred_width)
+          width = settings.display_flow == :inline ? child_widths.sum : (child_widths.max || 0)
+          [width, *settings.width].max
+        end
       end
 
       def preferred_width
-        settings.margin.left +
+        @preferred_width ||= settings.margin.left +
           (settings.border.left? ? 1 : 0) +
           settings.padding.left +
           content_width +
@@ -114,12 +127,14 @@ module WhirledPeas
       end
 
       def content_height
-        child_heights = children.map(&:preferred_height)
-        settings.display_flow == :inline ? (child_heights.max || 0) : child_heights.sum
+        @content_height ||= begin
+          child_heights = children.map(&:preferred_height)
+          settings.display_flow == :inline ? (child_heights.max || 0) : child_heights.sum
+        end
       end
 
       def preferred_height
-        settings.margin.top +
+        @preferred_height ||= settings.margin.top +
           (settings.border.top? ? 1 : 0) +
           settings.padding.top +
           content_height +
