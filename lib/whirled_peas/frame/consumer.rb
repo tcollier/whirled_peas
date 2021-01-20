@@ -28,8 +28,8 @@ module WhirledPeas
             @running = false
             break
           else
-            frames = args.delete('frames')
-            @loop.enqueue(name, frames, args)
+            duration = args.delete('duration')
+            @loop.enqueue(name, duration, args)
           end
         end
       rescue => e

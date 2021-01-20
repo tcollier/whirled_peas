@@ -69,10 +69,10 @@ The producer provides a single method
 # Send frame events to the UI
 #
 # @param name [String] application defined name for the frame. The template factory will be provided this name
-# @param frames [Integer] number of frame cycles this frame should be displayed for (default: 1)
+# @param duration [Number] time in seconds this frame should be displayed for (defaults to 1 frame)
 # @param args [Hash] key value pairs to send as arguments to the template factory, these values will be
 #   serialized/deserialized
-def send(name, frames:, args:)
+def send(name, duration:, args:)
   # implementation
 end
 ```
@@ -84,15 +84,15 @@ end
 class Driver
   def start(producer)
     numbers = File.readlines('/path/to/numbers.txt').map(&:to_i)
-    producer.send('load-numbers', frames: 10, args: { numbers: numbers })
+    producer.send('load-numbers', duration: 3, args: { numbers: numbers })
     numbers.sort!
-    producer.send('sort-numbers', frames: 10, args: { numbers: numbers })
+    producer.send('sort-numbers', duration: 3, args: { numbers: numbers })
     low = 0
     high = numbers.length - 1
     while low < high
       sum = numbers[low] + numbers[high]
       if sum == 1000
-        producer.send('found-pair', frames: 100, args: { low: low, high: high, sum: sum })
+        producer.send('found-pair', duration: 5, args: { low: low, high: high, sum: sum })
         return
       elsif sum < 1000
         producer.send('too-low', args: { low: low, high: high, sum: sum })
@@ -102,7 +102,7 @@ class Driver
         high -= 1
       end
     end
-    producer.send('no-solution', frames: 100)
+    producer.send('no-solution', duration: 5)
   end
 end
 ```

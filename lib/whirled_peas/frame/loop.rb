@@ -7,8 +7,8 @@ module WhirledPeas
         @refresh_rate_fps = refresh_rate_fps
       end
 
-      def enqueue(name, frames, args)
-        queue.push([name, frames, args])
+      def enqueue(name, duration, args)
+        queue.push([name, duration, args])
       end
 
       def start
@@ -18,12 +18,13 @@ module WhirledPeas
         template = nil
         while remaining_frames > 0
           frame_at = Time.now
-          next_frame_at = frame_at + 1.0 / @refresh_rate_fps
+          next_frame_at = frame_at + 1.0 / refresh_rate_fps
           remaining_frames -= 1
           if remaining_frames > 0
             screen.paint(template)
           elsif !queue.empty?
-            name, remaining_frames, args = queue.pop
+            name, duration, args = queue.pop
+            remaining_frames = duration ? duration * refresh_rate_fps : 1
             template = template_factory.build(name, args)
             screen.paint(template)
           end
