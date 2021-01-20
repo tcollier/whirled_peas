@@ -22,7 +22,7 @@ module WhirledPeas
           next_frame_at = frame_at + 1.0 / refresh_rate
           remaining_frames -= 1
           if remaining_frames > 0
-            screen.paint(template)
+            screen.refresh if screen.needs_refresh?
           elsif !queue.empty?
             name, duration, args = queue.pop
             remaining_frames = duration ? duration * refresh_rate : 1

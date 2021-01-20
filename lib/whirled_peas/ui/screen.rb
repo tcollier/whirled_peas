@@ -17,8 +17,17 @@ module WhirledPeas
       end
 
       def paint(template)
+        @template = template
+        refresh
+      end
+
+      def needs_refresh?
+        @refreshed_width != width || @refreshed_height != height
+      end
+
+      def refresh
         strokes = [cursor.hide, cursor.move_to(0, 0), cursor.clear_screen_down]
-        Painter.paint(template, Canvas.new(0, 0, width, height)) do |stroke|
+        Painter.paint(@template, Canvas.new(0, 0, width, height)) do |stroke|
           unless stroke.chars.nil?
             strokes << cursor.move_to(stroke.left, stroke.top)
             strokes << stroke.chars
@@ -27,6 +36,8 @@ module WhirledPeas
         return unless @print_output
         strokes.each(&method(:print))
         STDOUT.flush
+        @refreshed_width = width
+        @refreshed_height = height
       end
 
       def finalize
