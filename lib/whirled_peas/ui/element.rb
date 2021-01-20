@@ -4,9 +4,10 @@ module WhirledPeas
   module UI
     class Element
       attr_accessor :preferred_width, :preferred_height
-      attr_reader :settings
+      attr_reader :name, :settings
 
-      def initialize(settings)
+      def initialize(name, settings)
+        @name = name
         @settings = settings
       end
     end
@@ -15,8 +16,8 @@ module WhirledPeas
     class TextElement < Element
       attr_reader :value
 
-      def initialize(settings)
-        super(TextSettings.merge(settings))
+      def initialize(name, settings)
+        super(name, TextSettings.merge(settings))
       end
 
       def value=(val)
@@ -27,19 +28,27 @@ module WhirledPeas
 
       def inspect(indent='')
         dims = unless preferred_width.nil?
-          "#{indent + '  '}Dimensions: #{preferred_width}x#{preferred_height}"
+          "#{indent + '  '}- Dimensions: #{preferred_width}x#{preferred_height}"
         end
         [
-          "#{indent}#{self.class.name}",
+          "#{indent}+ #{name} [#{self.class.name}]",
           dims,
-          "#{indent + '  '}Settings",
+          "#{indent + '  '}- Settings",
           settings.inspect(indent + '    ')
         ].compact.join("\n")
       end
     end
 
     class ComposableElement < Element
-      def initialize(settings)
+      class << self
+        def next_name
+          @counter ||= 0
+          @counter += 1
+          "Element-#{@counter}"
+        end
+      end
+
+      def initialize(name, settings)
         super
       end
 
@@ -47,14 +56,14 @@ module WhirledPeas
         @children ||= []
       end
 
-      def add_text(&block)
-        element = TextElement.new(settings)
+      def add_text(name=self.class.next_name, &block)
+        element = TextElement.new(name, settings)
         element.value = yield nil, element.settings
         children << element
       end
 
-      def add_box(&block)
-        element = BoxElement.new(settings)
+      def add_box(name=self.class.next_name, &block)
+        element = BoxElement.new(name, settings)
         value = yield element, element.settings
         children << element
         if element.children.empty? && value.is_a?(String)
@@ -62,8 +71,8 @@ module WhirledPeas
         end
       end
 
-      def add_grid(&block)
-        element = GridElement.new(settings)
+      def add_grid(name=self.class.next_name, &block)
+        element = GridElement.new(name, settings)
         values = yield element, element.settings
         children << element
         if element.children.empty? && values.is_a?(Array)
@@ -74,14 +83,14 @@ module WhirledPeas
       def inspect(indent='')
         kids = children.map { |c| c.inspect(indent + '    ') }.join("\n")
         dims = unless preferred_width.nil?
-          "#{indent + '  '}Dimensions: #{preferred_width}x#{preferred_height}"
+          "#{indent + '  '}- Dimensions: #{preferred_width}x#{preferred_height}"
         end
         [
-          "#{indent}#{self.class.name}",
+          "#{indent}+ #{name} [#{self.class.name}]",
           dims,
-          "#{indent + '  '}Settings",
+          "#{indent + '  '}- Settings",
           settings.inspect(indent + '    '),
-          "#{indent + '  '}Children",
+          "#{indent + '  '}- Children",
           kids
         ].compact.join("\n")
       end
@@ -89,19 +98,19 @@ module WhirledPeas
 
     class Template < ComposableElement
       def initialize(settings=TemplateSettings.new)
-        super(settings)
+        super('TEMPLATE', settings)
       end
     end
 
     class BoxElement < ComposableElement
       attr_writer :content_width, :content_height
 
-      def initialize(settings)
-        super(BoxSettings.merge(settings))
+      def initialize(name, settings)
+        super(name, BoxSettings.merge(settings))
       end
 
       def self.from_template(template, width, height)
-        box = new(template.settings)
+        box = new(template.name, template.settings)
         template.children.each { |c| box.children << c }
         box.content_width = box.preferred_width = width
         box.content_height = box.preferred_height = height
@@ -145,8 +154,8 @@ module WhirledPeas
     end
 
     class GridElement < ComposableElement
-      def initialize(settings)
-        super(GridSettings.merge(settings))
+      def initialize(name, settings)
+        super(name, GridSettings.merge(settings))
       end
 
       def col_width
