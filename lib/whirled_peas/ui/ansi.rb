@@ -97,6 +97,10 @@ module WhirledPeas
       def to_s
         @code.to_s
       end
+
+      def inspect
+        "#{self.class.name.split('::').last}<code=#{@code}, bright=#{@bright}>"
+      end
     end
     private_constant :Color
 

@@ -148,11 +148,11 @@ module WhirledPeas
       attr_reader :settings, :num_cols, :num_rows, :col_width, :row_height
 
       def initialize(box)
-        @settings = ContainerSettings.new.merge(box.settings)
+        @settings = ContainerSettings.merge(box.settings)
         @num_cols = 1
         @num_rows = 1
-        @col_width = box.preferred_width
-        @row_height = box.preferred_height
+        @col_width = box.content_width
+        @row_height = box.content_height
       end
     end
 
@@ -165,16 +165,21 @@ module WhirledPeas
       def paint(&block)
         container = BoxContainer.new(box)
         ContainerPainter.new(container, canvas).paint(&block)
-        left = canvas.left
+        top = canvas.top + box.settings.margin.top + (box.settings.border.top? ? 1 : 0) + box.settings.padding.top
+        left = canvas.left + box.settings.margin.left + (box.settings.border.left? ? 1 : 0) + box.settings.padding.left
         box.children.each do |child|
           child_canvas = Canvas.new(
-            canvas.top,
+            top,
             left,
             child.preferred_width,
-            1
+            child.preferred_height
           )
           Painter.paint(child, child_canvas, &block)
-          left += child.preferred_width
+          if box.settings.display_flow == :inline
+            left += child.preferred_width
+          else
+            top += child.preferred_height
+          end
         end
       end
 
@@ -187,7 +192,7 @@ module WhirledPeas
       attr_reader :settings, :num_cols, :num_rows, :col_width, :row_height
 
       def initialize(grid, num_cols, num_rows)
-        @settings = ContainerSettings.new.merge(grid.settings)
+        @settings = ContainerSettings.merge(grid.settings)
         @num_cols = num_cols
         @num_rows = num_rows
         @col_width = grid.col_width
@@ -209,14 +214,13 @@ module WhirledPeas
         container = GridContainer.new(grid, num_cols, (grid.children.length.to_f / num_cols).ceil)
         ContainerPainter.new(container, canvas).paint(&block)
 
-        children = grid.children
-        # children = if grid.settings.transpose
-        #   grid.children.length.times.map do |i|
-        #     grid.children[(i * num_cols) % grid.children.length +  i / (grid.children.length / num_cols)]
-        #   end.compact
-        # else
-        #   grid.children
-        # end
+        children = if grid.settings.transpose?
+          grid.children.length.times.map do |i|
+            grid.children[(i * num_cols) % grid.children.length +  i / (grid.children.length / num_cols)]
+          end.compact
+        else
+          grid.children
+        end
 
         top = canvas.top + grid.settings.margin.top + (grid.settings.border.top? ? 1 : 0) + grid.settings.padding.top
         left = canvas.left + grid.settings.margin.left + (grid.settings.border.left? ? 1 : 0) + grid.settings.padding.left
@@ -251,7 +255,7 @@ module WhirledPeas
 
       def self.paint(element, canvas, &block)
         if element.is_a?(Template)
-          new_element = BoxElement.new(BoxSettings.new.merge(element.settings))
+          new_element = BoxElement.new(BoxSettings.merge(element.settings))
           element.children.each do |child|
             new_element.children << child
           end

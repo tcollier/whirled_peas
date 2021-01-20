@@ -7,19 +7,24 @@ require_relative 'painter'
 module WhirledPeas
   module UI
     class Screen
-      def initialize
-        Signal.trap('SIGWINCH', proc { self.refresh_size! })
+      def initialize(print_output=true)
+        @print_output = print_output
         @terminal = HighLine.new.terminal
         @cursor = TTY::Cursor
         refresh_size!
+        Signal.trap('SIGWINCH', proc { self.refresh_size! })
       end
 
       def paint(template)
-        strokes(template).each(&method(:print))
-        STDOUT.flush
+        strokes = strokes(template)
+        if @print_output
+          strokes.each(&method(:print))
+          STDOUT.flush
+        end
       end
 
       def finalize
+        return unless @print_output
         print UI::Ansi.clear
         print cursor.move_to(0, height - 1)
         print cursor.show

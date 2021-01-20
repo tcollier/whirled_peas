@@ -10,12 +10,17 @@ TEMPLATE = WhirledPeas.template do |t|
     settings.set_margin(top: 3, left: 10)
     settings.set_padding(top: 1, bottom: 1, left: 3, right: 3)
     settings.full_border(color: :green)
-    6.times.each { |i| grid.add_text { (i + 1).to_s } }
+    6.times.map { |i| (i + 1).to_s }
   end
 end
 
 module WhirledPeas
-  screen = UI::Screen.new
+  if ARGV.last == '--debug'
+    puts TEMPLATE.inspect
+    screen = UI::Screen.new(false)
+  else
+    screen = UI::Screen.new
+  end
   screen.paint(TEMPLATE)
   screen.finalize
 end
