@@ -175,8 +175,10 @@ module WhirledPeas
           margin = box.settings.margin.left
         end
         left = canvas.left + margin + (box.settings.border.left? ? 1 : 0) + box.settings.padding.left
-        greedy_width = box.settings.display_flow == :block || box.children.length == 1
-        box.children.each do |child|
+        greedy_width = box.settings.vertical_flow? || box.children.length == 1
+        children = box.children
+        children = children.reverse if box.settings.reverse_flow?
+        children.each do |child|
           if greedy_width
             width = box.content_width
             height = child.preferred_height
@@ -186,7 +188,7 @@ module WhirledPeas
           end
           child_canvas = Canvas.new(left, top, width, height)
           Painter.paint(child, child_canvas, &block)
-          if box.settings.display_flow == :inline
+          if box.settings.horizontal_flow?
             left += child.preferred_width
           else
             top += child.preferred_height

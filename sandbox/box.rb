@@ -6,12 +6,12 @@ WhirledPeas.sandbox do |t|
     outer_s.bg_color = :green
     outer_s.set_padding(left: 3, right: 3, top: 1, bottom: 1)
     outer.add_box do |inner1, i1_s|
-      i1_s.display_flow = :block
+      i1_s.flow = :t2b
       inner1.add_box { "TOP LEFT" }
       inner1.add_box { "BOTTOM LEFT" }
     end
     outer.add_box do |inner2, i2_s|
-      i2_s.display_flow = :block
+      i2_s.flow = :t2b
       inner2.add_box { "TOP RIGHT "}
       inner2.add_box { "BOTTOM RIGHT "}
     end

@@ -152,20 +152,20 @@ end
 Each element type has an associated settings type, which provide a custom set of options to format the output. Parent settings may be merged into child settings (assuming the child supports those settings)
 The available settigs are
 
-| Setting        | Description                                                          | Default   | Availability                      | Merged? |
-| -------------- | -------------------------------------------------------------------- | --------- | --------------------------------- | ------- |
-| `align`        | Justifies the text (allowed values: `:left`, `:center`, `:right`)    | `:left`   | `Box`, `Grid`, `Text`             | Yes     |
-| `auto_margin`  | Evenly distribute side margin (overrides left/right in `margin`)     | `false`   | `Box`, `Grid`                     | Yes     |
-| `bg_color`     | Background color (see [Colors](#colors))                             |           | `Box`, `Grid`, `Template`, `Text` | Yes     |
-| `bold`         | `true` makes the font bold                                           | `false`   | `Box`, `Grid`, `Template`, `Text` | Yes     |
-| `border`       | Set the border for the lements                                       | none      | `Box`, `Grid`,                    | Yes     |
-| `color`        | Foreground text color (see [Colors](#colors))                        |           | `Box`, `Grid`, `Template`, `Text` | Yes     |
-| `display_flow` | Display child elements `:inline` (horizontal) or `:block` (vertical) | `:inline` | `Box`                             | Yes     |
-| `margin`       | Set the (left, top, right, bottom) margin of the element             | `0`       | `Box`, `Grid`                     | Yes     |
-| `padding`      | Set the (left, top, right, bottom) padding of the element            | `0`       | `Box`, `Grid`                     | Yes     |
-| `transpose`    | Display grid elements top-to-bottom, then left-to-right              | `false`   | `Grid`                            | No      |
-| `underline`    | `true` underlines the font                                           | `false`   | `Box`, `Grid`, `Template`, `Text` | Yes     |
-| `width`        | Override the calculated with of an element                           |           | `Box`, `Grid`, `Text`             | No      |
+| Setting       | Description                                                        | Default | Availability                      | Merged? |
+| ------------- | ------------------------------------------------------------------ | ------- | --------------------------------- | ------- |
+| `align`       | Justifies the text (allowed values: `:left`, `:center`, `:right`)  | `:left` | `Box`, `Grid`, `Text`             | Yes     |
+| `auto_margin` | Evenly distribute side margin (overrides left/right in `margin`)   | `false` | `Box`, `Grid`                     | Yes     |
+| `bg_color`    | Background color (see [Colors](#colors))                           |         | `Box`, `Grid`, `Template`, `Text` | Yes     |
+| `bold`        | `true` makes the font bold                                         | `false` | `Box`, `Grid`, `Template`, `Text` | Yes     |
+| `border`      | Set the border for the lements                                     | none    | `Box`, `Grid`,                    | Yes     |
+| `color`       | Foreground text color (see [Colors](#colors))                      |         | `Box`, `Grid`, `Template`, `Text` | Yes     |
+| `flow`        | Flow to display child elements (see [Display Flow](#display-flow)) | `:l2r`  | `Box`                             | Yes     |
+| `margin`      | Set the (left, top, right, bottom) margin of the element           | `0`     | `Box`, `Grid`                     | Yes     |
+| `padding`     | Set the (left, top, right, bottom) padding of the element          | `0`     | `Box`, `Grid`                     | Yes     |
+| `transpose`   | Display grid elements top-to-bottom, then left-to-right            | `false` | `Grid`                            | No      |
+| `underline`   | `true` underlines the font                                         | `false` | `Box`, `Grid`, `Template`, `Text` | Yes     |
+| `width`       | Override the calculated with of an element                         |         | `Box`, `Grid`, `Text`             | No      |
 
 ##### Margin and Padding
 
@@ -214,7 +214,41 @@ Available border styles are
 ╰──┴──╯
 ```
 
-#### Colors
+##### Display Flow
+
+Child elements can flow in one of 4 directions
+
+- `:l2r` left-to-right
+
+```
+[child 1] [child 2] ... [child N]
+```
+
+- `:r2l` right-to-left
+
+```
+[child N] [child N - 1] ... [child 1]
+```
+
+- `:t2b` top-to-bottom
+
+```
+[child 1]
+[child 2]
+ ...
+[child N]
+```
+
+- `:b2t` bottom-to-top
+
+```
+[child N]
+[child N - 1]
+ ...
+[child 1]
+```
+
+##### Colors
 
 Below is the list of available colors (for both foreground and background)
 
@@ -250,7 +284,7 @@ class TemplateFactory
 
     WhirledPeas.template do |t|
       t.add_box do |body, settings|
-        settings.display_flow = :block
+        settings.flow = :l2r
         settings.auto_margin = true
         body.add_box do |title, settings|
           settings.underline = true

@@ -111,7 +111,7 @@ module WhirledPeas
       def content_width
         @content_width ||= begin
           child_widths = children.map(&:preferred_width)
-          width = settings.display_flow == :inline ? child_widths.sum : (child_widths.max || 0)
+          width = settings.horizontal_flow? ? child_widths.sum : (child_widths.max || 0)
           [width, *settings.width].max
         end
       end
@@ -129,7 +129,7 @@ module WhirledPeas
       def content_height
         @content_height ||= begin
           child_heights = children.map(&:preferred_height)
-          settings.display_flow == :inline ? (child_heights.max || 0) : child_heights.sum
+          settings.vertical_flow? ? child_heights.sum : (child_heights.max || 0)
         end
       end
 

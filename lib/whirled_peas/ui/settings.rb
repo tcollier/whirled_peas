@@ -18,12 +18,19 @@ module WhirledPeas
     end
 
     module DisplayFlow
-      INLINE = :inline
-      BLOCK = :block
+      LEFT_TO_RIGHT = :l2r
+      RIGHT_TO_LEFT = :r2l
+      TOP_TO_BOTTOM = :t2b
+      BOTTOM_TO_TOP = :b2t
 
       def self.validate!(flow)
         return unless flow
-        if [DisplayFlow::INLINE, DisplayFlow::BLOCK].include?(flow)
+        if [
+          DisplayFlow::LEFT_TO_RIGHT,
+          DisplayFlow::RIGHT_TO_LEFT,
+          DisplayFlow::TOP_TO_BOTTOM,
+          DisplayFlow::BOTTOM_TO_TOP
+        ].include?(flow)
           flow
         else
           raise ArgumentError, "Invalid flow: #{flow}"
@@ -451,27 +458,43 @@ module WhirledPeas
       include WidthSetting
       include AlignSetting
 
-      def display_flow=(display_flow)
-        @_display_flow = DisplayFlow.validate!(display_flow)
+      def flow=(flow)
+        @_flow = DisplayFlow.validate!(flow)
       end
 
-      def display_flow
-        @_display_flow || DisplayFlow::INLINE
+      def flow
+        @_flow || DisplayFlow::LEFT_TO_RIGHT
+      end
+
+      def horizontal_flow?
+        %i[l2r r2l].include?(flow)
+      end
+
+      def vertical_flow?
+        !horizontal_flow?
+      end
+
+      def forward_flow?
+        %i[l2r t2b].include?(flow)
+      end
+
+      def reverse_flow?
+        !forward_flow?
       end
 
       def merge(parent)
         merged = super
-        merged._display_flow = if @_display_flow
-          @_display_flow
+        merged._flow = if @_flow
+          @_flow
         elsif parent.is_a?(BoxSettings)
-          parent._display_flow
+          parent._flow
         end
         merged
       end
 
       protected
 
-      attr_accessor :_display_flow
+      attr_accessor :_flow
     end
 
     class GridSettings < ContainerSettings
