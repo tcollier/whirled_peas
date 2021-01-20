@@ -15,13 +15,17 @@ module WhirledPeas
         screen = UI::Screen.new
         sleep(0.01) while queue.empty?  # Wait for the first event
         remaining_frames = 1
+        template = nil
         while remaining_frames > 0
           frame_at = Time.now
           next_frame_at = frame_at + 1.0 / @refresh_rate_fps
           remaining_frames -= 1
-          if remaining_frames == 0 && !queue.empty?
+          if remaining_frames > 0
+            screen.paint(template)
+          elsif !queue.empty?
             name, remaining_frames, args = queue.pop
-            screen.paint(template_builder.build(name, args))
+            template = template_builder.build(name, args)
+            screen.paint(template)
           end
           sleep(next_frame_at - Time.now)
         end

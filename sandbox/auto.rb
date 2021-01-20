@@ -1,8 +1,6 @@
-require 'bundler/setup'
-require 'whirled_peas'
-require 'whirled_peas/ui'
+require_relative 'sandbox'
 
-TEMPLATE = WhirledPeas.template do |t|
+WhirledPeas.sandbox do |t|
   t.add_box do |outer, s|
     s.full_border
     s.bg_color = :green
@@ -12,15 +10,4 @@ TEMPLATE = WhirledPeas.template do |t|
       "MIDDLE"
     end
   end
-end
-
-module WhirledPeas
-  if ARGV.last == '--debug'
-    puts TEMPLATE.inspect
-    screen = UI::Screen.new(false)
-  else
-    screen = UI::Screen.new
-  end
-  screen.paint(TEMPLATE)
-  screen.finalize
 end

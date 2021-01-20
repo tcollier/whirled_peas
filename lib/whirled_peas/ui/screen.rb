@@ -11,16 +11,22 @@ module WhirledPeas
         @print_output = print_output
         @terminal = HighLine.new.terminal
         @cursor = TTY::Cursor
+        @strokes = []
         refresh_size!
         Signal.trap('SIGWINCH', proc { self.refresh_size! })
       end
 
       def paint(template)
-        strokes = strokes(template)
-        if @print_output
-          strokes.each(&method(:print))
-          STDOUT.flush
+        strokes = [cursor.hide, cursor.move_to(0, 0), cursor.clear_screen_down]
+        Painter.paint(template, Canvas.new(0, 0, width, height)) do |stroke|
+          unless stroke.chars.nil?
+            strokes << cursor.move_to(stroke.left, stroke.top)
+            strokes << stroke.chars
+          end
         end
+        return unless @print_output
+        strokes.each(&method(:print))
+        STDOUT.flush
       end
 
       def finalize
@@ -32,15 +38,6 @@ module WhirledPeas
       end
 
       protected
-
-      def strokes(template)
-        buffer = [cursor.hide, cursor.move_to(0, 0), cursor.clear_screen_down]
-        Painter.paint(template, Canvas.new(0, 0, width, height)) do |stroke|
-          buffer << cursor.move_to(stroke.left, stroke.top)
-          buffer << stroke.chars
-        end
-        buffer
-      end
 
       def refresh_size!
         @width, @height = terminal.terminal_size

@@ -1,13 +1,10 @@
-require_relative 'settings'
 require_relative 'ansi'
+require_relative 'canvas'
+require_relative 'settings'
 
 module WhirledPeas
   module UI
     DEBUG_SPACING = ARGV.include?('--debug-spacing')
-
-    Canvas = Struct.new(:top, :left, :width, :height)
-
-    Stroke = Struct.new(:top, :left, :chars)
 
     class TextPainter
       JUSTIFICATION = DEBUG_SPACING ? 'j' : ' '
@@ -18,7 +15,7 @@ module WhirledPeas
       end
 
       def paint(&block)
-        yield Stroke.new(canvas.top, canvas.left, justified)
+        yield canvas.stroke(canvas.left, canvas.top, justified)
       end
 
       private
@@ -78,21 +75,21 @@ module WhirledPeas
           left = canvas.left + settings.margin.left
         end
         if settings.border.top?
-          yield Stroke.new(top, left, top_border)
+          yield canvas.stroke(left, top, top_border)
           top += 1
         end
         container.num_rows.times do |row_num|
           if row_num > 0 && settings.border.inner_horiz?
-            yield Stroke.new(top, left, middle_border)
+            yield canvas.stroke(left, top, middle_border)
             top += 1
           end
           (settings.padding.top + container.row_height + settings.padding.bottom).times do
-            yield Stroke.new(top, left, content_line)
+            yield canvas.stroke(left, top, content_line)
             top += 1
           end
         end
         if settings.border.bottom?
-          yield Stroke.new(top, left, bottom_border)
+          yield canvas.stroke(left, top, bottom_border)
           top += 1
         end
       end
@@ -187,7 +184,7 @@ module WhirledPeas
             width = child.preferred_width
             height = box.content_height
           end
-          child_canvas = Canvas.new(top, left, width, height)
+          child_canvas = Canvas.new(left, top, width, height)
           Painter.paint(child, child_canvas, &block)
           if box.settings.display_flow == :inline
             left += child.preferred_width
@@ -251,8 +248,8 @@ module WhirledPeas
           row.each.with_index do |element, col_num|
             col_left = left + col_num * grid_width
             child_canvas = Canvas.new(
-              row_top,
               col_left,
+              row_top,
               element.preferred_width,
               element.preferred_height
             )

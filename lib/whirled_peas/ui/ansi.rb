@@ -47,6 +47,21 @@ module WhirledPeas
           end
         end
 
+        def first(str, num_visible_chars)
+          return str if str.length <= num_visible_chars + hidden_width(str)
+          result = ''
+          in_format = false
+          visible_len = 0
+          str.chars.each do |char|
+            in_format = true if !in_format && char == "\033"
+            result += char
+            visible_len += 1 if !in_format
+            in_format = false if in_format && char == 'm'
+            break if visible_len == num_visible_chars
+          end
+          close_formatting(result)
+        end
+
         private
 
         def esc_seq(code)
@@ -99,7 +114,7 @@ module WhirledPeas
       end
 
       def inspect
-        "#{self.class.name.split('::').last}<code=#{@code}, bright=#{@bright}>"
+        "#{self.class.name.split('::').last}(code=#{@code}, bright=#{@bright})"
       end
     end
     private_constant :Color
