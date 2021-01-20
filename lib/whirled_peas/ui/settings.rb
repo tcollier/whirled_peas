@@ -112,7 +112,7 @@ module WhirledPeas
       )
       SOFT = BorderStyle.new(
         '╭', '─', '┬', '╮',
-        '│', '┤',
+        '│', '├',
         '│', '┼', '─',
         '│', '┤',
         '╰', '─', '┴', '╯'
@@ -130,7 +130,7 @@ module WhirledPeas
         if style.is_a?(Symbol)
           error_message = "Unsupported border style: #{style}"
           begin
-            style = self.const_get(style)
+            style = self.const_get(style.upcase)
             raise ArgumentError, error_message unless style.is_a?(BorderStyle)
             style
           rescue NameError
@@ -238,8 +238,7 @@ module WhirledPeas
 
     class ElementSettings
       def self.merge(parent)
-        m = self.new.merge(parent)
-        m
+        self.new.merge(parent)
       end
 
       def color

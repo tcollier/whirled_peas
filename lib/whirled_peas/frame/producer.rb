@@ -21,16 +21,19 @@ module WhirledPeas
         @queue = Queue.new
       end
 
-      def send(name, duration=1, args={})
-        client.puts(JSON.generate('name' => name, 'duration' => duration, **args))
+      def send(name, frames: 1, args: {})
+        client.puts(JSON.generate('name' => name, 'frames' => frames, **args))
       end
 
-      def enqueue(name, duration=1, args={})
-        queue.push([name, duration, args])
+      def enqueue(name, frames: 1, args: {})
+        queue.push([name, frames, args])
       end
 
       def flush
-        send(*queue.pop) while !queue.empty?
+        while !queue.empty?
+          name, frames, args = queue.pop
+          send(name, frames: frames, args: args)
+        end
       end
 
       def stop

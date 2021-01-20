@@ -7,13 +7,14 @@ module WhirledPeas
 
   DEFAULT_HOST = 'localhost'
   DEFAULT_PORT = 8765
+  DEFAULT_REFRESH_RATE = 30
 
-  def self.start(application, template_builder, host: DEFAULT_HOST, port: DEFAULT_PORT)
-    consumer = Frame::Consumer.new(template_builder)
+  def self.start(driver, template_factory, refresh_rate_fps: DEFAULT_REFRESH_RATE, host: DEFAULT_HOST, port: DEFAULT_PORT)
+    consumer = Frame::Consumer.new(template_factory, refresh_rate_fps)
     consumer_thread = Thread.new { consumer.start(host: host, port: port) }
 
     Frame::Producer.start(host: host, port: port) do |producer|
-      application.start(producer)
+      driver.start(producer)
       producer.stop
     end
 

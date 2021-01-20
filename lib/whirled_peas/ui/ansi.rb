@@ -144,25 +144,6 @@ module WhirledPeas
       CYAN = new(Ansi::CYAN)
       WHITE = new(Ansi::WHITE)
       GRAY = BLACK.bright
-
-      SHORTCUTS = {
-        black: BLACK,
-        red: RED,
-        bright_red: RED.bright,
-        green: GREEN,
-        bright_green: GREEN.bright,
-        yellow: YELLOW,
-        bright_yellow: YELLOW.bright,
-        blue: BLUE,
-        bright_blue: BLUE.bright,
-        magenta: MAGENTA,
-        bright_magenta: MAGENTA.bright,
-        cyan: CYAN,
-        bright_cyan: CYAN.bright,
-        white: WHITE,
-        bright_white: WHITE.bright,
-        gray: GRAY
-      }
     end
 
     module TextFormat

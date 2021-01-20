@@ -1,8 +1,6 @@
 # WhirledPeas
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/whirled_peas`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Visualize your code's execution with Whirled Peas!
 
 ## Installation
 
@@ -22,7 +20,236 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'whirled_peas'
+
+class TemplateFactory
+  def build(frame, args)
+    WhirledPeas.template do |body|
+      body.add_box do |_, settings|
+        settings.underline = true
+        "Hello #{args['name']}"
+      end
+      # ...
+    end
+  end
+end
+
+class Driver
+  def start(producer)
+    producer.send('starting', args: { 'name' => 'World' })
+    # ...
+  end
+end
+
+WhirledPeas.start(Driver.new, TemplateFactory.new)
+```
+
+A Whirled Peas application consists of two pieces
+
+1. The driver, which emits lightweight frame events
+1. The template factory, which builds templates to convert frame events from the driver into terminal graphics
+
+### Driver
+
+The driver is the application code to be visualized. This is typically a lightweight wrapper around an existing application that conforms to the signature below.
+
+```ruby
+# Start the application and pass frame events to the producer to be rendered by the UI
+#
+# @param producer [Producer] frame producer that sends events to the UI
+def start(producer)
+  # application code here
+end
+```
+
+The producer provides a single method
+
+```ruby
+# Send frame events to the UI
+#
+# @param name [String] application defined name for the frame. The template factory will be provided this name
+# @param frames [Integer] number of frame cycles this frame should be displayed for (default: 1)
+# @param args [Hash] key value pairs to send as arguments to the template factory, these values will be
+#   serialized/deserialized
+def send(name, frames:, args:)
+  # implementation
+end
+```
+
+#### Example
+
+```ruby
+# Simple application that loads a set of numbers and looks for a pair that adds up to 1,000
+class Driver
+  def start(producer)
+    numbers = File.readlines('/path/to/numbers.txt').map(&:to_i)
+    producer.send('load-numbers', frames: 10, args: { numbers: numbers })
+    numbers.sort!
+    producer.send('sort-numbers', frames: 10, args: { numbers: numbers })
+    low = 0
+    high = numbers.length - 1
+    while low < high
+      sum = numbers[low] + numbers[high]
+      if sum == 1000
+        producer.send('found-pair', frames: 100, args: { low: low, high: high, sum: sum })
+        return
+      elsif sum < 1000
+        producer.send('too-low', args: { low: low, high: high, sum: sum })
+        low += 1
+      else
+        producer.send('too-high', args: { low: low, high: high, sum: sum })
+        high -= 1
+      end
+    end
+    producer.send('no-solution', frames: 100)
+  end
+end
+```
+
+### Template Factory
+
+To render the frame events sent by the driver, the application requires a template factory. This factory will be called for each frame event, with the frame name and the arguments supplied by the driver. A template factory can be a simple ruby class and thus can maintain state. Whirled Peas provides a few basic building blocks to make simple, yet elegant terminal-based UIs.
+
+#### Building Blocks
+
+A template is created with `WhirledPeas.template`, which yields a `Template` object and `TemplateSettings`. This template object is a `ComposableElement`, which allows for attaching child elements and setting layout options. `GridElement` and `BoxElement` are two other composable elements and `TextElement` is a simple element that can hold a text/number value and has layout options, but cannot have any child elements.
+
+A `ComposableElement` provides the following methods to add child elements
+
+- `add_box` - yields a `BoxElement` and a `BoxSettings`, which will be added to the parent's children
+- `add_grid` - yields a `GridElement` and a `GridSettings`, which will be added to the parent's children
+- `add_text` - yields `nil` and a `TextSettings`, which will be added to the parent's children
+
+Additionally, if no child element is explicitly added to a `GridElement`, but the block returns an array of strings or numbers, those will be converted to `TextElements` and added as children to the `GridElement`. For example, these are identical ways to create a grid of strings
+
+```ruby
+template.add_grid do |g|
+  100.times do |i|
+    g.add_text { i.to_s }
+  end
+end
+
+template.add_grid do |g|
+  100.times.map(&:to_s)
+end
+```
+
+Similarly, if no child element is explicilty added to a `BoxElement`, but the block returns a string or number, that value will be converted to a `TextElement` and added as a child. For example, these are identical ways to create a box with string content
+
+```ruby
+template.add_box do |b|
+  b.add_text { "Hello!" }
+end
+
+template.add_box do |b|
+  "Hello!"
+end
+```
+
+#### Settings
+
+Each element type has an associated settings type, which provide a custom set of options to format the output. Parent settings may be merged into child settings (assuming the child supports those settings)
+The available settigs are
+
+| Setting        | Description                                                          | Default   | Availability                      | Merged? |
+| -------------- | -------------------------------------------------------------------- | --------- | --------------------------------- | ------- |
+| `align`        | Justifies the text (allowed values: `:left`, `:center`, `:right`)    | `:left`   | `Box`, `Grid`, `Text`             | Yes     |
+| `auto_margin`  | Evenly distribute left/right margin (overrides margin.top/right)     | `false`   | `Box`, `Grid`                     | Yes     |
+| `bg_color`     | Background color (see [Colors](#colors))                             |           | `Box`, `Grid`, `Template`, `Text` | Yes     |
+| `bold`         | `true` makes the font bold                                           | `false`   | `Box`, `Grid`, `Template`, `Text` | Yes     |
+| `border`       | Set the border for the lements                                       | none      | `Box`, `Grid`,                    | Yes     |
+| `color`        | Foreground text color (see [Colors](#colors))                        |           | `Box`, `Grid`, `Template`, `Text` | Yes     |
+| `display_flow` | Display child elements `:inline` (horizontal) or `:block` (vertical) | `:inline` | `Box`                             | Yes     |
+| `margin`       | Set the (left, top, right, bottom) margin of the element             | `0`       | `Box`, `Grid`                     | Yes     |
+| `padding`      | Set the (left, top, right, bottom) padding of the element            | `0`       | `Box`, `Grid`                     | Yes     |
+| `transpose`    | Display grid elements top-to-bottom, then left-to-right              | `false`   | `Grid`                            | No      |
+| `underline`    | `true` underlines the font                                           | `false`   | `Box`, `Grid`, `Template`, `Text` | Yes     |
+| `width`        | Override the calculated with of an element                           |           | `Box`, `Grid`, `Text`             | No      |
+
+##### Margin and Padding
+
+Margin and padding settings allow for setting the spacing on each of the 4 sides of the element independently. The set these values, use
+
+- `set_margin(left:, top:, right:, bottom:)`
+- `set_padding(left:, top:, right:, bottom:)`
+
+Any argument value not provided will result in that value being 0.
+
+##### Border
+
+The border settings consist of 6 boolean values (border are either width 1 or not shown), the 4 obvious values (`left`, `top`, `right`, and `bottom`) along with 2 other values for inner borders (`inner_horiz` and `inner_vert`) in a grid. A border also has a foreground color (defaults to `:white`) and a style. The background color is determined by the `bg_color` of the element. Border values can be set with
+
+- `set_border(left:, top:, right:, bottom:, inner_horiz:, inner_vert:, color:, style:)`
+
+Available border styles are
+
+- `:bold` (default)
+
+```
+┏━━┳━━┓
+┃  ┃  ┃
+┣━━╋━━┫
+┃  ┃  ┃
+┗━━┻━━┛
+```
+
+- `:double`
+
+```
+╔══╦══╗
+║  ║  ║
+╠══╬══╣
+║  ║  ║
+╚══╩══╝
+```
+
+- `:soft`
+
+```
+╭──┬──╮
+│  │  │
+├──┼──┤
+│  │  │
+╰──┴──╯
+```
+
+#### Colors
+
+Below is the list of available colors (for both foreground and background)
+
+- `:black`
+- `:blue`
+- `:cyan`
+- `:gray`
+- `:green`
+- `:magenta`
+- `:red`
+- `:white`
+- `:yellow`
+
+Many of these also have a "bright" option:
+
+- `:bright_blue`
+- `:bright_cyan`
+- `:bright_green`
+- `:bright_magenta`
+- `:bright_red`
+- `:bright_yellow`
+
+### Example
+
+```ruby
+class TemplateFactory
+  def initialize
+    @numbers = []
+  end
+
+  def build(name, args)
+    @numbers = args['numbers'] if args.key?('numbers')
+  end
+end
+```
 
 ## Development
 
@@ -33,7 +260,6 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/whirled_peas. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/whirled_peas/blob/master/CODE_OF_CONDUCT.md).
-
 
 ## License
 

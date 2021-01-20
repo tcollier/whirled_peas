@@ -6,8 +6,8 @@ require_relative 'loop'
 module WhirledPeas
   module Frame
     class Consumer
-      def initialize(template_builder, refresh_rate_fps: 30)
-        @loop = Loop.new(template_builder, refresh_rate_fps)
+      def initialize(template_factory, refresh_rate_fps)
+        @loop = Loop.new(template_factory, refresh_rate_fps)
         @running = false
         @mutex = Mutex.new
       end
@@ -28,8 +28,8 @@ module WhirledPeas
             @running = false
             break
           else
-            duration = args.delete('duration')
-            @loop.enqueue(name, duration, args)
+            frames = args.delete('frames')
+            @loop.enqueue(name, frames, args)
           end
         end
       rescue => e
