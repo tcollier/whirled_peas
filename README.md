@@ -155,7 +155,7 @@ The available settigs are
 | Setting        | Description                                                          | Default   | Availability                      | Merged? |
 | -------------- | -------------------------------------------------------------------- | --------- | --------------------------------- | ------- |
 | `align`        | Justifies the text (allowed values: `:left`, `:center`, `:right`)    | `:left`   | `Box`, `Grid`, `Text`             | Yes     |
-| `auto_margin`  | Evenly distribute left/right margin (overrides margin.top/right)     | `false`   | `Box`, `Grid`                     | Yes     |
+| `auto_margin`  | Evenly distribute side margin (overrides left/right in `margin`)     | `false`   | `Box`, `Grid`                     | Yes     |
 | `bg_color`     | Background color (see [Colors](#colors))                             |           | `Box`, `Grid`, `Template`, `Text` | Yes     |
 | `bold`         | `true` makes the font bold                                           | `false`   | `Box`, `Grid`, `Template`, `Text` | Yes     |
 | `border`       | Set the border for the lements                                       | none      | `Box`, `Grid`,                    | Yes     |
