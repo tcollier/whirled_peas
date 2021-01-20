@@ -122,6 +122,36 @@ A `ComposableElement` provides the following methods to add child elements
 - `add_grid` - yields a `ComposableElement` and a `GridSettings`, which will be added to the parent's children
 - `add_text` - yields `nil` and a `TextSettings`, which will be added to the parent's children
 
+E.g.
+
+```ruby
+WhirledPeas.template do |template, template_settings|
+  template_settings.bg_color = :blue
+  template.add_grid do |grid, grid_settings|
+    grid_settings.num_cols = 10
+    100.times do |i|
+      grid.add_text { i.to_s }
+    end
+  end
+end
+```
+
+The above template can also be broken down into more manageable methods, e.g.
+
+```ruby
+def number_grid(grid, settings)
+  settings.num_cols = 10
+  100.times do |i|
+    grid.add_text { i.to_s }
+  end
+end
+
+WhirledPeas.template do |template, settings|
+  settings.bg_color = :blue
+  template.add_grid(&method(:number_grid))
+end
+```
+
 Additionally, if no child element is explicitly added to a `GridElement`, but the block returns an array of strings or numbers, those will be converted to `TextElements` and added as children to the `GridElement`. For example, these are identical ways to create a grid of strings
 
 ```ruby
