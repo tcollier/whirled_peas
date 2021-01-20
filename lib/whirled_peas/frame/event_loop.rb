@@ -1,6 +1,6 @@
 module WhirledPeas
   module Frame
-    class Loop
+    class EventLoop
       def initialize(template_factory, refresh_rate, logger=NullLogger.new)
         @template_factory = template_factory
         @queue = Queue.new
@@ -12,8 +12,12 @@ module WhirledPeas
         queue.push([name, duration, args])
       end
 
+      def running?
+        @running
+      end
+
       def start
-        logger.info('EVENT LOOP') { "Starting" }
+        logger.info('EVENT LOOP') { 'Starting' }
         @running = true
         screen = UI::Screen.new
         sleep(0.01) while queue.empty?  # Wait for the first event
@@ -33,17 +37,17 @@ module WhirledPeas
           end
           sleep(next_frame_at - Time.now)
         end
-        logger.info('EVENT LOOP') { "Exiting normally" }
-      rescue => e
-        logger.warn('EVENT LOOP') { "Exiting with error" }
-        logger.error('EVENT LOOP') { e.message }
-        logger.error('EVENT LOOP') { e.backtrace.join("\n") }
+        logger.info('EVENT LOOP') { 'Exiting normally' }
+      rescue
+        logger.warn('EVENT LOOP') { 'Exiting with error' }
+        @running = false
+        raise
       ensure
         screen.finalize if screen
       end
 
       def stop
-        logger.info('EVENT LOOP') { "Stopping..." }
+        logger.info('EVENT LOOP') { 'Stopping...' }
         @running = false
       end
 
@@ -51,6 +55,6 @@ module WhirledPeas
 
       attr_reader :template_factory, :queue, :refresh_rate, :logger
     end
-    private_constant :Loop
+    private_constant :EventLoop
   end
 end

@@ -306,38 +306,50 @@ Many of these also have a "bright" option:
 
 ```ruby
 class TemplateFactory
-  def initialize
-    @numbers = []
+  def build(frame, args)
+    set_state(frame, args)
+    WhirledPeas.template do |t|
+      t.add_box(&method(:body))
+    end
   end
 
-  def build(name, args)
-    @numbers = args['numbers'] if args.key?('numbers')
+  private
 
-    WhirledPeas.template do |t|
-      t.add_box do |body, settings|
-        settings.flow = :l2r
-        settings.auto_margin = true
-        body.add_box do |title, settings|
-          settings.underline = true
-          "Pair Finder"
-        end
-        body.add_box do |_, settings|
-          settings.color = name == 'found-pair' ? :green : :red
-          args.key?('sum') ? "Sum: #{args['sum']}" : 'N/A'
-        end
-        body.add_grid do |g, settings|
-          settings.full_border
-          @numbers.each.with_index do |num, index|
-            is_low = args.key?('low') && args['low'] == index
-            is_high = args.key?('high') && args['high'] == index
-            g.add_text do |_, settings|
-              settings.bg_color = (is_low || is_high) ? :cyan : :white
-              num.to_s
-            end
-          end
-        end
+  def set_state(frame, args)
+    @frame = frame
+    @numbers = args.key?('numbers') ? args['numbers'] || []
+    @sum = args['sum'] if args.key?('sum')
+    @low = args['low'] if args.key?('low')
+    @high = args['high'] if args.key?('high')
+  end
+
+  def title(_elem, settings)
+    settings.underline = true
+    "Pair Finder"
+  end
+
+  def sum(_elem, settings)
+    settings.color = @frame == 'found-pair' ? :green : :red
+    @sum ? "Sum: #{@sum}" : 'N/A'
+  end
+
+  def number_grid(elem, settings)
+    settings.full_border
+    @numbers.each.with_index do |num, index|
+      g.add_text do |_, settings|
+        settings.bg_color = (@low == index || @high == index) ? :cyan : :white
+        num.to_s
       end
     end
+  end
+
+  def body(elem, settings)
+    settings.flow = :l2r
+    settings.auto_margin = true
+
+    elem.add_box(&method(:title))
+    elem.add_box(&method(:sum))
+    elem.add_grid(&method(:number_grid))
   end
 end
 ```
