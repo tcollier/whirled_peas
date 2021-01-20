@@ -35,7 +35,7 @@ module WhirledPeas
             template = template_factory.build(name, args)
             screen.paint(template)
           end
-          sleep(next_frame_at - Time.now)
+          sleep([0, next_frame_at - Time.now].max)
         end
         logger.info('EVENT LOOP') { 'Exiting normally' }
       rescue
