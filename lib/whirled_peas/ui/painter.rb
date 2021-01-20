@@ -15,7 +15,6 @@ module WhirledPeas
       def initialize(text, canvas)
         @text = text
         @canvas = canvas
-        @width = text.settings.width || text.preferred_width
       end
 
       def paint(&block)
@@ -24,19 +23,19 @@ module WhirledPeas
 
       private
 
-      attr_reader :text, :canvas, :width
+      attr_reader :text, :canvas
 
       def visible
-        if text.preferred_width <= width
+        if text.value.length <= text.preferred_width
           text.value
         elsif text.settings.align == TextAlign::LEFT
-          text.value[0..width - 1]
+          text.value[0..text.preferred_width - 1]
         elsif text.settings.align == TextAlign::CENTER
-          left_chop = (text.preferred_width - width) / 2
-          right_chop = text.preferred_width - width - left_chop
+          left_chop = (text.value.length - text.preferred_width) / 2
+          right_chop = text.value.length - text.preferred_width - left_chop
           text.value[left_chop..-right_chop - 1]
         else
-          text.value[-width..-1]
+          text.value[-text.preferred_width..-1]
         end
       end
 
@@ -49,11 +48,11 @@ module WhirledPeas
         when TextAlign::LEFT
           0
         when TextAlign::CENTER
-          [0, (width - text.preferred_width) / 2].max
+          [0, (text.preferred_width - text.value.length) / 2].max
         when TextAlign::RIGHT
-          [0, width - text.preferred_width].max
+          [0, text.preferred_width - text.value.length].max
         end
-        rjust = [0, width - text.preferred_width - ljust].max
+        rjust = [0, text.preferred_width - text.value.length - ljust].max
         Ansi.format(JUSTIFICATION * ljust, [*text.settings.bg_color]) +
           Ansi.format(visible, format_settings) +
           Ansi.format(JUSTIFICATION * rjust, [*text.settings.bg_color])
@@ -62,6 +61,8 @@ module WhirledPeas
     private_constant :TextPainter
 
     class ContainerPainter
+      PADDING = DEBUG_SPACING ? 'p' : ' '
+
       def initialize(container, canvas)
         @container = container
         @settings = container.settings
@@ -119,7 +120,7 @@ module WhirledPeas
       def content_line
         line_stroke(
           settings.border.style.left_vert,
-          ' ',
+          PADDING,
           settings.border.style.middle_vert,
           settings.border.style.right_vert
         )

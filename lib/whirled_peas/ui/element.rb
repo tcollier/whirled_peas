@@ -20,7 +20,7 @@ module WhirledPeas
 
       def value=(val)
         @value = val
-        @preferred_width = value.length
+        @preferred_width = settings.width || value.length
         @preferred_height = 1
       end
 
