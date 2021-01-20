@@ -9,8 +9,8 @@ module WhirledPeas
   DEFAULT_PORT = 8765
   DEFAULT_REFRESH_RATE = 30
 
-  def self.start(driver, template_factory, refresh_rate_fps: DEFAULT_REFRESH_RATE, host: DEFAULT_HOST, port: DEFAULT_PORT)
-    consumer = Frame::Consumer.new(template_factory, refresh_rate_fps)
+  def self.start(driver, template_factory, refresh_rate: DEFAULT_REFRESH_RATE, host: DEFAULT_HOST, port: DEFAULT_PORT)
+    consumer = Frame::Consumer.new(template_factory, refresh_rate)
     consumer_thread = Thread.new { consumer.start(host: host, port: port) }
 
     Frame::Producer.start(host: host, port: port) do |producer|

@@ -6,8 +6,8 @@ require_relative 'loop'
 module WhirledPeas
   module Frame
     class Consumer
-      def initialize(template_factory, refresh_rate_fps)
-        @loop = Loop.new(template_factory, refresh_rate_fps)
+      def initialize(template_factory, refresh_rate)
+        @loop = Loop.new(template_factory, refresh_rate)
         @running = false
         @mutex = Mutex.new
       end

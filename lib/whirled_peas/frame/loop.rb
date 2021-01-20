@@ -1,10 +1,10 @@
 module WhirledPeas
   module Frame
     class Loop
-      def initialize(template_factory, refresh_rate_fps)
+      def initialize(template_factory, refresh_rate)
         @template_factory = template_factory
         @queue = Queue.new
-        @refresh_rate_fps = refresh_rate_fps
+        @refresh_rate = refresh_rate
       end
 
       def enqueue(name, duration, args)
@@ -19,13 +19,13 @@ module WhirledPeas
         template = nil
         while @running && remaining_frames > 0
           frame_at = Time.now
-          next_frame_at = frame_at + 1.0 / refresh_rate_fps
+          next_frame_at = frame_at + 1.0 / refresh_rate
           remaining_frames -= 1
           if remaining_frames > 0
             screen.paint(template)
           elsif !queue.empty?
             name, duration, args = queue.pop
-            remaining_frames = duration ? duration * refresh_rate_fps : 1
+            remaining_frames = duration ? duration * refresh_rate : 1
             template = template_factory.build(name, args)
             screen.paint(template)
           end
@@ -44,7 +44,7 @@ module WhirledPeas
 
       private
 
-      attr_reader :template_factory, :queue, :refresh_rate_fps
+      attr_reader :template_factory, :queue, :refresh_rate
     end
     private_constant :Loop
   end
