@@ -247,6 +247,32 @@ class TemplateFactory
 
   def build(name, args)
     @numbers = args['numbers'] if args.key?('numbers')
+
+    WhirledPeas.template do |t|
+      t.add_box do |body, settings|
+        settings.display_flow = :block
+        settings.auto_margin = true
+        body.add_box do |title, settings|
+          settings.underline = true
+          "Pair Finder"
+        end
+        body.add_box do |_, settings|
+          settings.color = name == 'found-pair' ? :green : :red
+          args.key?('sum') ? "Sum: #{args['sum']}" : 'N/A'
+        end
+        body.add_grid do |g, settings|
+          settings.full_border
+          @numbers.each.with_index do |num, index|
+            is_low = args.key?('low') && args['low'] == index
+            is_high = args.key?('high') && args['high'] == index
+            g.add_text do |_, settings|
+              settings.bg_color = (is_low || is_high) ? :cyan : :white
+              num.to_s
+            end
+          end
+        end
+      end
+    end
   end
 end
 ```
