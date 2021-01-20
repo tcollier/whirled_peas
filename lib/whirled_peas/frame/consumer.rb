@@ -6,16 +6,18 @@ require_relative 'loop'
 module WhirledPeas
   module Frame
     class Consumer
-      def initialize(template_factory, refresh_rate)
-        @loop = Loop.new(template_factory, refresh_rate)
+      def initialize(template_factory, refresh_rate, logger=NullLogger.new)
+        @loop = Loop.new(template_factory, refresh_rate, logger)
+        @logger = logger
         @running = false
         @mutex = Mutex.new
       end
 
       def start(host:, port:)
-        @mutex.synchronize { @running = true }
-        loop_thread = Thread.new { @loop.start }
+        mutex.synchronize { @running = true }
+        loop_thread = Thread.new { loop.start }
         socket = TCPSocket.new(host, port)
+        logger.info('CONSUMER') { "Connected to #{host}:#{port}" }
         while @running
           line = socket.gets
           if line.nil?
@@ -25,25 +27,35 @@ module WhirledPeas
           args = JSON.parse(line)
           name = args.delete('name')
           if [Frame::EOF, Frame::TERMINATE].include?(name)
-            @loop.stop if name == Frame::TERMINATE
+            logger.info('CONSUMER') { "Received #{name} event, stopping..." }
+            loop.stop if name == Frame::TERMINATE
             @running = false
           else
             duration = args.delete('duration')
-            @loop.enqueue(name, duration, args)
+            loop.enqueue(name, duration, args)
           end
         end
+        logger.info('CONSUMER') { "Exited normally" }
       rescue => e
-        @loop.stop
-        puts e.message
-        puts e.backtrace.join("\n")
+        logger.warn('CONSUMER') { "Exited with error" }
+        logger.error('CONSUMER') { e.message }
+        logger.error('CONSUMER') { e.backtrace.join("\n") }
+        loop.stop
       ensure
+        logger.info('CONSUMER') { "Waiting for loop thread to exit" }
         loop_thread.join
+        logger.info('CONSUMER') { "Closing socket" }
         socket.close if socket
       end
 
       def stop
-        @mutex.synchronize { @running = false }
+        logger.info('CONSUMER') { "Stopping..." }
+        mutex.synchronize { @running = false }
       end
+
+      private
+
+      attr_reader :loop, :logger, :mutex
     end
   end
 end

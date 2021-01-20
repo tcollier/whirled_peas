@@ -4,25 +4,30 @@ require 'json'
 module WhirledPeas
   module Frame
     class Producer
-      def self.start(host:, port:, &block)
+      def self.start(logger: NullLogger.new, host:, port:, &block)
         server = TCPServer.new(host, port)
         client = server.accept
-        producer = new(client)
+        logger.info('PRODUCER') { "Connected to #{host}:#{port}" }
+        producer = new(client, logger)
         yield producer
+        logger.info('PRODUCER') { "Exited normally" }
       rescue => e
-        puts e.message
-        puts e.backtrace.join("\n")
+        logger.warn('PRODUCER') { "Exited with error" }
+        logger.error('PRODUCER') { e.message }
+        logger.error('PRODUCER') { e.backtrace.join("\n") }
       ensure
         client.close if client
       end
 
-      def initialize(client)
+      def initialize(client, logger=NullLogger.new)
         @client = client
+        @logger = logger
         @queue = Queue.new
       end
 
       def send(name, duration: nil, args: {})
         client.puts(JSON.generate('name' => name, 'duration' => duration, **args))
+        logger.debug('PRODUCER') { "Sending frame: #{name}" }
       end
 
       def enqueue(name, duration: nil, args: {})
@@ -46,7 +51,7 @@ module WhirledPeas
 
       private
 
-      attr_reader :client, :queue
+      attr_reader :client, :logger, :queue
     end
   end
 end

@@ -1,3 +1,5 @@
+require 'logger'
+
 require 'whirled_peas/frame'
 require 'whirled_peas/ui'
 require 'whirled_peas/version'
@@ -9,15 +11,25 @@ module WhirledPeas
   DEFAULT_PORT = 8765
   DEFAULT_REFRESH_RATE = 30
 
-  def self.start(driver, template_factory, refresh_rate: DEFAULT_REFRESH_RATE, host: DEFAULT_HOST, port: DEFAULT_PORT)
-    consumer = Frame::Consumer.new(template_factory, refresh_rate)
+
+  def self.start(driver, template_factory, log_level: Logger::INFO, refresh_rate: DEFAULT_REFRESH_RATE, host: DEFAULT_HOST, port: DEFAULT_PORT)
+    logger = Logger.new(File.open('whirled_peas.log', 'a'))
+    logger.level = log_level
+    logger.formatter = proc do |severity, datetime, progname, msg|
+      "[#{severity}] #{datetime.strftime('%Y-%m-%dT%H:%M:%S.%L')} (#{progname}) - #{msg}\n"
+    end
+
+    consumer = Frame::Consumer.new(template_factory, refresh_rate, logger)
     consumer_thread = Thread.new { consumer.start(host: host, port: port) }
 
-    Frame::Producer.start(host: host, port: port) do |producer|
+    Frame::Producer.start(logger: logger, host: host, port: port) do |producer|
       begin
         driver.start(producer)
         producer.stop
-      rescue
+      rescue => e
+        logger.warn('MAIN') { "Driver exited with error, terminating producer..." }
+        logger.error('MAIN') { e }
+        logger.error('MAIN') { e.backtrace.join("\n") }
         producer.terminate
         raise
       end
