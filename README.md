@@ -79,8 +79,9 @@ end
 
 #### Example
 
+Simple application that loads a set of numbers and looks for a pair that adds up to 1,000
+
 ```ruby
-# Simple application that loads a set of numbers and looks for a pair that adds up to 1,000
 class Driver
   def start(producer)
     numbers = File.readlines('/path/to/numbers.txt').map(&:to_i)
@@ -117,8 +118,8 @@ A template is created with `WhirledPeas.template`, which yields a `Template` obj
 
 A `ComposableElement` provides the following methods to add child elements
 
-- `add_box` - yields a `BoxElement` and a `BoxSettings`, which will be added to the parent's children
-- `add_grid` - yields a `GridElement` and a `GridSettings`, which will be added to the parent's children
+- `add_box` - yields a `ComposableElement` and a `BoxSettings`, which will be added to the parent's children
+- `add_grid` - yields a `ComposableElement` and a `GridSettings`, which will be added to the parent's children
 - `add_text` - yields `nil` and a `TextSettings`, which will be added to the parent's children
 
 Additionally, if no child element is explicitly added to a `GridElement`, but the block returns an array of strings or numbers, those will be converted to `TextElements` and added as children to the `GridElement`. For example, these are identical ways to create a grid of strings
