@@ -72,7 +72,11 @@ module WhirledPeas
       def paint(&block)
         return if container.num_rows == 0 || container.num_cols == 0
         top = canvas.top + settings.margin.top
-        left = canvas.left + settings.margin.left
+        if settings.auto_margin?
+          left = canvas.left + (canvas.width - container.preferred_width) / 2
+        else
+          left = canvas.left + settings.margin.left
+        end
         if settings.border.top?
           yield Stroke.new(top, left, top_border)
           top += 1
@@ -146,7 +150,7 @@ module WhirledPeas
     end
 
     class BoxContainer
-      attr_reader :settings, :num_cols, :num_rows, :col_width, :row_height
+      attr_reader :settings, :num_cols, :num_rows, :col_width, :row_height, :preferred_width
 
       def initialize(box)
         @settings = ContainerSettings.merge(box.settings)
@@ -154,6 +158,7 @@ module WhirledPeas
         @num_rows = 1
         @col_width = box.content_width
         @row_height = box.content_height
+        @preferred_width = box.preferred_width
       end
     end
 
@@ -167,14 +172,22 @@ module WhirledPeas
         container = BoxContainer.new(box)
         ContainerPainter.new(container, canvas).paint(&block)
         top = canvas.top + box.settings.margin.top + (box.settings.border.top? ? 1 : 0) + box.settings.padding.top
-        left = canvas.left + box.settings.margin.left + (box.settings.border.left? ? 1 : 0) + box.settings.padding.left
+        if box.settings.auto_margin?
+          margin = (canvas.width - box.preferred_width) / 2
+        else
+          margin = box.settings.margin.left
+        end
+        left = canvas.left + margin + (box.settings.border.left? ? 1 : 0) + box.settings.padding.left
+        greedy_width = box.settings.display_flow == :block || box.children.length == 1
         box.children.each do |child|
-          child_canvas = Canvas.new(
-            top,
-            left,
-            child.preferred_width,
-            child.preferred_height
-          )
+          if greedy_width
+            width = box.content_width
+            height = child.preferred_height
+          else
+            width = child.preferred_width
+            height = box.content_height
+          end
+          child_canvas = Canvas.new(top, left, width, height)
           Painter.paint(child, child_canvas, &block)
           if box.settings.display_flow == :inline
             left += child.preferred_width
@@ -190,7 +203,7 @@ module WhirledPeas
     end
 
     class GridContainer
-      attr_reader :settings, :num_cols, :num_rows, :col_width, :row_height
+      attr_reader :settings, :num_cols, :num_rows, :col_width, :row_height, :preferred_width
 
       def initialize(grid, num_cols, num_rows)
         @settings = ContainerSettings.merge(grid.settings)
@@ -198,6 +211,7 @@ module WhirledPeas
         @num_rows = num_rows
         @col_width = grid.col_width
         @row_height = grid.row_height
+        @preferred_width = grid.preferred_width
       end
     end
 
@@ -224,7 +238,12 @@ module WhirledPeas
         end
 
         top = canvas.top + grid.settings.margin.top + (grid.settings.border.top? ? 1 : 0) + grid.settings.padding.top
-        left = canvas.left + grid.settings.margin.left + (grid.settings.border.left? ? 1 : 0) + grid.settings.padding.left
+        if grid.settings.auto_margin?
+          margin = (canvas.width - grid.preferred_width) / 2
+        else
+          margin = grid.settings.margin.left
+        end
+        left = canvas.left + margin + (grid.settings.border.left? ? 1 : 0) + grid.settings.padding.left
         grid_height = grid.settings.padding.top + grid.row_height + grid.settings.padding.bottom + (grid.settings.border.inner_horiz? ? 1 : 0)
         grid_width = grid.settings.padding.left + grid.col_width + grid.settings.padding.right + (grid.settings.border.inner_vert? ? 1 : 0)
         children.each_slice(num_cols).each.with_index do |row, row_num|

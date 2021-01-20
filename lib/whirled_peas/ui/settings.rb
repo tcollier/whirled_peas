@@ -301,16 +301,6 @@ module WhirledPeas
 
     module WidthSetting
       attr_accessor :width
-
-      def merge(parent)
-        merged = super
-        merged.width = if @width
-          @width
-        elsif parent.is_a?(WidthSetting)
-          parent.width
-        end
-        merged
-      end
     end
 
     module AlignSetting
@@ -350,15 +340,29 @@ module WhirledPeas
         @_margin || Margin.new
       end
 
+      def auto_margin=(val)
+        @_auto_margin = val
+      end
+
+      def auto_margin?
+        @_auto_margin || false
+      end
+
       def merge(parent)
         merged = super
-        merged._margin = parent.is_a?(MarginSettings) ? margin.merge(parent.margin) : _margin
+        if parent.is_a?(MarginSettings)
+          merged._margin = margin.merge(parent.margin)
+          merged._auto_margin = @_auto_margin.nil? ? parent._auto_margin : @_auto_margin
+        else
+          merged._margin = _margin
+          merged._auto_margin = @_auto_margin
+        end
         merged
       end
 
       protected
 
-      attr_accessor :_margin
+      attr_accessor :_margin, :_auto_margin
     end
     private_constant :MarginSettings
 

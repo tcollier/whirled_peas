@@ -99,7 +99,8 @@ module WhirledPeas
 
       def content_width
         child_widths = children.map(&:preferred_width)
-        settings.display_flow == :inline ? child_widths.sum : (child_widths.max || 0)
+        width = settings.display_flow == :inline ? child_widths.sum : (child_widths.max || 0)
+        [width, *settings.width].max
       end
 
       def preferred_width
