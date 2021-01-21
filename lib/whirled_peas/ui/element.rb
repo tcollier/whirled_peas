@@ -99,6 +99,40 @@ module WhirledPeas
           kids
         ].compact.join("\n")
       end
+
+      private
+
+      def margin_width
+        settings.margin.left + settings.margin.right
+      end
+
+      def margin_height
+        settings.margin.top + settings.margin.bottom
+      end
+
+      def outer_border_width
+        (settings.border.left? ? 1 : 0) + (settings.border.right? ? 1 : 0)
+      end
+
+      def outer_border_height
+        (settings.border.top? ? 1 : 0) + (settings.border.bottom? ? 1 : 0)
+      end
+
+      def inner_border_width
+        settings.border.inner_vert? ? 1 : 0
+      end
+
+      def inner_border_height
+        settings.border.inner_horiz? ? 1 : 0
+      end
+
+      def padding_width
+        settings.padding.left + settings.padding.right
+      end
+
+      def padding_height
+        settings.padding.top + settings.padding.bottom
+      end
     end
 
     class Template < ComposableElement
@@ -131,13 +165,8 @@ module WhirledPeas
       end
 
       def preferred_width
-        @preferred_width ||= settings.margin.left +
-          (settings.border.left? ? 1 : 0) +
-          settings.padding.left +
-          content_width +
-          settings.padding.right +
-          (settings.border.right? ? 1 : 0) +
-          settings.margin.right
+        @preferred_width ||=
+          margin_width + outer_border_width + padding_width + content_width
       end
 
       def content_height
@@ -148,13 +177,8 @@ module WhirledPeas
       end
 
       def preferred_height
-        @preferred_height ||= settings.margin.top +
-          (settings.border.top? ? 1 : 0) +
-          settings.padding.top +
-          content_height +
-          settings.padding.bottom +
-          (settings.border.bottom? ? 1 : 0) +
-          settings.margin.bottom
+        @preferred_height ||=
+          margin_height + outer_border_height + padding_height + content_height
       end
     end
 
@@ -183,30 +207,18 @@ module WhirledPeas
 
 
       def preferred_width
-        settings.margin.left +
-          (settings.border.left? ? 1 : 0) +
-          settings.num_cols * (
-            settings.padding.left +
-            col_width +
-            settings.padding.right
-          ) +
-          (settings.num_cols - 1) * (settings.border.inner_vert? ? 1 : 0) +
-          (settings.border.right? ? 1 : 0) +
-          settings.margin.right
+        margin_width +
+          outer_border_width +
+          settings.num_cols * (padding_width + col_width) +
+          (settings.num_cols - 1) * inner_border_width
       end
 
       def preferred_height
         num_rows = (children.length / settings.num_cols).ceil
-        settings.margin.top +
-          (settings.border.top? ? 1 : 0) +
-          num_rows * (
-            settings.padding.top +
-            row_height +
-            settings.padding.bottom
-          ) +
-          (num_rows - 1) * (settings.border.inner_horiz? ? 1 : 0) +
-          (settings.border.bottom? ? 1 : 0) +
-          settings.margin.bottom
+        margin_height +
+          outer_border_height +
+          num_rows * (padding_height + row_height) +
+          (num_rows - 1) * inner_border_height
       end
     end
   end
