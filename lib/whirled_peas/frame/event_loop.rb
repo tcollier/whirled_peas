@@ -8,7 +8,7 @@ module WhirledPeas
         @logger = logger
       end
 
-      def enqueue(name, duration, args)
+      def enqueue(name:, duration:, args:)
         queue.push([name, duration, args])
       end
 
@@ -55,6 +55,5 @@ module WhirledPeas
 
       attr_reader :template_factory, :queue, :refresh_rate, :logger
     end
-    private_constant :EventLoop
   end
 end

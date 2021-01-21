@@ -39,7 +39,7 @@ end
 
 class Driver
   def start(producer)
-    producer.send('starting', args: { 'name' => 'World' })
+    producer.send_frame('starting', args: { 'name' => 'World' })
     # ...
   end
 end
@@ -72,9 +72,8 @@ The producer provides a single method
 #
 # @param name [String] application defined name for the frame. The template factory will be provided this name
 # @param duration [Number] time in seconds this frame should be displayed for (defaults to 1 frame)
-# @param args [Hash] key value pairs to send as arguments to the template factory, these values will be
-#   serialized/deserialized
-def send(name, duration:, args:)
+# @param args [Hash] key value pairs to send as arguments to the template factory
+def send_frame(name, duration:, args:)
   # implementation
 end
 ```
@@ -87,25 +86,25 @@ Simple application that loads a set of numbers and looks for a pair that adds up
 class Driver
   def start(producer)
     numbers = File.readlines('/path/to/numbers.txt').map(&:to_i)
-    producer.send('load-numbers', duration: 3, args: { numbers: numbers })
+    producer.send_frame('load-numbers', duration: 3, args: { numbers: numbers })
     numbers.sort!
-    producer.send('sort-numbers', duration: 3, args: { numbers: numbers })
+    producer.send_frame('sort-numbers', duration: 3, args: { numbers: numbers })
     low = 0
     high = numbers.length - 1
     while low < high
       sum = numbers[low] + numbers[high]
       if sum == 1000
-        producer.send('found-pair', duration: 5, args: { low: low, high: high, sum: sum })
+        producer.send_frame('found-pair', duration: 5, args: { low: low, high: high, sum: sum })
         return
       elsif sum < 1000
-        producer.send('too-low', args: { low: low, high: high, sum: sum })
+        producer.send_frame('too-low', args: { low: low, high: high, sum: sum })
         low += 1
       else
-        producer.send('too-high', args: { low: low, high: high, sum: sum })
+        producer.send_frame('too-high', args: { low: low, high: high, sum: sum })
         high -= 1
       end
     end
-    producer.send('no-solution', duration: 5)
+    producer.send_frame('no-solution', duration: 5)
   end
 end
 ```
@@ -320,10 +319,10 @@ class TemplateFactory
 
   def set_state(frame, args)
     @frame = frame
-    @numbers = args.key?('numbers') ? args['numbers'] || []
-    @sum = args['sum'] if args.key?('sum')
-    @low = args['low'] if args.key?('low')
-    @high = args['high'] if args.key?('high')
+    @numbers = args.key?(:numbers) ? args[:numbers] || []
+    @sum = args[:sum] if args.key?(:sum)
+    @low = args[:low] if args.key?(:low)
+    @high = args[:high] if args.key?(:high)
   end
 
   def title(_elem, settings)
