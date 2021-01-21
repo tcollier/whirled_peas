@@ -33,6 +33,8 @@ module WhirledPeas
       begin
         driver.start(producer)
         producer.stop
+      rescue Errno::EPIPE
+        logger.error(LOGGER_ID) { 'Producer cannot connect to consumer, exiting...' }
       rescue => e
         logger.warn(LOGGER_ID) { 'Driver exited with error, terminating producer...' }
         logger.error(LOGGER_ID) { e }
