@@ -16,8 +16,7 @@ module WhirledPeas
       rescue => e
         producer.terminate
         logger.warn(LOGGER_ID) { 'Exited with error' }
-        logger.error(LOGGER_ID) { e.message }
-        logger.error(LOGGER_ID) { e.backtrace.join("\n") }
+        logger.error(LOGGER_ID) { e }
         raise
       ensure
         if client

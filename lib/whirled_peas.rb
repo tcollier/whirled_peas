@@ -17,6 +17,9 @@ module WhirledPeas
     logger = Logger.new(File.open('whirled_peas.log', 'a'))
     logger.level = log_level
     logger.formatter = proc do |severity, datetime, progname, msg|
+      if msg.is_a?(Exception)
+        msg = %Q(#{msg.class}: #{msg.to_s}\n    #{msg.backtrace.join("\n    ")})
+      end
       "[#{severity}] #{datetime.strftime('%Y-%m-%dT%H:%M:%S.%L')} (#{progname}) - #{msg}\n"
     end
 
@@ -33,7 +36,6 @@ module WhirledPeas
       rescue => e
         logger.warn(LOGGER_ID) { 'Driver exited with error, terminating producer...' }
         logger.error(LOGGER_ID) { e }
-        logger.error(LOGGER_ID) { e.backtrace.join("\n") }
         producer.terminate
         raise
       end

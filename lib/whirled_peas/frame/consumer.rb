@@ -46,8 +46,7 @@ module WhirledPeas
       rescue => e
         event_loop.stop if event_loop.running?
         logger.warn(LOGGER_ID) { 'Exited with error' }
-        logger.error(LOGGER_ID) { e.message }
-        logger.error(LOGGER_ID) { e.backtrace.join("\n") }
+        logger.error(LOGGER_ID) { e }
         raise
       ensure
         logger.info(LOGGER_ID) { 'Closing socket' }
