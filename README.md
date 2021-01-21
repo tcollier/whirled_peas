@@ -116,7 +116,7 @@ To render the frame events sent by the driver, the application requires a templa
 
 A template is created with `WhirledPeas.template`, which yields a `Template` object and `TemplateSettings`. This template object is a `ComposableElement`, which allows for attaching child elements and setting layout options. `GridElement` and `BoxElement` are two other composable elements and `TextElement` is a simple element that can hold a text/number value and has layout options, but cannot have any child elements.
 
-A `ComposableElement` provides the following methods to add child elements
+A `ComposableElement` provides the following methods to add child elements, each of these takes an optional string argument that is set as the name of the element (which can be useful when debugging).
 
 - `add_box` - yields a `ComposableElement` and a `BoxSettings`, which will be added to the parent's children
 - `add_grid` - yields a `ComposableElement` and a `GridSettings`, which will be added to the parent's children
@@ -310,7 +310,7 @@ class TemplateFactory
   def build(frame, args)
     set_state(frame, args)
     WhirledPeas.template do |t|
-      t.add_box(&method(:body))
+      t.add_box('Body', &method(:body))
     end
   end
 
@@ -348,9 +348,9 @@ class TemplateFactory
     settings.flow = :l2r
     settings.auto_margin = true
 
-    elem.add_box(&method(:title))
-    elem.add_box(&method(:sum))
-    elem.add_grid(&method(:number_grid))
+    elem.add_box('Title', &method(:title))
+    elem.add_box('Sum', &method(:sum))
+    elem.add_grid('NumberGrid', &method(:number_grid))
   end
 end
 ```
