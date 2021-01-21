@@ -305,11 +305,11 @@ module WhirledPeas
     end
     private_constant :ElementSettings
 
-    module WidthSetting
+    module WidthSettings
       attr_accessor :width
     end
 
-    module AlignSetting
+    module AlignSettings
       def align
         @_align || TextAlign::LEFT
       end
@@ -322,7 +322,7 @@ module WhirledPeas
         merged = super
         merged._align = if @_align
           @_align
-        elsif parent.is_a?(AlignSetting)
+        elsif parent.is_a?(AlignSettings)
           parent._align
         end
         merged
@@ -453,8 +453,8 @@ module WhirledPeas
     end
 
     class TextSettings < ElementSettings
-      include WidthSetting
-      include AlignSetting
+      include WidthSettings
+      include AlignSettings
     end
 
     class ContainerSettings < ElementSettings
@@ -464,8 +464,8 @@ module WhirledPeas
     end
 
     class BoxSettings < ContainerSettings
-      include WidthSetting
-      include AlignSetting
+      include WidthSettings
+      include AlignSettings
 
       def flow=(flow)
         @_flow = DisplayFlow.validate!(flow)
@@ -507,8 +507,8 @@ module WhirledPeas
     end
 
     class GridSettings < ContainerSettings
-      include WidthSetting
-      include AlignSetting
+      include WidthSettings
+      include AlignSettings
 
       attr_accessor :num_cols
       attr_writer :transpose
