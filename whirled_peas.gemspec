@@ -24,5 +24,4 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'highline', '~> 2.0'
   spec.add_runtime_dependency 'json', '~> 2.5'
-  spec.add_runtime_dependency 'tty-cursor', '~> 0.7'
 end

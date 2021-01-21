@@ -5,6 +5,8 @@ module WhirledPeas
     #
     # @see https://en.wikipedia.org/wiki/ANSI_escape_code
     module Ansi
+      ESC = "\033"
+
       # Text formatting constants
       BOLD = 1
       UNDERLINE = 4
@@ -23,6 +25,18 @@ module WhirledPeas
       private_constant :END_FORMATTING
 
       class << self
+        def cursor_pos(top: 0, left: 0)
+          "#{ESC}[#{top + 1};#{left + 1}H"
+        end
+
+        def cursor_visible(visible)
+          visible ? "#{ESC}[?25h" : "#{ESC}[?25l"
+        end
+
+        def clear_down
+          "#{ESC}[J"
+        end
+
         # Format the string with the ANSI escapes codes for the given integer codes
         #
         # @param str [String] the string to format
@@ -44,7 +58,7 @@ module WhirledPeas
         # If the string has unclosed formatting, add the end formatting characters to
         # the end of the string
         def close_formatting(str)
-          codes = str.scan(/\033\[(\d+)m/)
+          codes = str.scan(/#{ESC}\[(\d+)m/)
           if codes.length > 0 && codes.last[0] != END_FORMATTING.to_s
             "#{str}#{esc_seq(END_FORMATTING)}"
           else
@@ -66,7 +80,7 @@ module WhirledPeas
           substr_visible_len = 0
           str.chars.each do |char|
             in_substring = (visible_index >= first_visible_character)
-            is_visible = false if is_visible && char == "\033"
+            is_visible = false if is_visible && char == ESC
             visible_index += 1 if is_visible
             if !is_visible || in_substring
               substr += char
@@ -81,7 +95,7 @@ module WhirledPeas
         private
 
         def esc_seq(code)
-          "\033[#{code}m"
+          "#{ESC}[#{code}m"
         end
       end
     end

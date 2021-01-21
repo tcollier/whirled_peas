@@ -6,3 +6,4 @@ gemspec
 gem 'rake', '~> 12.0'
 gem 'rspec', '~> 3.0'
 gem 'pry-byebug'
+gem 'tty-cursor', '~> 0.7'
