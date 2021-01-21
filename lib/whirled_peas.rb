@@ -34,6 +34,8 @@ module WhirledPeas
         driver.start(producer)
         producer.stop
       rescue Errno::EPIPE
+        # This error is typically raised when the consumer crashes. Joining the consumer
+        # thread below will result in surfacing that error.
         logger.error(LOGGER_ID) { 'Producer cannot connect to consumer, exiting...' }
       rescue => e
         logger.warn(LOGGER_ID) { 'Driver exited with error, terminating producer...' }
