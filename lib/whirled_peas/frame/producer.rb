@@ -12,6 +12,7 @@ module WhirledPeas
         logger.info(LOGGER_ID) { "Connected to #{host}:#{port}" }
         producer = new(client, logger)
         yield producer
+        producer.stop
         logger.info(LOGGER_ID) { 'Exited normally' }
       rescue => e
         producer.terminate

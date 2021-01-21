@@ -32,7 +32,6 @@ module WhirledPeas
     Frame::Producer.start(logger: logger, host: host, port: port) do |producer|
       begin
         driver.start(producer)
-        producer.stop
       rescue Errno::EPIPE
         # This error is typically raised when the consumer crashes. Joining the consumer
         # thread below will result in surfacing that error.
