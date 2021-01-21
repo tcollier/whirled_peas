@@ -2,6 +2,8 @@ require_relative 'settings'
 
 module WhirledPeas
   module UI
+    STRINGALBE_CLASSES = [FalseClass, Float, Integer, NilClass, String, Symbol, TrueClass]
+
     class Element
       attr_accessor :preferred_width, :preferred_height
       attr_reader :name, :settings
@@ -21,7 +23,10 @@ module WhirledPeas
       end
 
       def value=(val)
-        @value = val
+        unless STRINGALBE_CLASSES.include?(val.class)
+          raise ArgmentError, "Unsupported type for TextElement: #{val.class}"
+        end
+        @value = val.to_s
         @preferred_width = settings.width || value.length
         @preferred_height = 1
       end
@@ -66,8 +71,8 @@ module WhirledPeas
         element = BoxElement.new(name, settings)
         value = yield element, element.settings
         children << element
-        if element.children.empty? && value.is_a?(String)
-          element.add_text { value }
+        if element.children.empty? && STRINGALBE_CLASSES.include?(value.class)
+          element.add_text { value.to_s }
         end
       end
 
@@ -76,7 +81,7 @@ module WhirledPeas
         values = yield element, element.settings
         children << element
         if element.children.empty? && values.is_a?(Array)
-          values.each { |v| element.add_text { v } }
+          values.each { |v| element.add_text { v.to_s } }
         end
       end
 

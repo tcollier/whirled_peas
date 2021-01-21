@@ -130,7 +130,7 @@ WhirledPeas.template do |template, template_settings|
   template.add_grid do |grid, grid_settings|
     grid_settings.num_cols = 10
     100.times do |i|
-      grid.add_text { i.to_s }
+      grid.add_text { i }
     end
   end
 end
@@ -142,7 +142,7 @@ The above template can also be broken down into more manageable methods, e.g.
 def number_grid(grid, settings)
   settings.num_cols = 10
   100.times do |i|
-    grid.add_text { i.to_s }
+    grid.add_text { i }
   end
 end
 
@@ -157,12 +157,12 @@ Additionally, if no child element is explicitly added to a `GridElement`, but th
 ```ruby
 template.add_grid do |g|
   100.times do |i|
-    g.add_text { i.to_s }
+    g.add_text { i }
   end
 end
 
 template.add_grid do |g|
-  100.times.map(&:to_s)
+  100.times.map(&:itself)
 end
 ```
 
@@ -338,7 +338,7 @@ class TemplateFactory
     @numbers.each.with_index do |num, index|
       g.add_text do |_, settings|
         settings.bg_color = (@low == index || @high == index) ? :cyan : :white
-        num.to_s
+        num
       end
     end
   end
