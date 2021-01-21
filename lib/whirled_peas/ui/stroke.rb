@@ -23,7 +23,7 @@ module WhirledPeas
         "Stroke(left=#{left}, top=#{top}, chars=#{chars})"
       end
 
-      alias_method :eql?, :==
+      alias_method :eq?, :==
     end
   end
 end

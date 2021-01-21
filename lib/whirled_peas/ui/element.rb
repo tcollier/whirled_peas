@@ -205,7 +205,6 @@ module WhirledPeas
         @row_height
       end
 
-
       def preferred_width
         margin_width +
           outer_border_width +

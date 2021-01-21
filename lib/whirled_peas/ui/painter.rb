@@ -38,8 +38,8 @@ module WhirledPeas
 
       def justified
         format_settings = [*text.settings.color, *text.settings.bg_color]
-        format_settings << TextFormat::BOLD if text.settings.bold?
-        format_settings << TextFormat::UNDERLINE if text.settings.underline?
+        format_settings << Ansi::BOLD if text.settings.bold?
+        format_settings << Ansi::UNDERLINE if text.settings.underline?
 
         ljust = case text.settings.align
         when TextAlign::LEFT

@@ -1,5 +1,7 @@
 require 'json'
 
+require_relative 'color'
+
 module WhirledPeas
   module UI
     module TextAlign

@@ -1,3 +1,4 @@
+require_relative 'ansi'
 require_relative 'stroke'
 
 module WhirledPeas
@@ -23,7 +24,7 @@ module WhirledPeas
             left = self.left
           end
           num_chars = [self.left + self.width, left + chars.length].min - left
-          Stroke.new(left, top, Ansi.first(chars, num_chars))
+          Stroke.new(left, top, Ansi.substring(chars, 0, num_chars))
         end
       end
 

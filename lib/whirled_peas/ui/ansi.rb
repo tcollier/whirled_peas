@@ -1,11 +1,15 @@
 module WhirledPeas
   module UI
-    DEBUG_COLOR = ARGV.include?('--debug-color')
-
+    # Helper module for working with ANSI escape codes. The most useful ANSI escape codes
+    # relate to text formatting.
+    #
+    # @see https://en.wikipedia.org/wiki/ANSI_escape_code
     module Ansi
+      # Text formatting constants
       BOLD = 1
       UNDERLINE = 4
 
+      # Text and background color constants
       BLACK = 30
       RED = 31
       GREEN = 32
@@ -16,8 +20,14 @@ module WhirledPeas
       WHITE = 37
 
       END_FORMATTING = 0
+      private_constant :END_FORMATTING
 
       class << self
+        # Format the string with the ANSI escapes codes for the given integer codes
+        #
+        # @param str [String] the string to format
+        # @param codes [Array<Integer>] the integer part of the ANSI escape code (see
+        #   constants in this module for codes and meanings)
         def format(str, codes)
           if str.empty? || codes.length == 0
             str
@@ -31,124 +41,49 @@ module WhirledPeas
           esc_seq(END_FORMATTING)
         end
 
-        def hidden_width(line)
-          return 0 if DEBUG_COLOR
-          width = 0
-          line.scan(/\033\[\d+m/).each { |f| width += f.length }
-          width
-        end
-
-        def close_formatting(line)
-          codes = line.scan(DEBUG_COLOR ? /<(\d+)>/ : /\033\[(\d+)m/)
+        # If the string has unclosed formatting, add the end formatting characters to
+        # the end of the string
+        def close_formatting(str)
+          codes = str.scan(/\033\[(\d+)m/)
           if codes.length > 0 && codes.last[0] != END_FORMATTING.to_s
-            "#{line}#{esc_seq(END_FORMATTING)}"
+            "#{str}#{esc_seq(END_FORMATTING)}"
           else
-            line
+            str
           end
         end
 
-        def first(str, num_visible_chars)
-          return str if str.length <= num_visible_chars + hidden_width(str)
-          result = ''
-          in_format = false
-          visible_len = 0
+        # Return a substring of the input string that preservse the formatting
+        #
+        # @param str [String] the (possibly formatted) string
+        # @param first_visible_character [Integer] the index of the first character to
+        #   include in the substring (ignoring all hidden formatting characters)
+        # @param num_visible_chars [Integer] the maximum number of visible characters to
+        #   include in the substring (ignoring all hidden formatting characters)
+        def substring(str, first_visible_character, num_visible_chars)
+          substr = ''
+          is_visible = true
+          visible_index = 0
+          substr_visible_len = 0
           str.chars.each do |char|
-            in_format = true if !in_format && char == "\033"
-            result += char
-            visible_len += 1 if !in_format
-            in_format = false if in_format && char == 'm'
-            break if visible_len == num_visible_chars
+            in_substring = (visible_index >= first_visible_character)
+            is_visible = false if is_visible && char == "\033"
+            visible_index += 1 if is_visible
+            if !is_visible || in_substring
+              substr += char
+              substr_visible_len += 1 if is_visible
+            end
+            is_visible = true if !is_visible && char == 'm'
+            break if substr_visible_len == num_visible_chars
           end
-          close_formatting(result)
+          close_formatting(substr)
         end
 
         private
 
         def esc_seq(code)
-          DEBUG_COLOR ? "<#{code}>" : "\033[#{code}m"
+          "\033[#{code}m"
         end
       end
-    end
-
-    class Color
-      BRIGHT_OFFSET = 60
-      private_constant :BRIGHT_OFFSET
-
-      def self.validate!(color)
-        return unless color
-        if color.is_a?(Symbol)
-          error_message = "Unsupported #{self.name.split('::').last}: #{color}"
-          match = color.to_s.match(/^(bright_)?(\w+)$/)
-          begin
-            color = self.const_get(match[2].upcase)
-            raise ArgumentError, error_message unless color.is_a?(Color)
-            if match[1]
-              raise ArgumentError, error_message if color.bright?
-              color.bright
-            else
-              color
-            end
-          rescue NameError
-            raise ArgumentError, error_message
-          end
-        else
-          color
-        end
-      end
-
-      def initialize(code, bright=false)
-        @code = code
-        @bright = bright
-      end
-
-      def bright?
-        @bright
-      end
-
-      def bright
-        bright? ? self : self.class.new(@code + BRIGHT_OFFSET, true)
-      end
-
-      def to_s
-        @code.to_s
-      end
-
-      def inspect
-        "#{self.class.name.split('::').last}(code=#{@code}, bright=#{@bright})"
-      end
-    end
-    private_constant :Color
-
-    class BgColor < Color
-      BG_OFFSET = 10
-      private_constant :BG_OFFSET
-
-      BLACK = new(Ansi::BLACK + BG_OFFSET)
-      RED = new(Ansi::RED + BG_OFFSET)
-      GREEN = new(Ansi::GREEN + BG_OFFSET)
-      YELLOW = new(Ansi::YELLOW + BG_OFFSET)
-      BLUE = new(Ansi::BLUE + BG_OFFSET)
-      MAGENTA = new(Ansi::MAGENTA + BG_OFFSET)
-      CYAN = new(Ansi::CYAN + BG_OFFSET)
-      WHITE = new(Ansi::WHITE + BG_OFFSET)
-      GRAY = BLACK.bright
-    end
-
-    class TextColor < Color
-      BLACK = new(Ansi::BLACK)
-      RED = new(Ansi::RED)
-      GREEN = new(Ansi::GREEN)
-      YELLOW = new(Ansi::YELLOW)
-      BLUE = new(Ansi::BLUE)
-      MAGENTA = new(Ansi::MAGENTA)
-      CYAN = new(Ansi::CYAN)
-      WHITE = new(Ansi::WHITE)
-      GRAY = BLACK.bright
-    end
-
-    module TextFormat
-      BOLD = Ansi::BOLD
-      UNDERLINE = Ansi::UNDERLINE
     end
   end
 end
