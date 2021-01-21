@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.0 - 2021-01-21
+
+- [617f802](https://github.com/tcollier/whirled_peas/tree/617f8027d6688a2ec81a3e594e529c94485cee85): BREAKING: send frames directly to EventLoop (`Producer#send` renamed to `Producer#send_frame`)
+
 ## v0.2.0 - 2021-01-20
 
 - [73eb326](https://github.com/tcollier/whirled_peas/tree/73eb326426f9814e91e3bc7a60dfd87be3d69f7e): Convert "primitive" data types to strings
