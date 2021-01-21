@@ -1,9 +1,39 @@
 require_relative 'ansi'
-require_relative 'stroke'
 
 module WhirledPeas
   module UI
+    # Canvas represent the area of the screen a painter can paint on.
     class Canvas
+      # A Stroke is a single line, formatted string of characters that is painted at
+      # a given position on a Canvas. This class is not meant to be instantiated
+      # directly. Instead, use Canvas#stroke to create a new Stroke.
+      class Stroke
+        attr_reader :left, :top, :chars
+
+        def initialize(left, top, chars)
+          @left = left
+          @top = top
+          @chars = chars
+        end
+
+        def hash
+          [left, top, chars].hash
+        end
+
+        def ==(other)
+          other.is_a?(self.class) && self.hash == other.hash
+        end
+
+        def inspect
+          "Stroke(left=#{left}, top=#{top}, chars=#{chars})"
+        end
+
+        alias_method :eq?, :==
+      end
+      private_constant :Stroke
+
+      EMPTY_STROKE = Stroke.new(nil, nil, nil)
+
       attr_reader :left, :top, :width, :height
 
       def initialize(left, top, width, height)
@@ -13,11 +43,13 @@ module WhirledPeas
         @height = height
       end
 
+      # Return a new Stroke instance, verifying only characters within the canvas
+      # are included in the stroke.
       def stroke(left, top, chars)
         if left >= self.left + self.width || left + chars.length <= self.left
-          Stroke::EMPTY
+          EMPTY_STROKE
         elsif top < self.top || top >= self.top + self.height
-          Stroke::EMPTY
+          EMPTY_STROKE
         else
           if left < self.left
             chars = chars[self.left - left..-1]
