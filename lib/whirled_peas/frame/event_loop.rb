@@ -12,7 +12,7 @@ module WhirledPeas
 
       def initialize(
         template_factory,
-        loading_template_factory,
+        loading_template_factory=nil,
         refresh_rate: DEFAULT_REFRESH_RATE,
         logger: NullLogger.new,
         screen: UI::Screen.new
@@ -35,12 +35,10 @@ module WhirledPeas
         wait_for_content
         play_content
       rescue
+        self.running = false
         logger.warn(LOGGER_ID) { 'Exiting with error' }
         raise
       ensure
-        # We may have exited due to an EOF or a raised exception, set state so that
-        # instance reflects actual state.
-        self.running = false
         screen.finalize
       end
 

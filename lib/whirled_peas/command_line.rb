@@ -143,11 +143,10 @@ module WhirledPeas
 
       consumer = Frame::EventLoop.new(
         WhirledPeas.config.template_factory,
-        WhirledPeas.config.loading_template_factory,
         logger: logger
       )
       Frame::Producer.produce(consumer, logger) do |producer|
-        producer.send_frame(args[1], duration: 5, args: frame_args)
+        producer.send_frame(frame, duration: 5, args: frame_args)
       end
     end
 

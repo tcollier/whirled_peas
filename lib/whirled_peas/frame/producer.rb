@@ -25,13 +25,12 @@ module WhirledPeas
         end
         yield producer
         producer.flush
-        consumer.stop if consumer.running?
       rescue => e
-        consumer.stop if consumer&.running?
         logger.warn(LOGGER_ID) { 'Exited with error' }
         logger.error(LOGGER_ID) { e }
         raise
       ensure
+        consumer.stop
         consumer_thread.join if consumer_thread
       end
 
