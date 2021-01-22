@@ -22,7 +22,16 @@ Or install it yourself as:
 
 ## Usage
 
+A Whirled Peas application consists of the following pieces
+
+1. [REQUIRED] The driver, which emits lightweight frame events
+1. [REQUIRED] The main template factory, which builds templates to convert frame events from the driver into terminal graphics
+1. [OPTIONAL] A loading screen template factory, which is used while content is loading
+
+These pieces are configured as following
+
 ```ruby
+# visualize.rb
 require 'whirled_peas'
 
 class TemplateFactory
@@ -37,6 +46,28 @@ class TemplateFactory
   end
 end
 
+class Driver
+  def start(producer)
+    producer.send_frame('starting', args: { 'name' => 'World' })
+    # ...
+  end
+end
+
+WhirledPeas.configure do |config|
+  config.driver = Driver.new
+  config.template_factory = TemplateFactory.new
+end
+```
+
+Then the visualizer is started on the command line with
+
+```
+$ whirled_peas start visualize.rb
+```
+
+The optional loading screen can be configured like
+
+````ruby
 class LoadingTemplateFactory
   def build
     WhirledPeas.template do |t|
@@ -50,20 +81,11 @@ class LoadingTemplateFactory
   end
 end
 
-class Driver
-  def start(producer)
-    producer.send_frame('starting', args: { 'name' => 'World' })
-    # ...
-  end
+WhirledPeas.configure do |config|
+  # ...
+  config.loading_template_factory = LoadingTemplateFactory.new
 end
-
-WhirledPeas.start(Driver.new, TemplateFactory.new, LoadingTemplateFactory.new)
 ```
-
-A Whirled Peas application consists of two pieces
-
-1. The driver, which emits lightweight frame events
-1. The template factory, which builds templates to convert frame events from the driver into terminal graphics
 
 ### Driver
 
@@ -76,7 +98,7 @@ The driver is the application code to be visualized. This is typically a lightwe
 def start(producer)
   # application code here
 end
-```
+````
 
 The producer provides a single method
 

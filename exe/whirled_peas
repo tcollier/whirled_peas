@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'whirled_peas'
+require 'whirled_peas/command_line'
+
+WhirledPeas::CommandLine.new(ARGV).start
