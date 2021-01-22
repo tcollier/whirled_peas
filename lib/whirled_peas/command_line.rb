@@ -66,10 +66,12 @@ module WhirledPeas
 
   class ConfigCommand < Command
     def start
-      require args[0]
+      require config
     end
 
     private
+
+    attr_reader :config
 
     def validate!
       if args.length == 0
@@ -78,6 +80,8 @@ module WhirledPeas
         @error_text = "File not found: #{args[0]}"
       elsif args[0][-3..-1] != '.rb'
         @error_text = 'Config file should be a .rb file'
+      else
+        @config = args[0][0] == '/' ? args[0] : File.join(Dir.pwd, args[0])
       end
     end
 
