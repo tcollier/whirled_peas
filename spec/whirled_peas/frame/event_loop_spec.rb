@@ -57,7 +57,12 @@ module WhirledPeas
       end
 
       subject(:event_loop) do
-        described_class.new(template_factory, loading_template_factory, TEST_REFRESH_RATE)
+        described_class.new(
+          template_factory,
+          loading_template_factory,
+          refresh_rate: TEST_REFRESH_RATE,
+          screen: screen
+        )
       end
 
       let(:template_factory) { MockTemplateFactory.new('the-template') }
@@ -66,21 +71,21 @@ module WhirledPeas
 
       it 'paints a template from the frame' do
         event_loop.enqueue('test', nil, foo: 'bar')
-        event_loop.enqueue(Frame::EOF, 1, {})
-        event_loop.start(screen)
+        event_loop.enqueue(described_class::EOF, 1, {})
+        event_loop.start
         expect(template_factory.frames).to include(['test', foo: 'bar'])
       end
 
       it 'paints the template' do
         event_loop.enqueue('test', nil, foo: 'bar')
-        event_loop.enqueue(Frame::EOF, 1, {})
-        event_loop.start(screen)
+        event_loop.enqueue(described_class::EOF, 1, {})
+        event_loop.start
         expect(screen.painted).to include('the-template')
       end
 
       it 'finalizes the screen' do
-        event_loop.enqueue(Frame::EOF, 1, {})
-        event_loop.start(screen)
+        event_loop.enqueue(described_class::EOF, 1, {})
+        event_loop.start
         expect(screen.finalize_count).to eq(1)
       end
 
@@ -93,14 +98,14 @@ module WhirledPeas
 
         it 'finalizes the screen' do
           event_loop.enqueue('test', 1, {})
-          event_loop.start(screen) rescue nil
+          event_loop.start rescue nil
           expect(screen.finalize_count).to eq(1)
         end
 
         it 'raises the error' do
           expect do
             event_loop.enqueue('test', 1, {})
-            event_loop.start(screen)
+            event_loop.start
           end.to raise_error(error)
         end
       end
@@ -111,7 +116,7 @@ module WhirledPeas
         end
 
         it 'paints the loading screen template' do
-          loop_thread = Thread.new { event_loop.start(screen) }
+          loop_thread = Thread.new { event_loop.start }
           sleep(1.5 / TEST_REFRESH_RATE)
           event_loop.stop
           loop_thread.join

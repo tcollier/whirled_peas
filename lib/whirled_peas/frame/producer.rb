@@ -5,11 +5,18 @@ require_relative '../null_logger'
 
 module WhirledPeas
   module Frame
+    # A Producer is the object given to the driver as the interface that allows
+    # the driver to emit frame events. The recommended way of creating a Producer
+    # is by invoking `Producer.produce` as it handles the lifecycle methods of
+    # the consumer.
     class Producer
       LOGGER_ID = 'PRODUCER'
 
-      # Manages the EventLoop lifecycle and yields a Producer to send frames to the
-      # EventLoop
+      # Manages the consumer lifecycle and yields a Producer to send frames to the
+      # consumer
+      #
+      # @param consumer [Consumer] instance that consumes frame events through
+      #   `#enqueue`
       def self.produce(consumer, logger=NullLogger.new)
         producer = new(consumer, logger)
         consumer_thread = Thread.new do
@@ -17,10 +24,10 @@ module WhirledPeas
           consumer.start
         end
         yield producer
-        producer.send_frame(Frame::EOF)
         producer.flush
+        consumer.stop if consumer.running?
       rescue => e
-        consumer.stop if consumer
+        consumer.stop if consumer&.running?
         logger.warn(LOGGER_ID) { 'Exited with error' }
         logger.error(LOGGER_ID) { e }
         raise

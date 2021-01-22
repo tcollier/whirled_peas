@@ -1,7 +1,5 @@
 module WhirledPeas
   class Command
-    DEFAULT_REFRESH_RATE = 30
-
     DEFAULT_LOG_LEVEL = Logger::INFO
     DEFAULT_FORMATTER = proc do |severity, datetime, progname, msg|
       if msg.is_a?(Exception)
@@ -103,8 +101,7 @@ module WhirledPeas
       consumer = Frame::EventLoop.new(
         WhirledPeas.config.template_factory,
         WhirledPeas.config.loading_template_factory,
-        DEFAULT_REFRESH_RATE,
-        logger
+        logger: logger
       )
       Frame::Producer.produce(consumer, logger) do |producer|
         begin
@@ -121,18 +118,11 @@ module WhirledPeas
   class ListFramesCommand < ConfigCommand
     def start
       super
-      require 'whirled_peas/frame/print_consumer'
+      require 'whirled_peas/frame/printer'
       require 'whirled_peas/frame/producer'
 
-      logger = self.class.build_logger(STDOUT)
-      Frame::Producer.produce(Frame::PrintConsumer.new, logger) do |producer|
-        begin
-          WhirledPeas.config.driver.start(producer)
-        rescue => e
-          logger.warn(LOGGER_ID) { 'Driver exited with error, terminating producer...' }
-          logger.error(LOGGER_ID) { e }
-          raise
-        end
+      Frame::Producer.produce(Frame::Printer.new) do |producer|
+        WhirledPeas.config.driver.start(producer)
       end
     end
   end
@@ -154,8 +144,7 @@ module WhirledPeas
       consumer = Frame::EventLoop.new(
         WhirledPeas.config.template_factory,
         WhirledPeas.config.loading_template_factory,
-        DEFAULT_REFRESH_RATE,
-        logger
+        logger: logger
       )
       Frame::Producer.produce(consumer, logger) do |producer|
         producer.send_frame(args[1], duration: 5, args: frame_args)
@@ -207,8 +196,7 @@ module WhirledPeas
       consumer = Frame::EventLoop.new(
         WhirledPeas.config.template_factory,
         WhirledPeas.config.loading_template_factory,
-        DEFAULT_REFRESH_RATE,
-        logger
+        logger: logger
       )
       Frame::Producer.produce(consumer, logger) { sleep(5) }
     end
