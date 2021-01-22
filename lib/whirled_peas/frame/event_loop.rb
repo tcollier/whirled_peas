@@ -1,3 +1,6 @@
+require_relative '../null_logger'
+require_relative '../ui/screen'
+
 module WhirledPeas
   module Frame
     class EventLoop
@@ -6,12 +9,13 @@ module WhirledPeas
       def initialize(template_factory, refresh_rate, logger=NullLogger.new)
         @template_factory = template_factory
         @queue = Queue.new
-        @refresh_rate = refresh_rate
+        @frame_duration = 1.0 / refresh_rate
         @logger = logger
       end
 
-      def enqueue(name:, duration:, args:)
-        queue.push([name, duration, args])
+      def enqueue(name, duration, args)
+        # If duration is nil, set it to the duration of a single frame
+        queue.push([name, duration || frame_duration, args])
       end
 
       def running?
@@ -19,32 +23,16 @@ module WhirledPeas
       end
 
       def start
-        logger.info(LOGGER_ID) { 'Starting' }
-        @running = true
         screen = UI::Screen.new
-        sleep(0.01) while queue.empty?  # Wait for the first event
-        remaining_frames = 1
-        template = nil
-        while @running && remaining_frames > 0
-          frame_at = Time.now
-          next_frame_at = frame_at + 1.0 / refresh_rate
-          remaining_frames -= 1
-          if remaining_frames > 0
-            screen.refresh if screen.needs_refresh?
-          elsif !queue.empty?
-            name, duration, args = queue.pop
-            remaining_frames = duration ? duration * refresh_rate : 1
-            template = template_factory.build(name, args)
-            screen.paint(template)
-          end
-          sleep([0, next_frame_at - Time.now].max)
-        end
-        logger.info(LOGGER_ID) { 'Exiting normally' }
+        wait_for_content(screen)
+        play_content(screen)
       rescue
         logger.warn(LOGGER_ID) { 'Exiting with error' }
-        @running = false
         raise
       ensure
+        # We may have exited due to an EOF or a raised exception, set state so that
+        # instance reflects actual state.
+        @running = false
         screen.finalize if screen
       end
 
@@ -55,7 +43,54 @@ module WhirledPeas
 
       private
 
-      attr_reader :template_factory, :queue, :refresh_rate, :logger
+      attr_reader :template_factory, :queue, :frame_duration, :logger
+
+      def wait_for_content(screen)
+        if template_factory.respond_to?(:build_loading_screen)
+          play_loading_screen(screen)
+        else
+          sleep(frame_duration) while queue.empty?
+        end
+      end
+
+      def play_loading_screen(screen)
+        playing = false
+        while queue.empty?
+          if playing
+            screen.refresh
+          else
+            screen.paint(template_factory.build_loading_screen)
+            playing = true
+          end
+          sleep(frame_duration)
+        end
+      end
+
+      def play_content(screen)
+        @running = true
+        template = nil
+        frame_until = Time.new(0)  # Tell the loop to immediately pick up a new frame
+        while running?
+          frame_start = Time.now
+          next_frame_at = frame_start + frame_duration
+          if frame_until > frame_start
+            # While we're still displaying the previous frame, refresh the screen
+            screen.refresh
+          elsif !queue.empty?
+            name, duration, args = queue.pop
+            if name == Frame::EOF
+              @running = false
+            else
+              frame_until = frame_start + duration
+              template = template_factory.build(name, args)
+              screen.paint(template)
+            end
+          else
+            wait_for_content(screen)
+          end
+          sleep([0, next_frame_at - Time.now].max)
+        end
+      end
     end
   end
 end

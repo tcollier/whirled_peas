@@ -1,5 +1,6 @@
 require_relative 'ansi'
 require_relative 'canvas'
+require_relative 'element'
 require_relative 'settings'
 
 module WhirledPeas

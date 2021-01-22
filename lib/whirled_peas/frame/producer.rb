@@ -1,23 +1,31 @@
 require 'socket'
 require 'json'
 
+require_relative '../null_logger'
+
 module WhirledPeas
   module Frame
     class Producer
       LOGGER_ID = 'PRODUCER'
 
-      def self.produce(event_loop:, logger: NullLogger.new)
+      # Manages the EventLoop lifecycle and yields a Producer to send frames to the
+      # EventLoop
+      def self.produce(event_loop, logger=NullLogger.new)
         producer = new(event_loop, logger)
-        logger.info(LOGGER_ID) { 'Starting' }
+        event_loop_thread = Thread.new do
+          Thread.current.report_on_exception = false
+          event_loop.start
+        end
         yield producer
-        logger.info(LOGGER_ID) { 'Done with yield' }
         producer.send_frame(Frame::EOF)
-        logger.info(LOGGER_ID) { 'Exited normally' }
+        producer.flush
       rescue => e
-        producer.send_frame(Frame::TERMINATE)
+        event_loop.stop if event_loop
         logger.warn(LOGGER_ID) { 'Exited with error' }
         logger.error(LOGGER_ID) { e }
         raise
+      ensure
+        event_loop_thread.join if event_loop_thread
       end
 
       def initialize(event_loop, logger=NullLogger.new)
@@ -26,25 +34,28 @@ module WhirledPeas
         @queue = Queue.new
       end
 
+      # Buffer a frame to be played for the given duration. `#flush` must be called
+      # for frames to get pushed to the EventLoop.
+      #
+      # @param name [String] name of frame, which is passed to #build of the
+      #   TemplateFactory
+      # @param duration [Float|Integer] duration in seconds the frame should be,
+      #   displayed (default is nil, which results in a duration of a single refresh
+      #   cycle)
+      # @param args [Hash] key/value pair of arguments, which is passed to #build of
+      #   the TemplateFactory
       def send_frame(name, duration: nil, args: {})
-        event_loop.enqueue(name: name, duration: duration, args: args)
-        logger.debug(LOGGER_ID) { "Sending frame: #{name}" }
-      end
-
-      def enqueue_frame(name, duration: nil, args: {})
         queue.push([name, duration, args])
       end
 
+      # Send any buffered frames to the EventLoop
       def flush
-        while !queue.empty?
-          name, duration, args = queue.pop
-          send_frame(name: name, duration: duration, args: args)
-        end
+        event_loop.enqueue(*queue.pop) while !queue.empty?
       end
 
       private
 
-      attr_reader :event_loop, :logger
+      attr_reader :event_loop, :logger, :queue
     end
   end
 end

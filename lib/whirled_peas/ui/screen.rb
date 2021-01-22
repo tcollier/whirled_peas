@@ -16,26 +16,13 @@ module WhirledPeas
 
       def paint(template)
         @template = template
-        refresh
-      end
-
-      def needs_refresh?
-        @refreshed_width != width || @refreshed_height != height
+        draw
       end
 
       def refresh
-        strokes = [Ansi.cursor_visible(false), Ansi.cursor_pos, Ansi.clear_down]
-        Painter.paint(@template, Canvas.new(0, 0, width, height)) do |stroke|
-          unless stroke.chars.nil?
-            strokes << Ansi.cursor_pos(left: stroke.left, top: stroke.top)
-            strokes << stroke.chars
-          end
-        end
-        return unless @print_output
-        strokes.each(&method(:print))
-        STDOUT.flush
-        @refreshed_width = width
-        @refreshed_height = height
+        # No need to refresh if the screen dimensions have not changed
+        return if @refreshed_width == width || @refreshed_height == height
+        draw
       end
 
       def finalize
@@ -55,6 +42,21 @@ module WhirledPeas
       private
 
       attr_reader :cursor, :terminal, :width, :height
+
+      def draw
+        strokes = [Ansi.cursor_visible(false), Ansi.cursor_pos, Ansi.clear_down]
+        Painter.paint(@template, Canvas.new(0, 0, width, height)) do |stroke|
+          unless stroke.chars.nil?
+            strokes << Ansi.cursor_pos(left: stroke.left, top: stroke.top)
+            strokes << stroke.chars
+          end
+        end
+        return unless @print_output
+        strokes.each(&method(:print))
+        STDOUT.flush
+        @refreshed_width = width
+        @refreshed_height = height
+      end
     end
   end
 end

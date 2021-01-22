@@ -1,7 +1,7 @@
 require 'whirled_peas/ui/ansi'
 
-module WhirledPeas::UI
-  module Ansi
+module WhirledPeas
+  module UI
     RSpec.describe Ansi do
       describe '.close_formatting' do
         it 'does nothing to an unformatted string' do

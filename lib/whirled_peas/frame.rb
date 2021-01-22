@@ -3,7 +3,6 @@ require_relative 'frame/producer'
 
 module WhirledPeas
   module Frame
-    TERMINATE = '__term__'
     EOF = '__EOF__'
   end
 
