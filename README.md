@@ -39,7 +39,7 @@ class TemplateFactory
     WhirledPeas.template do |body|
       body.add_box('Title') do |_, settings|
         settings.underline = true
-        "Hello #{args['name']}"
+        "Hello #{args[:name]}"
       end
       # ...
     end
@@ -48,7 +48,7 @@ end
 
 class Driver
   def start(producer)
-    producer.send_frame('starting', args: { 'name' => 'World' })
+    producer.send_frame('starting', args: { name: 'World' })
     # ...
   end
 end
@@ -107,11 +107,13 @@ The producer provides a single method
 #
 # @param name [String] application defined name for the frame. The template factory will be provided this name
 # @param duration [Number] time in seconds this frame should be displayed for (defaults to 1 frame)
-# @param args [Hash] key value pairs to send as arguments to the template factory
+# @param args [Hash<Symbol, Object>] key value pairs to send as arguments to the template factory
 def send_frame(name, duration:, args:)
   # implementation
 end
 ```
+
+**IMPORTANT**: the keys for arguments must be symbols.
 
 #### Example
 
