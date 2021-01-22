@@ -54,14 +54,8 @@ module WhirledPeas
       end
 
       def play_loading_screen(screen)
-        playing = false
         while queue.empty?
-          if playing
-            screen.refresh
-          else
-            screen.paint(template_factory.build_loading_screen)
-            playing = true
-          end
+          screen.paint(template_factory.build_loading_screen)
           sleep(frame_duration)
         end
       end
