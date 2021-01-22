@@ -1,3 +1,5 @@
+require_relative '../utils/title_font'
+
 require_relative 'settings'
 
 module WhirledPeas
@@ -16,19 +18,23 @@ module WhirledPeas
     private_constant :Element
 
     class TextElement < Element
-      attr_reader :value
+      attr_reader :lines
 
       def initialize(name, settings)
         super(name, TextSettings.merge(settings))
       end
 
-      def value=(val)
+      def lines=(val)
         unless STRINGALBE_CLASSES.include?(val.class)
           raise ArgmentError, "Unsupported type for TextElement: #{val.class}"
         end
-        @value = val.to_s
-        @preferred_width = settings.width || value.length
-        @preferred_height = 1
+        if settings.title_font
+          @lines = Utils::TitleFont.to_s(val.to_s, settings.title_font).split("\n")
+        else
+          @lines = [val.to_s]
+        end
+        @preferred_width = settings.width || @lines.first.length
+        @preferred_height = @lines.length
       end
 
       def inspect(indent='')
@@ -63,7 +69,7 @@ module WhirledPeas
 
       def add_text(name=self.class.next_name, &block)
         element = TextElement.new(name, settings)
-        element.value = yield nil, element.settings
+        element.lines = yield nil, element.settings
         children << element
       end
 

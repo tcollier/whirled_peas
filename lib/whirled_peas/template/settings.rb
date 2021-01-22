@@ -1,6 +1,7 @@
 require 'json'
 
 require_relative '../utils/color'
+require_relative '../utils/title_font'
 
 module WhirledPeas
   module UI
@@ -457,6 +458,12 @@ module WhirledPeas
     class TextSettings < ElementSettings
       include WidthSettings
       include AlignSettings
+
+      attr_reader :title_font
+
+      def title_font=(font)
+        @title_font = Utils::TitleFont.validate!(font)
+      end
     end
 
     class ContainerSettings < ElementSettings

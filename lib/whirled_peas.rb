@@ -20,7 +20,7 @@ module WhirledPeas
 
   LOGGER_ID = 'MAIN'
 
-  def self.start(driver, template_factory, log_level: Logger::INFO, refresh_rate: DEFAULT_REFRESH_RATE)
+  def self.start(driver, template_factory, loading_template_factory=nil, log_level: Logger::INFO, refresh_rate: DEFAULT_REFRESH_RATE)
     require 'whirled_peas/frame/event_loop'
     require 'whirled_peas/frame/producer'
 
@@ -28,7 +28,7 @@ module WhirledPeas
     logger.level = log_level
     logger.formatter = DEFAULT_FORMATTER
 
-    event_loop = Frame::EventLoop.new(template_factory, refresh_rate, logger)
+    event_loop = Frame::EventLoop.new(template_factory, loading_template_factory, refresh_rate, logger)
     Frame::Producer.produce(event_loop, logger) do |producer|
       begin
         driver.start(producer)
@@ -46,5 +46,15 @@ module WhirledPeas
     template = UI::Template.new
     yield template, template.settings
     template
+  end
+
+  def self.print_title_fonts
+    require 'whirled_peas/utils/title_font'
+
+    Utils::TitleFont.fonts.keys.each do |key|
+      puts Utils::TitleFont.to_s(key.to_s, key)
+      puts key.inspect
+      puts
+    end
   end
 end

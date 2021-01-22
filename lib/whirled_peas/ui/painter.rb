@@ -17,28 +17,30 @@ module WhirledPeas
       end
 
       def paint(&block)
-        yield canvas.stroke(canvas.left, canvas.top, justified)
+        text.lines.each.with_index do |line, index|
+          yield canvas.stroke(canvas.left, canvas.top + index, justified(line))
+        end
       end
 
       private
 
       attr_reader :text, :canvas
 
-      def visible
-        if text.value.length <= text.preferred_width
-          text.value
+      def visible(line)
+        if line.length <= text.preferred_width
+          line
         elsif text.settings.align == TextAlign::LEFT
-          text.value[0..text.preferred_width - 1]
+          line[0..text.preferred_width - 1]
         elsif text.settings.align == TextAlign::CENTER
-          left_chop = (text.value.length - text.preferred_width) / 2
-          right_chop = text.value.length - text.preferred_width - left_chop
-          text.value[left_chop..-right_chop - 1]
+          left_chop = (line.length - text.preferred_width) / 2
+          right_chop = line.length - text.preferred_width - left_chop
+          line[left_chop..-right_chop - 1]
         else
-          text.value[-text.preferred_width..-1]
+          line[-text.preferred_width..-1]
         end
       end
 
-      def justified
+      def justified(line)
         format_settings = [*text.settings.color, *text.settings.bg_color]
         format_settings << Ansi::BOLD if text.settings.bold?
         format_settings << Ansi::UNDERLINE if text.settings.underline?
@@ -47,13 +49,13 @@ module WhirledPeas
         when TextAlign::LEFT
           0
         when TextAlign::CENTER
-          [0, (text.preferred_width - text.value.length) / 2].max
+          [0, (text.preferred_width - line.length) / 2].max
         when TextAlign::RIGHT
-          [0, text.preferred_width - text.value.length].max
+          [0, text.preferred_width - line.length].max
         end
-        rjust = [0, text.preferred_width - text.value.length - ljust].max
+        rjust = [0, text.preferred_width - line.length - ljust].max
         Ansi.format(JUSTIFICATION * ljust, [*text.settings.bg_color]) +
-          Ansi.format(visible, format_settings) +
+          Ansi.format(visible(line), format_settings) +
           Ansi.format(JUSTIFICATION * rjust, [*text.settings.bg_color])
       end
     end

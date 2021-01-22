@@ -28,11 +28,24 @@ require 'whirled_peas'
 class TemplateFactory
   def build(frame, args)
     WhirledPeas.template do |body|
-      body.add_box do |_, settings|
+      body.add_box('Title') do |_, settings|
         settings.underline = true
         "Hello #{args['name']}"
       end
       # ...
+    end
+  end
+end
+
+class LoadingTemplateFactory
+  def build
+    WhirledPeas.template do |t|
+      t.add_box('Loading') do |box, settings|
+        settings.set_margin(top: 15)
+        settings.auto_margin = true
+        settings.full_border(color: :blue, style: :double)
+        "Loading..."
+      end
     end
   end
 end
@@ -44,7 +57,7 @@ class Driver
   end
 end
 
-WhirledPeas.start(Driver.new, TemplateFactory.new)
+WhirledPeas.start(Driver.new, TemplateFactory.new, LoadingTemplateFactory.new)
 ```
 
 A Whirled Peas application consists of two pieces
@@ -112,6 +125,10 @@ end
 ### Template Factory
 
 To render the frame events sent by the driver, the application requires a template factory. This factory will be called for each frame event, with the frame name and the arguments supplied by the driver. A template factory can be a simple ruby class and thus can maintain state. Whirled Peas provides a few basic building blocks to make simple, yet elegant terminal-based UIs.
+
+#### Loading Template Factory
+
+`WhirledPeas.start` takes an optional template facotry to build a loading screen. This instance must implement `#build` (taking no arguments). The template returned by that method will be painted while the event loop is waiting for frames. The factory method will be called once per refresh cycle, so it's possible to implement animation.
 
 #### Building Blocks
 
@@ -195,6 +212,7 @@ The available settigs are
 | `flow`        | Flow to display child elements (see [Display Flow](#display-flow)) | `:l2r`  | `Box`                             | Yes     |
 | `margin`      | Set the (left, top, right, bottom) margin of the element           | `0`     | `Box`, `Grid`                     | Yes     |
 | `padding`     | Set the (left, top, right, bottom) padding of the element          | `0`     | `Box`, `Grid`                     | Yes     |
+| `title_font`  | Font used to create "large" text (see [Large Text](#large-text))   |         | `Text`                            |
 | `transpose`   | Display grid elements top-to-bottom, then left-to-right            | `false` | `Grid`                            | No      |
 | `underline`   | `true` underlines the font                                         | `false` | `Box`, `Grid`, `Template`, `Text` | Yes     |
 | `width`       | Override the calculated with of an element                         |         | `Box`, `Grid`, `Text`             | No      |
@@ -303,6 +321,19 @@ Many of these also have a "bright" option:
 - `:bright_magenta`
 - `:bright_red`
 - `:bright_yellow`
+
+##### Large Text
+
+The `title_font` setting for `TextElement`s converts the standard terminal font into a large block font. The available fonts vary from system to system. Run `WhirledPeas.print_title_fonts` to print out a list of all available fonts as well as sample text in that font. Every system will have a `:default` font available, this font could look like
+
+```
+██████╗ ███████╗███████╗ █████╗ ██╗   ██╗██╗     ████████╗
+██╔══██╗██╔════╝██╔════╝██╔══██╗██║   ██║██║     ╚══██╔══╝
+██║  ██║█████╗  █████╗  ███████║██║   ██║██║        ██║
+██║  ██║██╔══╝  ██╔══╝  ██╔══██║██║   ██║██║        ██║
+██████╔╝███████╗██║     ██║  ██║╚██████╔╝███████╗   ██║
+╚═════╝ ╚══════╝╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝
+```
 
 ### Example
 

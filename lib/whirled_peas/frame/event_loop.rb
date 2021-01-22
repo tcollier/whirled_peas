@@ -6,8 +6,9 @@ module WhirledPeas
     class EventLoop
       LOGGER_ID = 'EVENT LOOP'
 
-      def initialize(template_factory, refresh_rate, logger=NullLogger.new)
+      def initialize(template_factory, loading_template_factory, refresh_rate, logger=NullLogger.new)
         @template_factory = template_factory
+        @loading_template_factory = loading_template_factory
         @queue = Queue.new
         @frame_duration = 1.0 / refresh_rate
         @logger = logger
@@ -43,10 +44,10 @@ module WhirledPeas
 
       private
 
-      attr_reader :template_factory, :queue, :frame_duration, :logger
+      attr_reader :template_factory, :loading_template_factory, :queue, :frame_duration, :logger
 
       def wait_for_content(screen)
-        if template_factory.respond_to?(:build_loading_screen)
+        if loading_template_factory
           play_loading_screen(screen)
         else
           sleep(frame_duration) while queue.empty?
@@ -55,7 +56,7 @@ module WhirledPeas
 
       def play_loading_screen(screen)
         while queue.empty?
-          screen.paint(template_factory.build_loading_screen)
+          screen.paint(loading_template_factory.build)
           sleep(frame_duration)
         end
       end

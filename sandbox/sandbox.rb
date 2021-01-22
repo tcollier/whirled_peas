@@ -1,6 +1,6 @@
 require 'bundler/setup'
 require 'whirled_peas'
-require 'whirled_peas/ui'
+require 'whirled_peas/ui/screen'
 
 module WhirledPeas
   def self.sandbox(&block)
