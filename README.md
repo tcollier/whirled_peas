@@ -417,6 +417,64 @@ class TemplateFactory
 end
 ```
 
+### Debugging
+
+The `whirled_peas` executable provides some commands that are helpful for debugging.
+
+#### list_frames
+
+List the frames sent by the driver
+
+```
+$ whirled_peas <config file> list_frames
+Frame 'start' displayed for 5 second(s)
+Frame 'move' displayed for 1 frame ({:direction=>'N'})
+...
+EOF frame detected
+```
+
+#### play_frame
+
+Displays a single frame for several seconds
+
+```
+$ whirled_peas <config file> play_frame move '{"direction":"N"}'
+```
+
+Adding the `--debug` flag will result in just printing out the template's debug information, e.g.
+
+```
+$ whirled_peas <config file> play_frame move '{"direction":"N"}' --debug
++ TEMPLATE [WhirledPeas::UI::Template]
+  - Settings
+    WhirledPeas::UI::TemplateSettings
+      <default>
+  - Children
+    + TitleContainer [WhirledPeas::UI::BoxElement]
+...
+```
+
+#### loading
+
+Displays the configured loading screen for several seconds
+
+```
+$ whirled_peas <config file> loading
+```
+
+Adding the `--debug` flag will result in just printing out the loading template's debug information, e.g.
+
+```
+$ whirled_peas <config file> loading --debug
++ TEMPLATE [WhirledPeas::UI::Template]
+  - Settings
+    WhirledPeas::UI::TemplateSettings
+      <default>
+  - Children
+    + TitleContainer [WhirledPeas::UI::BoxElement]
+...
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

@@ -10,26 +10,26 @@ module WhirledPeas
 
       # Manages the EventLoop lifecycle and yields a Producer to send frames to the
       # EventLoop
-      def self.produce(event_loop, logger=NullLogger.new)
-        producer = new(event_loop, logger)
-        event_loop_thread = Thread.new do
+      def self.produce(consumer, logger=NullLogger.new)
+        producer = new(consumer, logger)
+        consumer_thread = Thread.new do
           Thread.current.report_on_exception = false
-          event_loop.start
+          consumer.start
         end
         yield producer
         producer.send_frame(Frame::EOF)
         producer.flush
       rescue => e
-        event_loop.stop if event_loop
+        consumer.stop if consumer
         logger.warn(LOGGER_ID) { 'Exited with error' }
         logger.error(LOGGER_ID) { e }
         raise
       ensure
-        event_loop_thread.join if event_loop_thread
+        consumer_thread.join if consumer_thread
       end
 
-      def initialize(event_loop, logger=NullLogger.new)
-        @event_loop = event_loop
+      def initialize(consumer, logger=NullLogger.new)
+        @consumer = consumer
         @logger = logger
         @queue = Queue.new
       end
@@ -50,12 +50,12 @@ module WhirledPeas
 
       # Send any buffered frames to the EventLoop
       def flush
-        event_loop.enqueue(*queue.pop) while !queue.empty?
+        consumer.enqueue(*queue.pop) while !queue.empty?
       end
 
       private
 
-      attr_reader :event_loop, :logger, :queue
+      attr_reader :consumer, :logger, :queue
     end
   end
 end
