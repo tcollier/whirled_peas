@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.1 - 2021-01-22
+
+- [0f7aa6c](https://github.com/tcollier/whirled_peas/tree/0f7aa6ccc07323230dd602cb43e0341de5a69ad8): Allow relative path for config files
+
 ## v0.4.0 - 2021-01-22
 
 - [7fd6712](https://github.com/tcollier/whirled_peas/tree/7fd6712818c94cdbfd81828277ca67c705e01793): BREAKING: replace `WhirledPeas.start` with command line executable
