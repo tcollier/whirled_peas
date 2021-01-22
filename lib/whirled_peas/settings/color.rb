@@ -1,7 +1,7 @@
-require_relative 'ansi'
+require 'whirled_peas/utils/ansi'
 
 module WhirledPeas
-  module UI
+  module Settings
     # An abstract class that encapsulates colors for a specific use case
     class Color
       # The ANSI codes for bright colors are offset by this much from their
@@ -75,26 +75,26 @@ module WhirledPeas
       BG_OFFSET = 10
       private_constant :BG_OFFSET
 
-      BLACK = new(Ansi::BLACK + BG_OFFSET)
-      RED = new(Ansi::RED + BG_OFFSET)
-      GREEN = new(Ansi::GREEN + BG_OFFSET)
-      YELLOW = new(Ansi::YELLOW + BG_OFFSET)
-      BLUE = new(Ansi::BLUE + BG_OFFSET)
-      MAGENTA = new(Ansi::MAGENTA + BG_OFFSET)
-      CYAN = new(Ansi::CYAN + BG_OFFSET)
-      WHITE = new(Ansi::WHITE + BG_OFFSET)
+      BLACK = new(Utils::Ansi::BLACK + BG_OFFSET)
+      RED = new(Utils::Ansi::RED + BG_OFFSET)
+      GREEN = new(Utils::Ansi::GREEN + BG_OFFSET)
+      YELLOW = new(Utils::Ansi::YELLOW + BG_OFFSET)
+      BLUE = new(Utils::Ansi::BLUE + BG_OFFSET)
+      MAGENTA = new(Utils::Ansi::MAGENTA + BG_OFFSET)
+      CYAN = new(Utils::Ansi::CYAN + BG_OFFSET)
+      WHITE = new(Utils::Ansi::WHITE + BG_OFFSET)
       GRAY = BLACK.bright
     end
 
     class TextColor < Color
-      BLACK = new(Ansi::BLACK)
-      RED = new(Ansi::RED)
-      GREEN = new(Ansi::GREEN)
-      YELLOW = new(Ansi::YELLOW)
-      BLUE = new(Ansi::BLUE)
-      MAGENTA = new(Ansi::MAGENTA)
-      CYAN = new(Ansi::CYAN)
-      WHITE = new(Ansi::WHITE)
+      BLACK = new(Utils::Ansi::BLACK)
+      RED = new(Utils::Ansi::RED)
+      GREEN = new(Utils::Ansi::GREEN)
+      YELLOW = new(Utils::Ansi::YELLOW)
+      BLUE = new(Utils::Ansi::BLUE)
+      MAGENTA = new(Utils::Ansi::MAGENTA)
+      CYAN = new(Utils::Ansi::CYAN)
+      WHITE = new(Utils::Ansi::WHITE)
       GRAY = BLACK.bright
     end
   end

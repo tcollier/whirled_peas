@@ -1,7 +1,7 @@
 require 'socket'
 require 'json'
 
-require_relative '../null_logger'
+require 'whirled_peas/null_logger'
 
 module WhirledPeas
   module Frame

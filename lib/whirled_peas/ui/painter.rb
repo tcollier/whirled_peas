@@ -1,6 +1,6 @@
-require_relative '../template/element'
-require_relative '../template/settings'
-require_relative '../utils/ansi'
+require 'whirled_peas/settings/text_align'
+require 'whirled_peas/template/element'
+require 'whirled_peas/utils/ansi'
 
 require_relative 'canvas'
 
@@ -29,9 +29,9 @@ module WhirledPeas
       def visible(line)
         if line.length <= text.preferred_width
           line
-        elsif text.settings.align == TextAlign::LEFT
+        elsif text.settings.align == Settings::TextAlign::LEFT
           line[0..text.preferred_width - 1]
-        elsif text.settings.align == TextAlign::CENTER
+        elsif text.settings.align == Settings::TextAlign::CENTER
           left_chop = (line.length - text.preferred_width) / 2
           right_chop = line.length - text.preferred_width - left_chop
           line[left_chop..-right_chop - 1]
@@ -42,21 +42,21 @@ module WhirledPeas
 
       def justified(line)
         format_settings = [*text.settings.color, *text.settings.bg_color]
-        format_settings << Ansi::BOLD if text.settings.bold?
-        format_settings << Ansi::UNDERLINE if text.settings.underline?
+        format_settings << Utils::Ansi::BOLD if text.settings.bold?
+        format_settings << Utils::Ansi::UNDERLINE if text.settings.underline?
 
         ljust = case text.settings.align
-        when TextAlign::LEFT
+        when Settings::TextAlign::LEFT
           0
-        when TextAlign::CENTER
+        when Settings::TextAlign::CENTER
           [0, (text.preferred_width - line.length) / 2].max
-        when TextAlign::RIGHT
+        when Settings::TextAlign::RIGHT
           [0, text.preferred_width - line.length].max
         end
         rjust = [0, text.preferred_width - line.length - ljust].max
-        Ansi.format(JUSTIFICATION * ljust, [*text.settings.bg_color]) +
-          Ansi.format(visible(line), format_settings) +
-          Ansi.format(JUSTIFICATION * rjust, [*text.settings.bg_color])
+        Utils::Ansi.format(JUSTIFICATION * ljust, [*text.settings.bg_color]) +
+          Utils::Ansi.format(visible(line), format_settings) +
+          Utils::Ansi.format(JUSTIFICATION * rjust, [*text.settings.bg_color])
       end
     end
     private_constant :TextPainter
@@ -110,7 +110,7 @@ module WhirledPeas
           stroke += horiz_border * (container.col_width + settings.padding.left + settings.padding.right)
         end
         stroke += right_border if settings.border.right?
-        Ansi.format(stroke, [*settings.border.color, *settings.bg_color])
+        Utils::Ansi.format(stroke, [*settings.border.color, *settings.bg_color])
       end
 
       def top_border
@@ -154,7 +154,7 @@ module WhirledPeas
       attr_reader :settings, :num_cols, :num_rows, :col_width, :row_height, :preferred_width
 
       def initialize(box)
-        @settings = ContainerSettings.merge(box.settings)
+        @settings = Settings::ContainerSettings.cast(box.settings)
         @num_cols = 1
         @num_rows = 1
         @col_width = box.content_width
@@ -209,7 +209,7 @@ module WhirledPeas
       attr_reader :settings, :num_cols, :num_rows, :col_width, :row_height, :preferred_width
 
       def initialize(grid, num_cols, num_rows)
-        @settings = ContainerSettings.merge(grid.settings)
+        @settings = Settings::ContainerSettings.cast(grid.settings)
         @num_cols = num_cols
         @num_rows = num_rows
         @col_width = grid.col_width
@@ -232,14 +232,6 @@ module WhirledPeas
         container = GridContainer.new(grid, num_cols, (grid.children.length.to_f / num_cols).ceil)
         ContainerPainter.new(container, canvas).paint(&block)
 
-        children = if grid.settings.transpose?
-          grid.children.length.times.map do |i|
-            grid.children[(i * num_cols) % grid.children.length +  i / (grid.children.length / num_cols)]
-          end.compact
-        else
-          grid.children
-        end
-
         top = canvas.top + grid.settings.margin.top + (grid.settings.border.top? ? 1 : 0) + grid.settings.padding.top
         if grid.settings.auto_margin?
           margin = (canvas.width - grid.preferred_width) / 2
@@ -249,7 +241,7 @@ module WhirledPeas
         left = canvas.left + margin + (grid.settings.border.left? ? 1 : 0) + grid.settings.padding.left
         grid_height = grid.settings.padding.top + grid.row_height + grid.settings.padding.bottom + (grid.settings.border.inner_horiz? ? 1 : 0)
         grid_width = grid.settings.padding.left + grid.col_width + grid.settings.padding.right + (grid.settings.border.inner_vert? ? 1 : 0)
-        children.each_slice(num_cols).each.with_index do |row, row_num|
+        grid.children.each_slice(num_cols).each.with_index do |row, row_num|
           row_top = top + row_num * grid_height
           row.each.with_index do |element, col_num|
             col_left = left + col_num * grid_width
@@ -271,14 +263,14 @@ module WhirledPeas
 
     module Painter
       PAINTERS = {
-        TextElement => TextPainter,
-        BoxElement => BoxPainter,
-        GridElement => GridPainter,
+        Template::TextElement => TextPainter,
+        Template::BoxElement => BoxPainter,
+        Template::GridElement => GridPainter,
       }
 
       def self.paint(element, canvas, &block)
-        if element.is_a?(Template)
-          element = BoxElement.from_template(element, canvas.width, canvas.height)
+        if element.is_a?(Template::Template)
+          element = Template::BoxElement.from_template(element, canvas.width, canvas.height)
         end
         PAINTERS[element.class].new(element, canvas).paint(&block)
       end

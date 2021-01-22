@@ -1,5 +1,5 @@
 module WhirledPeas
-  module UI
+  module Utils
     # Helper module for working with ANSI escape codes. The most useful ANSI escape codes
     # relate to text formatting.
     #

@@ -1,7 +1,7 @@
-require 'whirled_peas/utils/color'
+require 'whirled_peas/settings/color'
 
 module WhirledPeas
-  module UI
+  module Settings
     RSpec.shared_examples_for 'a Color' do
       describe '.validate!' do
         VALID_SYMBOLS = {

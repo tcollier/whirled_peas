@@ -1,5 +1,5 @@
-require_relative '../null_logger'
-require_relative '../ui/screen'
+require 'whirled_peas/null_logger'
+require 'whirled_peas/ui/screen'
 
 require_relative 'consumer'
 

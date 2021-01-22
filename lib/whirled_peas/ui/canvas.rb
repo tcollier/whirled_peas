@@ -1,4 +1,4 @@
-require_relative '../utils/ansi'
+require 'whirled_peas/utils/ansi'
 
 module WhirledPeas
   module UI
@@ -56,7 +56,7 @@ module WhirledPeas
             left = self.left
           end
           num_chars = [self.left + self.width, left + chars.length].min - left
-          Stroke.new(left, top, Ansi.substring(chars, 0, num_chars))
+          Stroke.new(left, top, Utils::Ansi.substring(chars, 0, num_chars))
         end
       end
 

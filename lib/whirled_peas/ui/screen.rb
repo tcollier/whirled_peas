@@ -1,6 +1,6 @@
 require 'highline'
 
-require_relative '../utils/ansi'
+require 'whirled_peas/utils/ansi'
 
 require_relative 'painter'
 
@@ -28,9 +28,9 @@ module WhirledPeas
 
       def finalize
         return unless @print_output
-        print Ansi.clear
-        print Ansi.cursor_pos(top: height - 1)
-        print Ansi.cursor_visible(true)
+        print Utils::Ansi.clear
+        print Utils::Ansi.cursor_pos(top: height - 1)
+        print Utils::Ansi.cursor_visible(true)
         STDOUT.flush
       end
 
@@ -45,10 +45,10 @@ module WhirledPeas
       attr_reader :cursor, :terminal, :width, :height
 
       def draw
-        strokes = [Ansi.cursor_visible(false), Ansi.cursor_pos, Ansi.clear_down]
+        strokes = [Utils::Ansi.cursor_visible(false), Utils::Ansi.cursor_pos, Utils::Ansi.clear_down]
         Painter.paint(@template, Canvas.new(0, 0, width, height)) do |stroke|
           unless stroke.chars.nil?
-            strokes << Ansi.cursor_pos(left: stroke.left, top: stroke.top)
+            strokes << Utils::Ansi.cursor_pos(left: stroke.left, top: stroke.top)
             strokes << stroke.chars
           end
         end

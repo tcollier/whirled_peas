@@ -1,4 +1,4 @@
-require_relative '../null_logger'
+require 'whirled_peas/null_logger'
 
 require_relative 'consumer'
 

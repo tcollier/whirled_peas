@@ -222,24 +222,24 @@ end
 
 #### Settings
 
-Each element type has an associated settings type, which provide a custom set of options to format the output. Parent settings may be merged into child settings (assuming the child supports those settings)
+Each element type has an associated settings type, which provide a custom set of options to format the output. Child settings will inherit from the parent, where applicable
 The available settigs are
 
-| Setting       | Description                                                        | Default | Availability                      | Merged? |
-| ------------- | ------------------------------------------------------------------ | ------- | --------------------------------- | ------- |
-| `align`       | Justifies the text (allowed values: `:left`, `:center`, `:right`)  | `:left` | `Box`, `Grid`, `Text`             | Yes     |
-| `auto_margin` | Evenly distribute side margin (overrides left/right in `margin`)   | `false` | `Box`, `Grid`                     | Yes     |
-| `bg_color`    | Background color (see [Colors](#colors))                           |         | `Box`, `Grid`, `Template`, `Text` | Yes     |
-| `bold`        | `true` makes the font bold                                         | `false` | `Box`, `Grid`, `Template`, `Text` | Yes     |
-| `border`      | Set the border for the lements                                     | none    | `Box`, `Grid`,                    | Yes     |
-| `color`       | Foreground text color (see [Colors](#colors))                      |         | `Box`, `Grid`, `Template`, `Text` | Yes     |
-| `flow`        | Flow to display child elements (see [Display Flow](#display-flow)) | `:l2r`  | `Box`                             | Yes     |
-| `margin`      | Set the (left, top, right, bottom) margin of the element           | `0`     | `Box`, `Grid`                     | Yes     |
-| `padding`     | Set the (left, top, right, bottom) padding of the element          | `0`     | `Box`, `Grid`                     | Yes     |
-| `title_font`  | Font used to create "large" text (see [Large Text](#large-text))   |         | `Text`                            |
-| `transpose`   | Display grid elements top-to-bottom, then left-to-right            | `false` | `Grid`                            | No      |
-| `underline`   | `true` underlines the font                                         | `false` | `Box`, `Grid`, `Template`, `Text` | Yes     |
-| `width`       | Override the calculated with of an element                         |         | `Box`, `Grid`, `Text`             | No      |
+| Setting       | Description                                                        | Default | Availability                      | Inherited |
+| ------------- | ------------------------------------------------------------------ | ------- | --------------------------------- | --------- |
+| `align`       | Justifies the text (allowed values: `:left`, `:center`, `:right`)  | `:left` | `Box`, `Grid`, `Text`             | Yes       |
+| `auto_margin` | Evenly distribute side margin (overrides left/right in `margin`)   | `false` | `Box`, `Grid`                     | No        |
+| `bg_color`    | Background color (see [Colors](#colors))                           |         | `Box`, `Grid`, `Template`, `Text` | Yes       |
+| `bold`        | `true` makes the font bold                                         | `false` | `Box`, `Grid`, `Template`, `Text` | Yes       |
+| `border`      | Set the border for the lements                                     | none    | `Box`, `Grid`,                    | No        |
+| `color`       | Foreground text color (see [Colors](#colors))                      |         | `Box`, `Grid`, `Template`, `Text` | Yes       |
+| `flow`        | Flow to display child elements (see [Display Flow](#display-flow)) | `:l2r`  | `Box`                             | Yes       |
+| `margin`      | Set the (left, top, right, bottom) margin of the element           | `0`     | `Box`, `Grid`                     | No        |
+| `padding`     | Set the (left, top, right, bottom) padding of the element          | `0`     | `Box`, `Grid`                     | No        |
+| `title_font`  | Font used to create "large" text (see [Large Text](#large-text))   |         | `Text`                            | No        |
+| `Grid`        | No                                                                 |
+| `underline`   | `true` underlines the font                                         | `false` | `Box`, `Grid`, `Template`, `Text` | Yes       |
+| `width`       | Override the calculated with of an element                         |         | `Box`, `Grid`, `Text`             | No        |
 
 ##### Margin and Padding
 

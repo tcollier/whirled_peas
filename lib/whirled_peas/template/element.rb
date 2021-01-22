@@ -1,9 +1,11 @@
-require_relative '../utils/title_font'
-
-require_relative 'settings'
+require 'whirled_peas/settings/box_settings'
+require 'whirled_peas/settings/grid_settings'
+require 'whirled_peas/settings/template_settings'
+require 'whirled_peas/settings/text_settings'
+require 'whirled_peas/utils/title_font'
 
 module WhirledPeas
-  module UI
+  module Template
     STRINGALBE_CLASSES = [FalseClass, Float, Integer, NilClass, String, Symbol, TrueClass]
 
     class Element
@@ -20,8 +22,8 @@ module WhirledPeas
     class TextElement < Element
       attr_reader :lines
 
-      def initialize(name, settings)
-        super(name, TextSettings.merge(settings))
+      def initialize(name, parent_settings)
+        super(name, Settings::TextSettings.inherit(parent_settings))
       end
 
       def lines=(val)
@@ -142,7 +144,7 @@ module WhirledPeas
     end
 
     class Template < ComposableElement
-      def initialize(settings=TemplateSettings.new)
+      def initialize(settings=Settings::TemplateSettings.new)
         super('TEMPLATE', settings)
       end
     end
@@ -150,8 +152,8 @@ module WhirledPeas
     class BoxElement < ComposableElement
       attr_writer :content_width, :content_height
 
-      def initialize(name, settings)
-        super(name, BoxSettings.merge(settings))
+      def initialize(name, parent_settings)
+        super(name, Settings::BoxSettings.inherit(parent_settings))
       end
 
       def self.from_template(template, width, height)
@@ -189,8 +191,8 @@ module WhirledPeas
     end
 
     class GridElement < ComposableElement
-      def initialize(name, settings)
-        super(name, GridSettings.merge(settings))
+      def initialize(name, parent_settings)
+        super(name, Settings::GridSettings.inherit(parent_settings))
       end
 
       def col_width
