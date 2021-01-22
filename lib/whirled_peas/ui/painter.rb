@@ -106,7 +106,7 @@ module WhirledPeas
         stroke = ''
         stroke += left_border if settings.border.left?
         container.num_cols.times do |col_num|
-          stroke += junc_border if col_num > 0 && settings.border.inner_horiz?
+          stroke += junc_border if col_num > 0 && settings.border.inner_vert?
           stroke += horiz_border * (container.col_width + settings.padding.left + settings.padding.right)
         end
         stroke += right_border if settings.border.right?
