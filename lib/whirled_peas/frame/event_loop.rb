@@ -23,8 +23,7 @@ module WhirledPeas
         @running
       end
 
-      def start
-        screen = UI::Screen.new
+      def start(screen=UI::Screen.new)
         wait_for_content(screen)
         play_content(screen)
       rescue
@@ -39,6 +38,7 @@ module WhirledPeas
 
       def stop
         logger.info(LOGGER_ID) { 'Stopping...' }
+        enqueue(Frame::EOF, nil, {})
         @running = false
       end
 
