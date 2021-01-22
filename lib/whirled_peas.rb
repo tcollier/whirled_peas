@@ -1,12 +1,7 @@
 require 'logger'
 
 require 'whirled_peas/frame'
-require 'whirled_peas/frame/event_loop'
-require 'whirled_peas/frame/producer'
-
 require 'whirled_peas/template'
-require 'whirled_peas/template/element'
-
 require 'whirled_peas/ui'
 require 'whirled_peas/utils'
 require 'whirled_peas/version'
@@ -26,6 +21,9 @@ module WhirledPeas
   LOGGER_ID = 'MAIN'
 
   def self.start(driver, template_factory, log_level: Logger::INFO, refresh_rate: DEFAULT_REFRESH_RATE)
+    require 'whirled_peas/frame/event_loop'
+    require 'whirled_peas/frame/producer'
+
     logger = Logger.new(File.open('whirled_peas.log', 'a'))
     logger.level = log_level
     logger.formatter = DEFAULT_FORMATTER
@@ -43,6 +41,8 @@ module WhirledPeas
   end
 
   def self.template(&block)
+    require 'whirled_peas/template/element'
+
     template = UI::Template.new
     yield template, template.settings
     template
