@@ -24,9 +24,9 @@ Or install it yourself as:
 
 A Whirled Peas application consists of the following pieces
 
-1. [REQUIRED] The driver, which emits lightweight frame events
-1. [REQUIRED] The main template factory, which builds templates to convert frame events from the driver into terminal graphics
-1. [OPTIONAL] A loading screen template factory, which is used while content is loading
+- The driver (required) - the code that is to be visualized, it emits lightweight frame events through a producer
+- The main template factory (required) - builds templates to convert frame events from the driver into terminal graphics
+- A loading screen template factory (optional) - builds templates to display while content is loading
 
 These pieces are configured as following
 
@@ -67,7 +67,7 @@ $ whirled_peas start visualize.rb
 
 The optional loading screen can be configured like
 
-````ruby
+```ruby
 class LoadingTemplateFactory
   def build
     WhirledPeas.template do |t|
@@ -98,7 +98,7 @@ The driver is the application code to be visualized. This is typically a lightwe
 def start(producer)
   # application code here
 end
-````
+```
 
 The producer provides a single method
 
