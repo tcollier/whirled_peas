@@ -30,6 +30,18 @@ module WhirledPeas
     end
   end
 
+  class TitleFontsCommand < Command
+    def start
+      require 'whirled_peas/utils/title_font'
+
+      Utils::TitleFont.fonts.keys.each do |key|
+        puts Utils::TitleFont.to_s(key.to_s, key)
+        puts key.inspect
+        puts
+      end
+    end
+  end
+
   class ConfigCommand < Command
     def start
       require args[0]
@@ -89,7 +101,10 @@ module WhirledPeas
   end
 
   class CommandLine
-    COMMANDS = [StartCommand].map.with_object({}) { |c, h| h[c.command_name] = c }
+    COMMANDS = [
+      StartCommand,
+      TitleFontsCommand
+    ].map.with_object({}) { |c, h| h[c.command_name] = c }
 
     def initialize(args)
       @args = args

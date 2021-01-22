@@ -346,7 +346,7 @@ Many of these also have a "bright" option:
 
 ##### Large Text
 
-The `title_font` setting for `TextElement`s converts the standard terminal font into a large block font. The available fonts vary from system to system. Run `WhirledPeas.print_title_fonts` to print out a list of all available fonts as well as sample text in that font. Every system will have a `:default` font available, this font could look like
+The `title_font` setting for `TextElement`s converts the standard terminal font into a large block font. The available fonts vary from system to system. Every system will have a `:default` font available, this font could look like
 
 ```
 ██████╗ ███████╗███████╗ █████╗ ██╗   ██╗██╗     ████████╗
@@ -356,6 +356,14 @@ The `title_font` setting for `TextElement`s converts the standard terminal font 
 ██████╔╝███████╗██║     ██║  ██║╚██████╔╝███████╗   ██║
 ╚═════╝ ╚══════╝╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝
 ```
+
+To print out a list of all available fonts as well as sample text in that font, run
+
+```
+$ whirled_peas title_fonts
+```
+
+Note: when using a title font with WhirledPeas for the first time on a system, the gem loads all fonts to check which ones are available. This can be a slow process and may cause a noticeable delay when running a visualization. Running the command above will cache the results and thus when a WhirledPeas visualization is run, there will be no lag from loading fonts.
 
 ### Example
 

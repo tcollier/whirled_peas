@@ -25,14 +25,4 @@ module WhirledPeas
     yield template, template.settings
     template
   end
-
-  def self.print_title_fonts
-    require 'whirled_peas/utils/title_font'
-
-    Utils::TitleFont.fonts.keys.each do |key|
-      puts Utils::TitleFont.to_s(key.to_s, key)
-      puts key.inspect
-      puts
-    end
-  end
 end
