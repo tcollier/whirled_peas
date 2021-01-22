@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.4.0 - 2021-01-22
+
+- [7fd6712](https://github.com/tcollier/whirled_peas/tree/7fd6712818c94cdbfd81828277ca67c705e01793): BREAKING: replace `WhirledPeas.start` with command line executable
+- [2535342](https://github.com/tcollier/whirled_peas/tree/25353424f1ab4af4880f44eb7ddd28afefbbb9b2): Add support for loading screen
+- [7388fc2](https://github.com/tcollier/whirled_peas/tree/7388fc2eacdc8045b725311c11d650d6b8654be8): Add support for title fonts
+- [b345155](https://github.com/tcollier/whirled_peas/tree/b345155b1c212cabe73f9a2562ac8dbbedbbb6df): Add command to list title fonts to executable
+- [d3a8324](https://github.com/tcollier/whirled_peas/tree/d3a832496c36985993217ff11b6d83dd4697c4ed): Add commands for debugging application to executable
+
 ## v0.3.0 - 2021-01-21
 
 - [617f802](https://github.com/tcollier/whirled_peas/tree/617f8027d6688a2ec81a3e594e529c94485cee85): BREAKING: send frames directly to EventLoop (`Producer#send` renamed to `Producer#send_frame`)
