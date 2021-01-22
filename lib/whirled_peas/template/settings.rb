@@ -1,6 +1,6 @@
 require 'json'
 
-require_relative 'color'
+require_relative '../utils/color'
 
 module WhirledPeas
   module UI

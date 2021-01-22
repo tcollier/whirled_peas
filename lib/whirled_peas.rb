@@ -1,7 +1,14 @@
 require 'logger'
 
 require 'whirled_peas/frame'
+require 'whirled_peas/frame/event_loop'
+require 'whirled_peas/frame/producer'
+
+require 'whirled_peas/template'
+require 'whirled_peas/template/element'
+
 require 'whirled_peas/ui'
+require 'whirled_peas/utils'
 require 'whirled_peas/version'
 
 module WhirledPeas

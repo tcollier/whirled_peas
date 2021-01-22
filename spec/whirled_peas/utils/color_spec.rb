@@ -1,4 +1,4 @@
-require 'whirled_peas/ui/color'
+require 'whirled_peas/utils/color'
 
 module WhirledPeas
   module UI

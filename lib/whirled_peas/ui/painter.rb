@@ -1,7 +1,8 @@
-require_relative 'ansi'
+require_relative '../template/element'
+require_relative '../template/settings'
+require_relative '../utils/ansi'
+
 require_relative 'canvas'
-require_relative 'element'
-require_relative 'settings'
 
 module WhirledPeas
   module UI

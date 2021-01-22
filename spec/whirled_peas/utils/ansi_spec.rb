@@ -1,4 +1,4 @@
-require 'whirled_peas/ui/ansi'
+require 'whirled_peas/utils/ansi'
 
 module WhirledPeas
   module UI

@@ -1,6 +1,7 @@
 require 'highline'
 
-require_relative 'ansi'
+require_relative '../utils/ansi'
+
 require_relative 'painter'
 
 module WhirledPeas
