@@ -1,7 +1,6 @@
 require 'logger'
 
 require 'whirled_peas/errors'
-
 require 'whirled_peas/config'
 require 'whirled_peas/frame'
 require 'whirled_peas/settings'
@@ -20,10 +19,10 @@ module WhirledPeas
   end
 
   def self.template(&block)
-    require 'whirled_peas/template/element'
+    require 'whirled_peas/template/composer'
 
-    template = Template::Template.new
-    yield template, template.settings
-    template
+    composer = Template::Composer.new
+    yield composer, composer.element.settings
+    composer.element
   end
 end

@@ -6,27 +6,10 @@ require_relative 'text_align'
 module WhirledPeas
   module Settings
     class ElementSettings
-      # Cast settings from one type to another
-      def self.cast(other)
-        casted = self.new
-        casted.cast(other)
-        casted
-      end
-
       def self.inherit(parent)
         child = self.new
         child.inherit(parent)
         child
-      end
-
-      attr_accessor :width
-
-      def color
-        @_color
-      end
-
-      def color=(color)
-        @_color = TextColor.validate!(color)
       end
 
       def bg_color
@@ -45,6 +28,14 @@ module WhirledPeas
         @_bold = val
       end
 
+      def color
+        @_color
+      end
+
+      def color=(color)
+        @_color = TextColor.validate!(color)
+      end
+
       def underline?
         @_underline || false
       end
@@ -53,27 +44,11 @@ module WhirledPeas
         @_underline = val
       end
 
-      def align
-        @_align || TextAlign::LEFT
-      end
-
-      def align=(align)
-        @_align = TextAlign.validate!(align)
-      end
-
-      def cast(other)
-        @_color = other._color
-        @_bg_color = other._bg_color
-        @_bold = other._bold
-        @_underline = other._underline
-        @width = other.width
-        @_align = other._align
-      end
-
       def inherit(parent)
-        @_color = parent._color
         @_bg_color = parent._bg_color
-        @_align = parent._align
+        @_bold = parent._bold
+        @_color = parent._color
+        @_underline = parent._underline
       end
 
       def inspect(indent='')
@@ -88,7 +63,7 @@ module WhirledPeas
 
       protected
 
-      attr_accessor :_color, :_bg_color, :_bold, :_underline, :_align
+      attr_accessor :_bg_color, :_bold, :_color, :_underline
     end
     private_constant :ElementSettings
   end

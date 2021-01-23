@@ -167,8 +167,8 @@ A `ComposableElement` provides the following methods to add child elements, each
 E.g.
 
 ```ruby
-WhirledPeas.template do |template, template_settings|
-  template_settings.bg_color = :blue
+WhirledPeas.template do |template, settings|
+  settings.bg_color = :blue
   template.add_grid do |grid, grid_settings|
     grid_settings.num_cols = 10
     100.times do |i|
@@ -225,29 +225,35 @@ end
 Each element type has an associated settings type, which provide a custom set of options to format the output. Child settings will inherit from the parent, where applicable
 The available settigs are
 
-| Setting       | Description                                                        | Default | Availability                      | Inherited |
-| ------------- | ------------------------------------------------------------------ | ------- | --------------------------------- | --------- |
-| `align`       | Justifies the text (allowed values: `:left`, `:center`, `:right`)  | `:left` | `Box`, `Grid`, `Text`             | Yes       |
-| `auto_margin` | Evenly distribute side margin (overrides left/right in `margin`)   | `false` | `Box`, `Grid`                     | No        |
-| `bg_color`    | Background color (see [Colors](#colors))                           |         | `Box`, `Grid`, `Template`, `Text` | Yes       |
-| `bold`        | `true` makes the font bold                                         | `false` | `Box`, `Grid`, `Template`, `Text` | Yes       |
-| `border`      | Set the border for the lements                                     | none    | `Box`, `Grid`,                    | No        |
-| `color`       | Foreground text color (see [Colors](#colors))                      |         | `Box`, `Grid`, `Template`, `Text` | Yes       |
-| `flow`        | Flow to display child elements (see [Display Flow](#display-flow)) | `:l2r`  | `Box`                             | Yes       |
-| `margin`      | Set the (left, top, right, bottom) margin of the element           | `0`     | `Box`, `Grid`                     | No        |
-| `padding`     | Set the (left, top, right, bottom) padding of the element          | `0`     | `Box`, `Grid`                     | No        |
-| `title_font`  | Font used to create "large" text (see [Large Text](#large-text))   |         | `Text`                            | No        |
-| `Grid`        | No                                                                 |
-| `underline`   | `true` underlines the font                                         | `false` | `Box`, `Grid`, `Template`, `Text` | Yes       |
-| `width`       | Override the calculated with of an element                         |         | `Box`, `Grid`, `Text`             | No        |
+| Setting       | Description                                                          | Default | Availability          | Inherited            |
+| ------------- | -------------------------------------------------------------------- | ------- | --------------------- | -------------------- |
+| `align`       | Justifies the content (allowed values: `:left`, `:center`, `:right`) | `:left` | `Box`, `Grid`         | Yes                  |
+| `auto_margin` | Evenly distribute side margin (overrides left/right in `margin`)     | `false` | `Box`, `Grid`         | No                   |
+| `bg_color`    | Background color (see [Colors](#colors))                             |         | `Box`, `Grid`, `Text` | Yes                  |
+| `bold`        | `true` makes the font bold                                           | `false` | `Box`, `Grid`, `Text` | Yes                  |
+| `border`      | Set the border for the lements                                       | none    | `Box`, `Grid`,        | Only style and color |
+| `color`       | Foreground text color (see [Colors](#colors))                        |         | `Box`, `Grid`, `Text` | Yes                  |
+| `flow`        | Flow to display child elements (see [Display Flow](#display-flow))   | `:l2r`  | `Box`                 | Yes                  |
+| `margin`      | Set the (left, top, right, bottom) margin of the element             | `0`     | `Box`, `Grid`         | No                   |
+| `nul_cols`    | Number of columns in the grid (must be set!)                         |         | `Grid`                | No                   |
+| `padding`     | Set the (left, top, right, bottom) padding of the element            | `0`     | `Box`, `Grid`         | No                   |
+| `title_font`  | Font used to create "large" text (see [Large Text](#large-text))     |         | `Text`                | No                   |
+| `underline`   | `true` underlines the font                                           | `false` | `Box`, `Grid`, `Text` | Yes                  |
+| `width`       | Override the calculated with of an element                           |         | `Box`, `Grid`         | No                   |
 
-##### Margin and Padding
+##### Margin
 
-Margin and padding settings allow for setting the spacing on each of the 4 sides of the element independently. The set these values, use
+Margin settings dictate the spacing on the outside (i.e. outside of the border) of each of the 4 sides of the container independently. The set these values, use
 
 - `clear_margin` - sets all margin values to 0
 - `set_margin(left:, top:, right:, bottom:)`
-- `clear_padding` - sets all margin values to 0
+- `auto_margin=(bool_value)` - use the same margin on the left and right such that the element is in the center of its container (ignores other settings for `left`/`right`)
+
+##### Padding
+
+Padding settings dictate the spacing on the inside (i.e. inside of the border) of each of the 4 sides of the container independently. The set these values, use
+
+- `clear_padding` - sets all padding values to 0
 - `set_padding(left:, top:, right:, bottom:)`
 
 ##### Border
@@ -256,6 +262,7 @@ The border settings consist of 6 boolean values (border are either width 1 or no
 
 - `clear_border` - sets all border positions to `false`
 - `set_border(left:, top:, right:, bottom:, inner_horiz:, inner_vert:, color:, style:)`
+- `full_border(style:, color:)`
 
 Available border styles are
 

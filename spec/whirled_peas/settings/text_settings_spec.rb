@@ -1,8 +1,6 @@
 require 'whirled_peas/settings/text_settings'
 require 'whirled_peas/utils/title_font'
 
-require_relative 'element_settings_spec'
-
 module WhirledPeas
   module Settings
     RSpec.describe TextSettings do
