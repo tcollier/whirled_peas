@@ -1,5 +1,3 @@
-require 'json'
-
 module WhirledPeas
   module Settings
     class Spacing
@@ -20,22 +18,7 @@ module WhirledPeas
       def bottom
         @bottom || 0
       end
-
-      def inspect
-        vals = {}
-        vals[:left] = @left if @left
-        vals[:top] = @top if @top
-        vals[:right] = @right if @right
-        vals[:bottom] = @bottom if @bottom
-        JSON.generate(vals) if vals.any?
-      end
     end
     private_constant :Spacing
-
-    class Padding < Spacing
-    end
-
-    class Margin < Spacing
-    end
   end
 end

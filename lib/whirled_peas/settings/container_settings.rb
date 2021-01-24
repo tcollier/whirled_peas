@@ -1,8 +1,8 @@
 require_relative 'border'
-require_relative 'color'
 require_relative 'display_flow'
-require_relative 'spacing'
 require_relative 'element_settings'
+require_relative 'margin'
+require_relative 'padding'
 
 module WhirledPeas
   module Settings
@@ -55,6 +55,30 @@ module WhirledPeas
         @_border || Border.new
       end
 
+      def flow=(flow)
+        @_flow = DisplayFlow.validate!(flow)
+      end
+
+      def flow
+        @_flow || DisplayFlow::LEFT_TO_RIGHT
+      end
+
+      def horizontal_flow?
+        %i[l2r r2l].include?(flow)
+      end
+
+      def vertical_flow?
+        !horizontal_flow?
+      end
+
+      def forward_flow?
+        %i[l2r t2b].include?(flow)
+      end
+
+      def reverse_flow?
+        !forward_flow?
+      end
+
       def set_margin(left: nil, top: nil, right: nil, bottom: nil)
         @_margin = Margin.new unless @_margin
         @_margin.left = left if left
@@ -92,12 +116,13 @@ module WhirledPeas
         super
         return unless parent.is_a?(ContainerSettings)
         @_align = parent._align
+        @_flow = parent._flow
         set_border(color: parent.border.color, style: parent.border.style)
       end
 
       protected
 
-      attr_accessor :_align, :_auto_margin, :_border, :_margin, :_padding
+      attr_accessor :_align, :_auto_margin, :_border, :_flow, :_margin, :_padding
     end
   end
 end

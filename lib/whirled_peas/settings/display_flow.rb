@@ -20,5 +20,6 @@ module WhirledPeas
         end
       end
     end
+    private_constant :DisplayFlow
   end
 end

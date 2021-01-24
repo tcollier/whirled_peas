@@ -36,8 +36,8 @@ require 'whirled_peas'
 
 class TemplateFactory
   def build(frame, args)
-    WhirledPeas.template do |body|
-      body.add_box('Title') do |_, settings|
+    WhirledPeas.template do |composer|
+      composer.add_box('Title') do |_, settings|
         settings.underline = true
         "Hello #{args[:name]}"
       end
@@ -70,8 +70,8 @@ The optional loading screen can be configured like
 ```ruby
 class LoadingTemplateFactory
   def build
-    WhirledPeas.template do |t|
-      t.add_box('Loading') do |box, settings|
+    WhirledPeas.template do |composer|
+      composer.add_box('Loading') do |_, settings|
         settings.set_margin(top: 15)
         settings.auto_margin = true
         settings.full_border(color: :blue, style: :double)
@@ -113,7 +113,7 @@ def send_frame(name, duration:, args:)
 end
 ```
 
-**IMPORTANT**: the keys for arguments must be symbols.
+**IMPORTANT**: the keys in the `args` hash must be symbols!
 
 #### Example
 
@@ -148,31 +148,31 @@ end
 
 ### Template Factory
 
-To render the frame events sent by the driver, the application requires a template factory. This factory will be called for each frame event, with the frame name and the arguments supplied by the driver. A template factory can be a simple ruby class and thus can maintain state. Whirled Peas provides a few basic building blocks to make simple, yet elegant terminal-based UIs.
+To render the frame events sent by the driver, the application requires a template factory. This factory will be called for each frame event, with the frame name and the arguments supplied by the driver. A template factory can be an instance of ruby class and thus can maintain state. Whirled Peas provides a few basic building blocks to make simple, yet elegant terminal-based UIs.
 
 #### Loading Template Factory
 
-`WhirledPeas.start` takes an optional template facotry to build a loading screen. This instance must implement `#build` (taking no arguments). The template returned by that method will be painted while the event loop is waiting for frames. The factory method will be called once per refresh cycle, so it's possible to implement animation.
+`WhirledPeas.configure` takes an optional template factory to build a loading screen. This instance must implement `#build` (taking no arguments). The template returned by that method will be painted while the event loop is waiting for frames. The factory method will be called once per refresh cycle, so it's possible to implement animation.
 
 #### Building Blocks
 
-A template is created with `WhirledPeas.template`, which yields a `Template` object and `TemplateSettings`. This template object is a `ComposableElement`, which allows for attaching child elements and setting layout options. `GridElement` and `BoxElement` are two other composable elements and `TextElement` is a simple element that can hold a text/number value and has layout options, but cannot have any child elements.
+A template is created with `WhirledPeas.template`, which yields a `Composer` object for a `BoxElement` and `BoxSettings`. The composer allows for attaching child elements and the settings for setting layout options.
 
-A `ComposableElement` provides the following methods to add child elements, each of these takes an optional string argument that is set as the name of the element (which can be useful when debugging).
+A `Composer` provides the following methods to add child elements, each of these takes an optional string argument that is set as the name of the element (which can be useful when debugging).
 
-- `add_box` - yields a `ComposableElement` and a `BoxSettings`, which will be added to the parent's children
-- `add_grid` - yields a `ComposableElement` and a `GridSettings`, which will be added to the parent's children
+- `add_box` - yields a `Composer` and a `BoxSettings`, which will be added to the parent's children
+- `add_grid` - yields a `Composer` and a `GridSettings`, which will be added to the parent's children
 - `add_text` - yields `nil` and a `TextSettings`, which will be added to the parent's children
 
 E.g.
 
 ```ruby
-WhirledPeas.template do |template, settings|
+WhirledPeas.template do |composer, settings|
   settings.bg_color = :blue
-  template.add_grid do |grid, grid_settings|
-    grid_settings.num_cols = 10
+  composer.add_grid do |composer, settings|
+    settings.num_cols = 10
     100.times do |i|
-      grid.add_text { i }
+      composer.add_text { i }
     end
   end
 end
@@ -181,29 +181,27 @@ end
 The above template can also be broken down into more manageable methods, e.g.
 
 ```ruby
-def number_grid(grid, settings)
+def number_grid(_composer, settings)
   settings.num_cols = 10
-  100.times do |i|
-    grid.add_text { i }
-  end
+  100.times.map(&:itself)
 end
 
-WhirledPeas.template do |template, settings|
+WhirledPeas.template do |composer, settings|
   settings.bg_color = :blue
-  template.add_grid(&method(:number_grid))
+  composer.add_grid(&method(:number_grid))
 end
 ```
 
 Additionally, if no child element is explicitly added to a `GridElement`, but the block returns an array of strings or numbers, those will be converted to `TextElements` and added as children to the `GridElement`. For example, these are identical ways to create a grid of strings
 
 ```ruby
-template.add_grid do |g|
+template.add_grid do |composer|
   100.times do |i|
-    g.add_text { i }
+    composer.add_text { i }
   end
 end
 
-template.add_grid do |g|
+template.add_grid do
   100.times.map(&:itself)
 end
 ```
@@ -211,11 +209,11 @@ end
 Similarly, if no child element is explicilty added to a `BoxElement`, but the block returns a string or number, that value will be converted to a `TextElement` and added as a child. For example, these are identical ways to create a box with string content
 
 ```ruby
-template.add_box do |b|
-  b.add_text { "Hello!" }
+template.add_box do |composer|
+  composer.add_text { "Hello!" }
 end
 
-template.add_box do |b|
+template.add_box do
   "Hello!"
 end
 ```
@@ -225,21 +223,21 @@ end
 Each element type has an associated settings type, which provide a custom set of options to format the output. Child settings will inherit from the parent, where applicable
 The available settigs are
 
-| Setting       | Description                                                          | Default | Availability          | Inherited            |
-| ------------- | -------------------------------------------------------------------- | ------- | --------------------- | -------------------- |
-| `align`       | Justifies the content (allowed values: `:left`, `:center`, `:right`) | `:left` | `Box`, `Grid`         | Yes                  |
-| `auto_margin` | Evenly distribute side margin (overrides left/right in `margin`)     | `false` | `Box`, `Grid`         | No                   |
-| `bg_color`    | Background color (see [Colors](#colors))                             |         | `Box`, `Grid`, `Text` | Yes                  |
-| `bold`        | `true` makes the font bold                                           | `false` | `Box`, `Grid`, `Text` | Yes                  |
-| `border`      | Set the border for the lements                                       | none    | `Box`, `Grid`,        | Only style and color |
-| `color`       | Foreground text color (see [Colors](#colors))                        |         | `Box`, `Grid`, `Text` | Yes                  |
-| `flow`        | Flow to display child elements (see [Display Flow](#display-flow))   | `:l2r`  | `Box`                 | Yes                  |
-| `margin`      | Set the (left, top, right, bottom) margin of the element             | `0`     | `Box`, `Grid`         | No                   |
-| `nul_cols`    | Number of columns in the grid (must be set!)                         |         | `Grid`                | No                   |
-| `padding`     | Set the (left, top, right, bottom) padding of the element            | `0`     | `Box`, `Grid`         | No                   |
-| `title_font`  | Font used to create "large" text (see [Large Text](#large-text))     |         | `Text`                | No                   |
-| `underline`   | `true` underlines the font                                           | `false` | `Box`, `Grid`, `Text` | Yes                  |
-| `width`       | Override the calculated with of an element                           |         | `Box`, `Grid`         | No                   |
+| Setting       | Description                                                                     | Default | Availability          | Inherited            |
+| ------------- | ------------------------------------------------------------------------------- | ------- | --------------------- | -------------------- |
+| `align`       | Justifies the content (allowed values: `:left`, `:center`, `:right`)            | `:left` | `Box`, `Grid`         | Yes                  |
+| `auto_margin` | Evenly distribute side margin (overrides left/right in `margin`)                | `false` | `Box`, `Grid`         | No                   |
+| `bg_color`    | Background color (see [Colors](#colors))                                        |         | `Box`, `Grid`, `Text` | Yes                  |
+| `bold`        | `true` makes the font bold                                                      | `false` | `Box`, `Grid`, `Text` | Yes                  |
+| `border`      | Set the border for the lements                                                  | none    | `Box`, `Grid`,        | Only style and color |
+| `color`       | Foreground text color (see [Colors](#colors))                                   |         | `Box`, `Grid`, `Text` | Yes                  |
+| `flow`        | Flow to display child elements (see [Display Flow](#display-flow))              | `:l2r`  | `Box`, `Grid`         | Yes                  |
+| `margin`      | Set the (left, top, right, bottom) margin of the element                        | `0`     | `Box`, `Grid`         | No                   |
+| `nul_cols`    | Number of columns in the grid (must be set!)                                    |         | `Grid`                | No                   |
+| `padding`     | Set the (left, top, right, bottom) padding of the element                       | `0`     | `Box`, `Grid`         | No                   |
+| `title_font`  | Font used for "large" text (see [Large Text](#large-text), ignores `underline`) |         | `Text`                | No                   |
+| `underline`   | `true` underlines the font                                                      | `false` | `Box`, `Grid`, `Text` | Yes                  |
+| `width`       | Override the calculated with of an element                                      |         | `Box`, `Grid`         | No                   |
 
 ##### Margin
 
@@ -380,8 +378,13 @@ Note: when using a title font with WhirledPeas for the first time on a system, t
 class TemplateFactory
   def build(frame, args)
     set_state(frame, args)
-    WhirledPeas.template do |t|
-      t.add_box('Body', &method(:body))
+    WhirledPeas.template do |composer, settings|
+      settings.flow = :l2r
+      settings.auto_margin = true
+
+      composer.add_box('Title', &method(:title))
+      composer.add_box('Sum', &method(:sum))
+      composer.add_grid('NumberGrid', &method(:number_grid))
     end
   end
 
@@ -395,33 +398,24 @@ class TemplateFactory
     @high = args[:high] if args.key?(:high)
   end
 
-  def title(_elem, settings)
+  def title(_composer, settings)
     settings.underline = true
     "Pair Finder"
   end
 
-  def sum(_elem, settings)
+  def sum(_composer, settings)
     settings.color = @frame == 'found-pair' ? :green : :red
     @sum ? "Sum: #{@sum}" : 'N/A'
   end
 
-  def number_grid(elem, settings)
+  def number_grid(composer, settings)
     settings.full_border
     @numbers.each.with_index do |num, index|
-      g.add_text do |_, settings|
+      composer.add_text do |_, settings|
         settings.bg_color = (@low == index || @high == index) ? :cyan : :white
         num
       end
     end
-  end
-
-  def body(elem, settings)
-    settings.flow = :l2r
-    settings.auto_margin = true
-
-    elem.add_box('Title', &method(:title))
-    elem.add_box('Sum', &method(:sum))
-    elem.add_grid('NumberGrid', &method(:number_grid))
   end
 end
 ```
@@ -450,16 +444,31 @@ Displays a single frame for several seconds
 $ whirled_peas <config file> play_frame move '{"direction":"N"}'
 ```
 
-Adding the `--debug` flag will result in just printing out the template's debug information, e.g.
+Adding the `--template` flag will result in printing out the template's debug information, e.g.
 
 ```
-$ whirled_peas <config file> play_frame move '{"direction":"N"}' --debug
-+ TEMPLATE [WhirledPeas::UI::Template]
+$ whirled_peas <config file> play_frame move '{"direction":"N"}' --template
++ TEMPLATE [WhirledPeas::Template::BoxElement]
   - Settings
-    WhirledPeas::UI::TemplateSettings
+    WhirledPeas::Settings::BoxSettings
       <default>
   - Children
-    + TitleContainer [WhirledPeas::UI::BoxElement]
+    + TitleContainer [WhirledPeas::Template::BoxElement]
+...
+```
+
+Adding the `--rendered` flag will result in printing out the rendered template's debug information, e.g.
+
+```
+$ whirled_peas <config file> play_frame move '{"direction":"N"}' --rendered
++ TEMPLATE [WhirledPeas::Graphics::BoxPainter]
+  - Settings
+    WhirledPeas::Settings::BoxSettings
+      <default>
+  - Dimensions
+  - Canvas:
+  - Children
+    + TitleContainer [WhirledPeas::Graphics::BoxPainter]
 ...
 ```
 

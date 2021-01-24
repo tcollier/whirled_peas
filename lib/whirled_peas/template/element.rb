@@ -7,10 +7,6 @@ module WhirledPeas
         @name = name
         @settings = settings
       end
-
-      def dimensions
-        raise NotImplemented, "#{self.class} must implement #dimensions"
-      end
     end
     private_constant :Element
   end

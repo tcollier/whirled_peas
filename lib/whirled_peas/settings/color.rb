@@ -4,11 +4,6 @@ module WhirledPeas
   module Settings
     # An abstract class that encapsulates colors for a specific use case
     class Color
-      # The ANSI codes for bright colors are offset by this much from their
-      # standard versions
-      BRIGHT_OFFSET = 60
-      private_constant :BRIGHT_OFFSET
-
       # Validate the `color` argument is either (1) nil, (2) a valid Color constant in
       # this class or (3) a symbol that maps to valid Color constant. E.g. if there
       # is a RED constant in an implementing class, then :red or :bright_red are
@@ -49,7 +44,7 @@ module WhirledPeas
       end
 
       def bright
-        bright? ? self : self.class.new(@code + BRIGHT_OFFSET, true)
+        bright? ? self : self.class.new(@code + Utils::Ansi::BRIGHT_OFFSET, true)
       end
 
       def hash
@@ -70,32 +65,5 @@ module WhirledPeas
       end
     end
     private_constant :Color
-
-    class BgColor < Color
-      BG_OFFSET = 10
-      private_constant :BG_OFFSET
-
-      BLACK = new(Utils::Ansi::BLACK + BG_OFFSET)
-      RED = new(Utils::Ansi::RED + BG_OFFSET)
-      GREEN = new(Utils::Ansi::GREEN + BG_OFFSET)
-      YELLOW = new(Utils::Ansi::YELLOW + BG_OFFSET)
-      BLUE = new(Utils::Ansi::BLUE + BG_OFFSET)
-      MAGENTA = new(Utils::Ansi::MAGENTA + BG_OFFSET)
-      CYAN = new(Utils::Ansi::CYAN + BG_OFFSET)
-      WHITE = new(Utils::Ansi::WHITE + BG_OFFSET)
-      GRAY = BLACK.bright
-    end
-
-    class TextColor < Color
-      BLACK = new(Utils::Ansi::BLACK)
-      RED = new(Utils::Ansi::RED)
-      GREEN = new(Utils::Ansi::GREEN)
-      YELLOW = new(Utils::Ansi::YELLOW)
-      BLUE = new(Utils::Ansi::BLUE)
-      MAGENTA = new(Utils::Ansi::MAGENTA)
-      CYAN = new(Utils::Ansi::CYAN)
-      WHITE = new(Utils::Ansi::WHITE)
-      GRAY = BLACK.bright
-    end
   end
 end

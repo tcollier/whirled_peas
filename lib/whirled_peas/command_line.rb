@@ -1,3 +1,13 @@
+require 'json'
+
+require 'whirled_peas/graphics/debugger'
+require 'whirled_peas/graphics/renderer'
+require 'whirled_peas/graphics/screen'
+require 'whirled_peas/frame/debug_consumer'
+require 'whirled_peas/frame/event_loop'
+require 'whirled_peas/frame/producer'
+require 'whirled_peas/template/debugger'
+
 module WhirledPeas
   class Command
     DEFAULT_LOG_LEVEL = Logger::INFO
@@ -93,8 +103,6 @@ module WhirledPeas
 
     def start
       super
-      require 'whirled_peas/frame/event_loop'
-      require 'whirled_peas/frame/producer'
 
       logger = self.class.build_logger(File.open('whirled_peas.log', 'a'))
 
@@ -118,10 +126,8 @@ module WhirledPeas
   class ListFramesCommand < ConfigCommand
     def start
       super
-      require 'whirled_peas/frame/printer'
-      require 'whirled_peas/frame/producer'
 
-      Frame::Producer.produce(Frame::Printer.new) do |producer|
+      Frame::Producer.produce(Frame::DebugConsumer.new) do |producer|
         WhirledPeas.config.driver.start(producer)
       end
     end
@@ -131,13 +137,16 @@ module WhirledPeas
     def start
       super
 
-      if args.last == '--debug'
-        puts WhirledPeas.config.template_factory.build(frame, frame_args).inspect
+      if args.last == '--template'
+        element = WhirledPeas.config.template_factory.build(frame, frame_args)
+        puts Template::Debugger.new(element).debug
+        exit
+      elsif args.last == '--rendered'
+        element = WhirledPeas.config.template_factory.build(frame, frame_args)
+        painter = Graphics::Renderer.new(element, *Graphics::Screen.current_dimensions).painter
+        puts Graphics::Debugger.new(painter).debug
         exit
       end
-
-      require 'whirled_peas/frame/event_loop'
-      require 'whirled_peas/frame/producer'
 
       logger = self.class.build_logger(File.open('whirled_peas.log', 'a'))
 
@@ -146,7 +155,7 @@ module WhirledPeas
         logger: logger
       )
       Frame::Producer.produce(consumer, logger) do |producer|
-        producer.send_frame(frame, duration: 5, args: frame_args)
+        producer.send_frame(frame, args: frame_args)
       end
     end
 
@@ -161,9 +170,9 @@ module WhirledPeas
       elsif args.length < 2
         @error_text = "#{self.class.command_name} requires a frame name"
       else
-        require 'json'
         @frame = args[1]
         @frame_args = {}
+        return if args.length < 3 || args[2][0..1] == '--'
         JSON.parse(args[2] || '{}').each do |key, value|
           @frame_args[key.to_sym] = value
         end
@@ -187,9 +196,6 @@ module WhirledPeas
         puts WhirledPeas.config.loading_template_factory.build.inspect
         exit
       end
-
-      require 'whirled_peas/frame/event_loop'
-      require 'whirled_peas/frame/producer'
 
       logger = self.class.build_logger(File.open('whirled_peas.log', 'a'))
       consumer = Frame::EventLoop.new(

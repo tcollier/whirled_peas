@@ -1,7 +1,8 @@
 require 'json'
 
-require_relative 'color'
+require_relative 'bg_color'
 require_relative 'text_align'
+require_relative 'text_color'
 
 module WhirledPeas
   module Settings
@@ -49,16 +50,6 @@ module WhirledPeas
         @_bold = parent._bold
         @_color = parent._color
         @_underline = parent._underline
-      end
-
-      def inspect(indent='')
-        values = self.instance_variables.map do |v|
-          unless instance_variable_get(v).nil? || instance_variable_get(v).inspect.nil?
-            "#{indent}  #{v} = #{instance_variable_get(v).inspect}"
-          end
-        end.compact
-        details = values.length > 0 ? values.join("\n") : "#{indent}  <default>"
-        "#{indent}#{self.class.name}\n#{details}"
       end
 
       protected

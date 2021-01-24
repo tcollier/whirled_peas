@@ -1,5 +1,5 @@
 require 'whirled_peas/null_logger'
-require 'whirled_peas/ui/screen'
+require 'whirled_peas/graphics/screen'
 
 require_relative 'consumer'
 
@@ -15,7 +15,7 @@ module WhirledPeas
         loading_template_factory=nil,
         refresh_rate: DEFAULT_REFRESH_RATE,
         logger: NullLogger.new,
-        screen: UI::Screen.new
+        screen: Graphics::Screen.new
       )
         @template_factory = template_factory
         @loading_template_factory = loading_template_factory

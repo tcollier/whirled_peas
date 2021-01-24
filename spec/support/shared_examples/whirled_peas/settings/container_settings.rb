@@ -23,10 +23,15 @@ module WhirledPeas
         end
 
         specify do
-          parent.set_border(style: BorderStyles::SOFT, color: TextColor::GREEN)
+          parent.set_border(style: Border::Styles::SOFT, color: TextColor::GREEN)
           inherited = described_class.inherit(parent)
-          expect(inherited.border.style).to eq(BorderStyles::SOFT)
+          expect(inherited.border.style).to eq(Border::Styles::SOFT)
           expect(inherited.border.color).to eq(TextColor::GREEN)
+        end
+
+        specify do
+          parent.flow = DisplayFlow::BOTTOM_TO_TOP
+          expect(described_class.inherit(parent).flow).to eq(DisplayFlow::BOTTOM_TO_TOP)
         end
       end
 

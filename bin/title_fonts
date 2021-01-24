@@ -1,6 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'bundler/setup'
-require 'whirled_peas'
-
-WhirledPeas.print_title_fonts

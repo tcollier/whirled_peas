@@ -15,9 +15,20 @@ module WhirledPeas
         "Element-#{@counter}"
       end
 
+      def self.build
+        settings = Settings::BoxSettings.new
+        template = BoxElement.new('TEMPLATE', settings)
+        composer = Template::Composer.new(template)
+        value = yield composer, settings
+        if !template.children? && TextElement.stringable?(value)
+          composer.add_text { value.to_s }
+        end
+        template
+      end
+
       attr_reader :element
 
-      def initialize(element=BoxElement.new('TEMPLATE', Settings::BoxSettings.new))
+      def initialize(element)
         @element = element
       end
 
@@ -32,20 +43,24 @@ module WhirledPeas
       def add_box(name=self.class.next_name, &block)
         child_settings = Settings::BoxSettings.inherit(element.settings)
         child = BoxElement.new(name, child_settings)
-        value = yield self.class.new(child), child.settings
+        composer = self.class.new(child)
+        value = yield composer, child.settings
         element.add_child(child)
         if !child.children? && TextElement.stringable?(value)
-          self.class.new(child).add_text { value.to_s }
+          composer.add_text("#{name}-Text") { value.to_s }
         end
       end
 
       def add_grid(name=self.class.next_name, &block)
         child_settings = Settings::GridSettings.inherit(element.settings)
         child = GridElement.new(name, child_settings)
-        values = yield self.class.new(child), child.settings
+        composer = self.class.new(child)
+        values = yield composer, child.settings
         element.add_child(child)
         if !child.children? && values.is_a?(Array)
-          values.each { |v| self.class.new(child).add_text { v.to_s } }
+          values.each.with_index do |value, index|
+            composer.add_text("#{name}-Text-#{index}") { value.to_s }
+          end
         end
       end
     end

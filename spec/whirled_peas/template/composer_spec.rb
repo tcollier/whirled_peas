@@ -17,15 +17,6 @@ module WhirledPeas
         end
       end
 
-      describe '.new' do
-        it 'defaults to a BoxElement' do
-          composer = described_class.new
-          expect(composer.element.name).to eq('TEMPLATE')
-          expect(composer.element).to be_a(BoxElement)
-          expect(composer.element.settings).to be_a(Settings::BoxSettings)
-        end
-      end
-
       describe '#add_text' do
         subject(:composer) { described_class.new(parent) }
 
@@ -37,7 +28,7 @@ module WhirledPeas
           expect(parent.num_children).to eq(1)
           parent.each_child do |child|
             expect(child).to be_a(TextElement)
-            expect(child.content).to eq(['the-content'])
+            expect(child.content).to eq('the-content')
           end
         end
 
@@ -89,7 +80,7 @@ module WhirledPeas
               expect(child.num_children).to eq(1)
               child.each_child do |grand_child|
                 expect(grand_child).to be_a(TextElement)
-                expect(grand_child.content).to eq(['explicit-content'])
+                expect(grand_child.content).to eq('explicit-content')
               end
             end
           end
@@ -102,7 +93,8 @@ module WhirledPeas
               expect(child.num_children).to eq(1)
               child.each_child do |grand_child|
                 expect(grand_child).to be_a(TextElement)
-                expect(grand_child.content).to eq(['implicit-content'])
+                expect(grand_child.name).to eq('Child-Text')
+                expect(grand_child.content).to eq('implicit-content')
               end
             end
           end
@@ -147,7 +139,7 @@ module WhirledPeas
               expect(child.num_children).to eq(1)
               child.each_child do |grand_child|
                 expect(grand_child).to be_a(TextElement)
-                expect(grand_child.content).to eq(['explicit-content'])
+                expect(grand_child.content).to eq('explicit-content')
               end
             end
           end
@@ -160,7 +152,8 @@ module WhirledPeas
               expect(child.num_children).to eq(1)
               child.each_child do |grand_child|
                 expect(grand_child).to be_a(TextElement)
-                expect(grand_child.content).to eq(['implicit-content'])
+                expect(grand_child.name).to eq('Child-Text-0')
+                expect(grand_child.content).to eq('implicit-content')
               end
             end
           end

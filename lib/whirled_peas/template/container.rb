@@ -23,23 +23,6 @@ module WhirledPeas
       def each_child(&block)
         @children.each(&block)
       end
-
-      def inspect(indent='')
-        kids = children.map { |c| c.inspect(indent + '    ') }.join("\n")
-        dims = "#{indent + '  '}- Dimensions: #{dimensions.outer_width}x#{dimensions.outer_height}"
-        [
-          "#{indent}+ #{name} [#{self.class.name}]",
-          dims,
-          "#{indent + '  '}- Settings",
-          settings.inspect(indent + '    '),
-          "#{indent + '  '}- Children",
-          kids
-        ].compact.join("\n")
-      end
-
-      private
-
-      attr_reader :dimensions
     end
   end
 end

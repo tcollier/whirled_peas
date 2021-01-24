@@ -14,5 +14,6 @@ module WhirledPeas
         end
       end
     end
+    private_constant :TextAlign
   end
 end

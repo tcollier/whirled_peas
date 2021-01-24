@@ -2,10 +2,11 @@ require 'logger'
 
 require 'whirled_peas/errors'
 require 'whirled_peas/config'
+require 'whirled_peas/debugger'
 require 'whirled_peas/frame'
+require 'whirled_peas/graphics'
 require 'whirled_peas/settings'
 require 'whirled_peas/template'
-require 'whirled_peas/ui'
 require 'whirled_peas/utils'
 require 'whirled_peas/version'
 
@@ -18,11 +19,12 @@ module WhirledPeas
     yield config
   end
 
+  def self.debug(config_file, option=nil)
+    Debugger.new(config_file, option).debug
+  end
+
   def self.template(&block)
     require 'whirled_peas/template/composer'
-
-    composer = Template::Composer.new
-    yield composer, composer.element.settings
-    composer.element
+    Template::Composer.build(&block)
   end
 end
