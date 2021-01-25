@@ -29,7 +29,7 @@ module WhirledPeas
       def dimensions
         @dimensions ||= begin
           if settings.num_cols.nil? || settings.num_cols == 0
-            raise SettingsError, "`num_cols` must be set for GridSettings<#{name}>"
+            raise SettingsError, "`num_cols` must be set for GridSettings(#{name})"
           end
           num_cols = settings.num_cols
           num_rows = (num_children.to_f / num_cols).ceil
