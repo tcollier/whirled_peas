@@ -19,8 +19,8 @@ module WhirledPeas
           child_canvas = Canvas.new(
             content_left,
             coords(canvas).content_top(row_index),
-            dimensions.outer_width,
-            dimensions.outer_height
+            [dimensions.content_width, child.dimensions.outer_width].min,
+            [dimensions.content_height, child.dimensions.outer_height].min
           )
           child.paint(child_canvas, &block)
         end

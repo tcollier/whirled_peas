@@ -10,7 +10,9 @@ module WhirledPeas
 
         let(:element) { instance_double(Template::GridElement) }
         let(:settings) do
-          instance_double(Settings::GridSettings, width: nil, num_cols: 3)
+          instance_double(
+            Settings::GridSettings, width: nil, height: nil, num_cols: 3
+          )
         end
         let(:wide_child) do
           instance_double(

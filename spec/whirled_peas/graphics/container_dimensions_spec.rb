@@ -19,7 +19,8 @@ module WhirledPeas
           margin: margin,
           border: border,
           padding: padding,
-          width: nil
+          width: nil,
+          height: nil
         )
       end
 
@@ -33,6 +34,20 @@ module WhirledPeas
 
           it 'returns settings.width' do
             expect(dimensions.content_width).to eq(25)
+          end
+        end
+      end
+
+      describe '#content_height' do
+        it 'returns the passed in content_height' do
+          expect(dimensions.content_height).to eq(3)
+        end
+
+        context 'when width is explicitly set' do
+          before { allow(settings).to receive(:height).and_return(7) }
+
+          it 'returns settings.width' do
+            expect(dimensions.content_height).to eq(7)
           end
         end
       end

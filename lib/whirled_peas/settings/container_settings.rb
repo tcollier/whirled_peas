@@ -7,7 +7,7 @@ require_relative 'padding'
 module WhirledPeas
   module Settings
     class ContainerSettings < ElementSettings
-      attr_accessor :width
+      attr_accessor :width, :height
 
       def align
         @_align || TextAlign::LEFT

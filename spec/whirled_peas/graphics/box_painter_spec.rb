@@ -9,7 +9,9 @@ module WhirledPeas
 
       let(:element) { instance_double(Template::BoxElement) }
       let(:settings) do
-        instance_double(Settings::BoxSettings, width: nil, reverse_flow?: false)
+        instance_double(
+          Settings::BoxSettings, width: nil, height: nil, reverse_flow?: false
+        )
       end
 
       let(:wide_child) do

@@ -59,7 +59,7 @@ module WhirledPeas
             stroke_left + given_width,
             stroke_top,
             child_width,
-            child.dimensions.outer_height
+            [dimensions.content_height, child.dimensions.outer_height].min
           )
           child.paint(child_canvas, &block)
           given_width += child_width
@@ -70,6 +70,7 @@ module WhirledPeas
       def paint_vertically(canvas, &block)
         stroke_top = coords(canvas).content_top
         stroke_left = coords(canvas).content_left
+        given_height = 0
         each_child do |child|
           if settings.align_center?
             justify_offset = (dimensions.content_width - child.dimensions.outer_width) / 2
@@ -78,14 +79,19 @@ module WhirledPeas
           else
             justify_offset = 0
           end
+          child_height = [
+            child.dimensions.outer_height,
+            dimensions.content_height - given_height
+          ].min
           child_canvas = canvas.child(
             stroke_left + justify_offset,
-            stroke_top,
+            stroke_top + given_height,
             [dimensions.content_width, child.dimensions.outer_width].min,
-            child.dimensions.outer_height
+            child_height
           )
           child.paint(child_canvas, &block)
-          stroke_top += child.dimensions.outer_height
+          given_height += child_height
+          break if given_height == dimensions.content_height
         end
       end
     end

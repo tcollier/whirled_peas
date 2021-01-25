@@ -5,7 +5,7 @@ module WhirledPeas
 
       def initialize(settings, content_width, content_height, num_cols=1, num_rows=1)
         @content_width = settings.width || content_width
-        @content_height = content_height
+        @content_height = settings.height || content_height
         @num_cols = num_cols
         @num_rows = num_rows
         @settings = settings
