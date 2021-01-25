@@ -98,7 +98,9 @@ module WhirledPeas
 
     def render_screen(template_factory, output)
       screen = Graphics::Screen.new(output)
-      consumer = Frame::EventLoop.new(template_factory, screen: screen)
+      consumer = Frame::EventLoop.new(
+        template_factory, screen: screen, refresh_rate: 100000
+      )
       Frame::Producer.produce(consumer) do |producer|
         producer.send_frame('test', args: {})
       end
