@@ -241,15 +241,19 @@ The available settigs are
 
 ##### Margin
 
-Margin settings dictate the spacing on the outside (i.e. outside of the border) of each of the 4 sides of the container independently. The set these values, use
+Margin settings dictate the spacing on the outside (i.e. outside of the border) of each of the 4 sides of the container independently. To set these values, use
 
 - `set_margin(left:, top:, right:, bottom:)`
 
+Note: values cannot be negative
+
 ##### Padding
 
-Padding settings dictate the spacing on the inside (i.e. inside of the border) of each of the 4 sides of the container independently. The set these values, use
+Padding settings dictate the spacing on the inside (i.e. inside of the border) of each of the 4 sides of the container independently. To set these values, use
 
 - `set_padding(left:, top:, right:, bottom:)`
+
+Note: values cannot be negative
 
 ##### Border
 
