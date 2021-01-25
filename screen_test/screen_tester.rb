@@ -18,6 +18,8 @@ module WhirledPeas
       test_files = Dir.glob(File.join(base_dir, 'rendered', '**', '*.rb'))
       failures = {}
       pendings = Set.new
+      puts "Running #{test_files.length} rendered screen test(s)"
+      puts
       test_files.each do |file|
         tester = new(file)
         if tester.pending?
