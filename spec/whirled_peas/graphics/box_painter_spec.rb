@@ -8,7 +8,9 @@ module WhirledPeas
       subject(:painter) { described_class.new(element, settings, 'Subject') }
 
       let(:element) { instance_double(Template::BoxElement) }
-      let(:settings) { instance_double(Settings::BoxSettings, reverse_flow?: false) }
+      let(:settings) do
+        instance_double(Settings::BoxSettings, width: nil, reverse_flow?: false)
+      end
 
       let(:wide_child) do
         instance_double(

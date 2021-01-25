@@ -18,8 +18,23 @@ module WhirledPeas
           Settings::ContainerSettings,
           margin: margin,
           border: border,
-          padding: padding
+          padding: padding,
+          width: nil
         )
+      end
+
+      describe '#content_width' do
+        it 'returns the passed in content_width' do
+          expect(dimensions.content_width).to eq(7)
+        end
+
+        context 'when width is explicitly set' do
+          before { allow(settings).to receive(:width).and_return(25) }
+
+          it 'returns settings.width' do
+            expect(dimensions.content_width).to eq(25)
+          end
+        end
       end
 
       describe '#outer_width' do

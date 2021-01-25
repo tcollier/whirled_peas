@@ -4,7 +4,7 @@ module WhirledPeas
       attr_reader :content_width, :content_height, :num_cols, :num_rows
 
       def initialize(settings, content_width, content_height, num_cols=1, num_rows=1)
-        @content_width = content_width
+        @content_width = settings.width || content_width
         @content_height = content_height
         @num_cols = num_cols
         @num_rows = num_rows

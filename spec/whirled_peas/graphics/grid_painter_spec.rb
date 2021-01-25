@@ -9,7 +9,9 @@ module WhirledPeas
         subject(:painter) { described_class.new(element, settings, 'Subject') }
 
         let(:element) { instance_double(Template::GridElement) }
-        let(:settings) { instance_double(Settings::GridSettings, num_cols: 3) }
+        let(:settings) do
+          instance_double(Settings::GridSettings, width: nil, num_cols: 3)
+        end
         let(:wide_child) do
           instance_double(
             Painter,

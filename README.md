@@ -236,7 +236,7 @@ The available settigs are
 | `padding`    | Set the (left, top, right, bottom) padding of the element                       | `0`     | `Box`, `Grid`         | No                   |
 | `title_font` | Font used for "large" text (see [Large Text](#large-text), ignores `underline`) |         | `Text`                | No                   |
 | `underline`  | `true` underlines the font                                                      | `false` | `Box`, `Grid`, `Text` | Yes                  |
-| `width`      | Override the calculated with of an element                                      |         | `Box`, `Grid`         | No                   |
+| `width`      | Override the calculated width of an element's content area                      |         | `Box`, `Grid`         | No                   |
 
 ##### Margin
 
