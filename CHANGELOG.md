@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.5.0 - 2021-01-25
+
+BREAKING: there was a significant amount of structural refactoring in this release. While that aspect did not add or remove any features, it fixed several layout bugs (some known and some unknown), so most template with moderate complexity will now be laid out slightly differently.
+
+- [3ddfede](https://github.com/tcollier/whirled_peas/tree/3ddfedee4ab2fadeecbe82c7c9caf25c2988f095): Allow relative positioning of containers
+- [507e77c](https://github.com/tcollier/whirled_peas/tree/507e77c551bcb9cc832d5c24e2f24eb1afe4eddc): Add height attribute for container settings
+- [af8ef19](https://github.com/tcollier/whirled_peas/tree/af8ef1950edebcd23a57a04982b22a56296ee09b): Add automated screen testing
+
 ## v0.4.1 - 2021-01-22
 
 - [0f7aa6c](https://github.com/tcollier/whirled_peas/tree/0f7aa6ccc07323230dd602cb43e0341de5a69ad8): Allow relative path for config files
