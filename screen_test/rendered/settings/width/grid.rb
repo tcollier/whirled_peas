@@ -2,7 +2,7 @@ require 'whirled_peas'
 
 class TemplateFactory
   def build(*)
-    WhirledPeas.template do |composer, _|
+    WhirledPeas.template do |composer|
       composer.add_grid('Wide') do |_, settings|
         settings.full_border
         settings.width = 30
