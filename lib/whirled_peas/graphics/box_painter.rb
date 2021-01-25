@@ -49,15 +49,21 @@ module WhirledPeas
         elsif settings.align_right?
           stroke_left += dimensions.content_width - total_child_width
         end
+        given_width = 0
         each_child do |child|
-          child_canvas = canvas.child(
-            stroke_left,
-            stroke_top,
+          child_width = [
             child.dimensions.outer_width,
+            dimensions.content_width - given_width
+          ].min
+          child_canvas = canvas.child(
+            stroke_left + given_width,
+            stroke_top,
+            child_width,
             child.dimensions.outer_height
           )
           child.paint(child_canvas, &block)
-          stroke_left += child.dimensions.outer_width
+          given_width += child_width
+          break if given_width == dimensions.content_width
         end
       end
 
@@ -75,7 +81,7 @@ module WhirledPeas
           child_canvas = canvas.child(
             stroke_left + justify_offset,
             stroke_top,
-            child.dimensions.outer_width,
+            [dimensions.content_width, child.dimensions.outer_width].min,
             child.dimensions.outer_height
           )
           child.paint(child_canvas, &block)
