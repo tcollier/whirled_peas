@@ -233,7 +233,7 @@ The available settigs are
 | `flow`       | Flow to display child elements (see [Display Flow](#display-flow))              | `:l2r`  | `Box`, `Grid`         | Yes                  |
 | `height`     | Override the calculated height of an element's content area                     |         | `Box`, `Grid`         | No                   |
 | `margin`     | Set the (left, top, right, bottom) margin of the element                        | `0`     | `Box`, `Grid`         | No                   |
-| `nul_cols`   | Number of columns in the grid (must be set!)                                    |         | `Grid`                | No                   |
+| `num_cols`   | Number of columns in the grid (must be set!)                                    |         | `Grid`                | No                   |
 | `padding`    | Set the (left, top, right, bottom) padding of the element                       | `0`     | `Box`, `Grid`         | No                   |
 | `title_font` | Font used for "large" text (see [Large Text](#large-text), ignores `underline`) |         | `Text`                | No                   |
 | `underline`  | `true` underlines the font                                                      | `false` | `Box`, `Grid`, `Text` | Yes                  |
