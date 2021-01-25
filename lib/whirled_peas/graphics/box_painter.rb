@@ -37,6 +37,14 @@ module WhirledPeas
         end
       end
 
+      def each_child(&block)
+        if settings.reverse_flow?
+          children.reverse.each(&block)
+        else
+          super
+        end
+      end
+
       private
 
       def paint_horizontally(canvas, &block)
