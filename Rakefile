@@ -8,7 +8,7 @@ def screen_test(file, method)
 
   require 'bundler/setup'
   require 'whirled_peas'
-  require_relative 'screen_tests/screen_tester'
+  require_relative 'screen_test/screen_tester'
 
   WhirledPeas::ScreenTester.new(file).send(method)
 end
@@ -30,7 +30,7 @@ end
 task :screen_test do
   require 'bundler/setup'
   require 'whirled_peas'
-  require_relative 'screen_tests/screen_tester'
+  require_relative 'screen_test/screen_tester'
 
   WhirledPeas::ScreenTester.run_all
 end

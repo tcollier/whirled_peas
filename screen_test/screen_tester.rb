@@ -11,7 +11,12 @@ module WhirledPeas
     def self.run_all
       base_dir = File.dirname(__FILE__)
       test_files = Dir.glob(File.join(base_dir, 'rendered', '**', '*.rb'))
-      failure_count = test_files.map { |f| new(f).run }.sum
+      failure_count = 0
+      test_files.each do |f|
+        tester = new(f)
+        tester.run
+        failure_count += 1 if tester.failed?
+      end
       if failure_count == 0
         puts "No failures"
       else
@@ -24,6 +29,11 @@ module WhirledPeas
       @test_file = test_file[0] == '/' ? test_file : File.join(Dir.pwd, test_file)
       raise ArgumentError, "File not found: #{@test_file}" unless File.exist?(@test_file)
       @output_file = @test_file.sub(/\.rb$/, '.frame')
+      @failed = false
+    end
+
+    def failed?
+      @failed
     end
 
     def run
@@ -38,7 +48,6 @@ module WhirledPeas
         return failure(test_file, 'Rendered output does not match saved output')
       end
       puts Utils::FormattedString.new('PASS', Settings::TextColor::GREEN)
-      0
     rescue => e
       failure(test_file, e.message)
     end
@@ -87,12 +96,11 @@ module WhirledPeas
 
     def pending(test_file)
       puts "#{Utils::FormattedString.new('PENDING', Settings::TextColor::YELLOW)}: No output for #{test_file}"
-      0
     end
 
     def failure(test_file, message)
+      @failed = true
       puts "#{Utils::FormattedString.new('FAILURE', Settings::TextColor::RED)}: #{message} #{test_file}"
-      1
     end
   end
 end
