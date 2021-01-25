@@ -15,10 +15,7 @@ module WhirledPeas
 
       def paint(canvas, &block)
         return unless canvas.writable?
-        has_inner_vert = dimensions.num_cols > 1 && settings.border.inner_vert?
-        has_inner_horiz = dimensions.num_rows > 1 && settings.border.inner_horiz?
-        has_border = settings.border.outer? || has_inner_vert || has_inner_horiz
-        return unless settings.bg_color || has_border
+        return unless needs_printing?
         stroke_left = coords(canvas).border_left
         stroke_top = coords(canvas).border_top
         formatting = [*settings.border.color, *settings.bg_color]
@@ -63,6 +60,13 @@ module WhirledPeas
       private
 
       attr_reader :children
+
+      def needs_printing?
+        return true if settings.bg_color
+        return true if settings.border.outer?
+        return true if dimensions.num_cols > 1 && settings.border.inner_vert?
+        dimensions.num_rows > 1 && settings.border.inner_horiz?
+      end
 
       def coords(canvas)
         ContainerCoords.new(canvas, dimensions, settings)
