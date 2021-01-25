@@ -38,3 +38,4 @@ task :screen_test do
 end
 
 task default: [:screen_test, :spec]
+task ci: :spec
