@@ -34,21 +34,9 @@ module WhirledPeas
         end
       end
 
-      describe '#top' do
-        it 'returns the top of the canvas' do
-          expect(coords.top).to eq(17)
-        end
-      end
-
       describe '#border_left' do
         it 'returns #left of the canvas plus the left margin' do
           expect(coords.border_left).to eq(34)
-        end
-      end
-
-      describe '#border_top' do
-        it 'returns #top of the canvas plus the top margin' do
-          expect(coords.border_top).to eq(22)
         end
       end
 
@@ -70,24 +58,6 @@ module WhirledPeas
         end
       end
 
-      describe '#padding_top' do
-        context 'without a top border' do
-          before { allow(border).to receive(:top?).and_return(false) }
-
-          it 'returns #border_top' do
-            expect(coords.padding_top).to eq(22)
-          end
-        end
-
-        context 'with a top border' do
-          before { allow(border).to receive(:top?).and_return(true) }
-
-          it 'returns #border_top plus one' do
-            expect(coords.padding_top).to eq(23)
-          end
-        end
-      end
-
       describe '#content_left' do
         before do
           allow(border).to receive(:left?).and_return(true)
@@ -102,21 +72,6 @@ module WhirledPeas
           it 'returns #border_left plus left padding plus col_index grid_widths' do
             # content_left (42) + col_index (3) * grid_width (35)
             expect(coords.content_left(3)).to eq(147)
-          end
-        end
-      end
-
-      describe '#content_top' do
-        before { allow(border).to receive(:top?).and_return(true) }
-
-        it 'returns #border_top plus the top padding' do
-          expect(coords.content_top).to eq(26)
-        end
-
-        context 'when row_index > 0' do
-          it 'returns #border_topt plus top padding plus row_index grid_heights' do
-            # content_top (26) + row_index (2) * grid_height (15)
-            expect(coords.content_top(2)).to eq(56)
           end
         end
       end
@@ -140,6 +95,51 @@ module WhirledPeas
 
           it 'returns the width of the content plus left/right padding' do
             expect(coords.grid_width(true)).to eq(34)
+          end
+        end
+      end
+
+      describe '#top' do
+        it 'returns the top of the canvas' do
+          expect(coords.top).to eq(17)
+        end
+      end
+
+      describe '#border_top' do
+        it 'returns #top of the canvas plus the top margin' do
+          expect(coords.border_top).to eq(22)
+        end
+      end
+
+      describe '#padding_top' do
+        context 'without a top border' do
+          before { allow(border).to receive(:top?).and_return(false) }
+
+          it 'returns #border_top' do
+            expect(coords.padding_top).to eq(22)
+          end
+        end
+
+        context 'with a top border' do
+          before { allow(border).to receive(:top?).and_return(true) }
+
+          it 'returns #border_top plus one' do
+            expect(coords.padding_top).to eq(23)
+          end
+        end
+      end
+
+      describe '#content_top' do
+        before { allow(border).to receive(:top?).and_return(true) }
+
+        it 'returns #border_top plus the top padding' do
+          expect(coords.content_top).to eq(26)
+        end
+
+        context 'when row_index > 0' do
+          it 'returns #border_topt plus top padding plus row_index grid_heights' do
+            # content_top (26) + row_index (2) * grid_height (15)
+            expect(coords.content_top(2)).to eq(56)
           end
         end
       end
