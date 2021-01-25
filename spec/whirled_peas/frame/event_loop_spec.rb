@@ -117,7 +117,7 @@ module WhirledPeas
 
         it 'paints the loading screen template' do
           loop_thread = Thread.new { event_loop.start }
-          sleep(10 / TEST_REFRESH_RATE)
+          sleep(0.01)
           event_loop.stop
           loop_thread.join
           expect(screen.painted).to include('loading-template')
