@@ -16,11 +16,7 @@ module WhirledPeas
       end
 
       def border_left
-        if settings.auto_margin?
-          left + (canvas.width - dimensions.outer_width) / 2
-        else
-          left + settings.margin.left
-        end
+        left + settings.margin.left
       end
 
       def border_top

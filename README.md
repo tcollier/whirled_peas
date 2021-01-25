@@ -73,7 +73,7 @@ class LoadingTemplateFactory
     WhirledPeas.template do |composer|
       composer.add_box('Loading') do |_, settings|
         settings.set_margin(top: 15)
-        settings.auto_margin = true
+        settings.align = :center
         settings.full_border(color: :blue, style: :double)
         "Loading..."
       end
@@ -223,21 +223,20 @@ end
 Each element type has an associated settings type, which provide a custom set of options to format the output. Child settings will inherit from the parent, where applicable
 The available settigs are
 
-| Setting       | Description                                                                     | Default | Availability          | Inherited            |
-| ------------- | ------------------------------------------------------------------------------- | ------- | --------------------- | -------------------- |
-| `align`       | Justifies the content (allowed values: `:left`, `:center`, `:right`)            | `:left` | `Box`, `Grid`         | Yes                  |
-| `auto_margin` | Evenly distribute side margin (overrides left/right in `margin`)                | `false` | `Box`, `Grid`         | No                   |
-| `bg_color`    | Background color (see [Colors](#colors))                                        |         | `Box`, `Grid`, `Text` | Yes                  |
-| `bold`        | `true` makes the font bold                                                      | `false` | `Box`, `Grid`, `Text` | Yes                  |
-| `border`      | Set the border for the lements                                                  | none    | `Box`, `Grid`,        | Only style and color |
-| `color`       | Foreground text color (see [Colors](#colors))                                   |         | `Box`, `Grid`, `Text` | Yes                  |
-| `flow`        | Flow to display child elements (see [Display Flow](#display-flow))              | `:l2r`  | `Box`, `Grid`         | Yes                  |
-| `margin`      | Set the (left, top, right, bottom) margin of the element                        | `0`     | `Box`, `Grid`         | No                   |
-| `nul_cols`    | Number of columns in the grid (must be set!)                                    |         | `Grid`                | No                   |
-| `padding`     | Set the (left, top, right, bottom) padding of the element                       | `0`     | `Box`, `Grid`         | No                   |
-| `title_font`  | Font used for "large" text (see [Large Text](#large-text), ignores `underline`) |         | `Text`                | No                   |
-| `underline`   | `true` underlines the font                                                      | `false` | `Box`, `Grid`, `Text` | Yes                  |
-| `width`       | Override the calculated with of an element                                      |         | `Box`, `Grid`         | No                   |
+| Setting      | Description                                                                     | Default | Availability          | Inherited            |
+| ------------ | ------------------------------------------------------------------------------- | ------- | --------------------- | -------------------- |
+| `align`      | Justifies the content (allowed values: `:left`, `:center`, `:right`)            | `:left` | `Box`, `Grid`         | Yes                  |
+| `bg_color`   | Background color (see [Colors](#colors))                                        |         | `Box`, `Grid`, `Text` | Yes                  |
+| `bold`       | `true` makes the font bold                                                      | `false` | `Box`, `Grid`, `Text` | Yes                  |
+| `border`     | Set the border for the lements                                                  | none    | `Box`, `Grid`,        | Only style and color |
+| `color`      | Foreground text color (see [Colors](#colors))                                   |         | `Box`, `Grid`, `Text` | Yes                  |
+| `flow`       | Flow to display child elements (see [Display Flow](#display-flow))              | `:l2r`  | `Box`, `Grid`         | Yes                  |
+| `margin`     | Set the (left, top, right, bottom) margin of the element                        | `0`     | `Box`, `Grid`         | No                   |
+| `nul_cols`   | Number of columns in the grid (must be set!)                                    |         | `Grid`                | No                   |
+| `padding`    | Set the (left, top, right, bottom) padding of the element                       | `0`     | `Box`, `Grid`         | No                   |
+| `title_font` | Font used for "large" text (see [Large Text](#large-text), ignores `underline`) |         | `Text`                | No                   |
+| `underline`  | `true` underlines the font                                                      | `false` | `Box`, `Grid`, `Text` | Yes                  |
+| `width`      | Override the calculated with of an element                                      |         | `Box`, `Grid`         | No                   |
 
 ##### Margin
 
@@ -245,7 +244,6 @@ Margin settings dictate the spacing on the outside (i.e. outside of the border) 
 
 - `clear_margin` - sets all margin values to 0
 - `set_margin(left:, top:, right:, bottom:)`
-- `auto_margin=(bool_value)` - use the same margin on the left and right such that the element is in the center of its container (ignores other settings for `left`/`right`)
 
 ##### Padding
 
@@ -380,7 +378,7 @@ class TemplateFactory
     set_state(frame, args)
     WhirledPeas.template do |composer, settings|
       settings.flow = :l2r
-      settings.auto_margin = true
+      settings.align = :center
 
       composer.add_box('Title', &method(:title))
       composer.add_box('Sum', &method(:sum))
@@ -508,9 +506,10 @@ Note: viewing `.frame` files with `cat` works better than most other text editor
 The following rake tasks are provided to interact with the screen tests
 
 - `screen_test` runs all screen tests in the `screen_test/rendered` directory
+- `screen_test:debug[path/to/file.rb]` print the rendered template debug tree
 - `screen_test:run[path/to/file.rb]` runs a single screen test
-- `screen_test:view[path/to/file.rb]` views the output generated by the template
 - `screen_test:save_output[path/to/file.rb]` saves the output generated by the template in the `.frame` file, overwriting any existing file
+- `screen_test:view[path/to/file.rb]` views the output generated by the template
 
 ## Contributing
 

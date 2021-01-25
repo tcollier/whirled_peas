@@ -17,7 +17,6 @@ module WhirledPeas
       let(:settings) do
         instance_double(
           Settings::ContainerSettings,
-          auto_margin?: false,
           margin: margin,
           border: border,
           padding: padding
@@ -44,15 +43,6 @@ module WhirledPeas
       describe '#border_left' do
         it 'returns #left of the canvas plus the left margin' do
           expect(coords.border_left).to eq(34)
-        end
-
-        context 'with auto_margin' do
-          before { allow(settings).to receive(:auto_margin?).and_return(true) }
-
-          it 'returns the position of the start of the left border' do
-            # canvas.left (23) + (canvas.width (100) - dimensions.outer_width (50)) / 2
-            expect(coords.border_left).to eq(46)
-          end
         end
       end
 

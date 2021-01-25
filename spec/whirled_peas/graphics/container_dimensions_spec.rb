@@ -10,14 +10,12 @@ module WhirledPeas
 
       let(:num_cols) { 1 }
       let(:num_rows) { 1 }
-      let(:auto_margin) { false }
       let(:margin) { Settings::Margin.new }
       let(:border) { Settings::Border.new }
       let(:padding) { Settings::Padding.new }
       let(:settings) do
         instance_double(
           Settings::ContainerSettings,
-          auto_margin?: auto_margin,
           margin: margin,
           border: border,
           padding: padding
@@ -42,19 +40,6 @@ module WhirledPeas
 
           it 'is included in the total' do
             expect(dimensions.outer_width).to eq(12)
-          end
-        end
-
-        context 'when auto_margin is true and left/right margin are set' do
-          let(:auto_margin) { true }
-
-          before do
-            margin.left = 4
-            margin.right = 5
-          end
-
-          it 'ignores left/right margin' do
-            expect(dimensions.outer_width).to eq(7)
           end
         end
 

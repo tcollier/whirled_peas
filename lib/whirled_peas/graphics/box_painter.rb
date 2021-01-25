@@ -7,24 +7,10 @@ module WhirledPeas
       def paint(canvas, &block)
         super
         return unless canvas.writable?
-        stroke_top = coords(canvas).content_top
-        stroke_left = coords(canvas).content_left
-        greedy_width = element.settings.vertical_flow? || element.num_children == 1
-        each_child do |child|
-          if greedy_width
-            width = dimensions.content_width
-            height = child.dimensions.outer_height
-          else
-            width = child.dimensions.outer_width
-            height = dimensions.content_height
-          end
-          child_canvas = canvas.child(stroke_left, stroke_top, width, height)
-          child.paint(child_canvas, &block)
-          if element.settings.horizontal_flow?
-            stroke_left += child.dimensions.outer_width
-          else
-            stroke_top += child.dimensions.outer_height
-          end
+        if element.settings.horizontal_flow?
+          paint_horizontally(canvas, &block)
+        else
+          paint_vertically(canvas, &block)
         end
       end
 
@@ -48,6 +34,52 @@ module WhirledPeas
             end
           end
           ContainerDimensions.new(settings, content_width, content_height)
+        end
+      end
+
+      private
+
+      def paint_horizontally(canvas, &block)
+        stroke_top = coords(canvas).content_top
+        stroke_left = coords(canvas).content_left
+        total_child_width = 0
+        each_child { |c| total_child_width += c.dimensions.outer_width }
+        if settings.align_center?
+          stroke_left += (dimensions.content_width - total_child_width) / 2
+        elsif settings.align_right?
+          stroke_left += dimensions.content_width - total_child_width
+        end
+        each_child do |child|
+          child_canvas = canvas.child(
+            stroke_left,
+            stroke_top,
+            child.dimensions.outer_width,
+            child.dimensions.outer_height
+          )
+          child.paint(child_canvas, &block)
+          stroke_left += child.dimensions.outer_width
+        end
+      end
+
+      def paint_vertically(canvas, &block)
+        stroke_top = coords(canvas).content_top
+        stroke_left = coords(canvas).content_left
+        each_child do |child|
+          if settings.align_center?
+            justify_offset = (dimensions.content_width - child.dimensions.outer_width) / 2
+          elsif settings.align_right?
+            justify_offset = dimensions.content_width - child.dimensions.outer_width
+          else
+            justify_offset = 0
+          end
+          child_canvas = canvas.child(
+            stroke_left + justify_offset,
+            stroke_top,
+            child.dimensions.outer_width,
+            child.dimensions.outer_height
+          )
+          child.paint(child_canvas, &block)
+          stroke_top += child.dimensions.outer_height
         end
       end
     end

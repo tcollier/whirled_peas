@@ -2,6 +2,8 @@ require 'bundler/setup'
 require 'whirled_peas'
 require 'whirled_peas/frame/event_loop'
 require 'whirled_peas/frame/producer'
+require 'whirled_peas/graphics/debugger'
+require 'whirled_peas/graphics/renderer'
 require 'whirled_peas/graphics/screen'
 require 'whirled_peas/settings/text_color'
 require 'whirled_peas/utils/formatted_string'
@@ -55,6 +57,14 @@ module WhirledPeas
     def view
       with_template_factory do |template_factory|
         render_screen(template_factory, STDOUT)
+      end
+    end
+
+    def debug
+      with_template_factory do |template_factory|
+        template = template_factory.build('Test', {})
+        painter = Graphics::Renderer.new(template, *Graphics::Screen.current_dimensions).painter
+        puts Graphics::Debugger.new(painter).debug
       end
     end
 

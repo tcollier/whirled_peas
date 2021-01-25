@@ -10,8 +10,14 @@ module WhirledPeas
         each_child.with_index do |child, index|
           col_index = index % dimensions.num_cols
           row_index = index / dimensions.num_cols
+          content_left = coords(canvas).content_left(col_index)
+          if settings.align_center?
+            content_left += (dimensions.content_width - child.dimensions.outer_width) / 2
+          elsif settings.align_right?
+            content_left += dimensions.content_width - child.dimensions.outer_width
+          end
           child_canvas = Canvas.new(
-            coords(canvas).content_left(col_index),
+            content_left,
             coords(canvas).content_top(row_index),
             dimensions.outer_width,
             dimensions.outer_height

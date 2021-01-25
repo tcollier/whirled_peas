@@ -13,16 +13,20 @@ module WhirledPeas
         @_align || TextAlign::LEFT
       end
 
+      def align_left?
+        align == TextAlign::LEFT
+      end
+
+      def align_center?
+        align == TextAlign::CENTER
+      end
+
+      def align_right?
+        align == TextAlign::RIGHT
+      end
+
       def align=(align)
         @_align = TextAlign.validate!(align)
-      end
-
-      def auto_margin?
-        @_auto_margin || false
-      end
-
-      def auto_margin=(val)
-        @_auto_margin = val
       end
 
       def set_border(
@@ -89,7 +93,6 @@ module WhirledPeas
 
       def clear_margin
         set_margin(left: 0, top: 0, right: 0, bottom: 0)
-        @_auto_margin = nil
       end
 
       def margin
@@ -122,7 +125,7 @@ module WhirledPeas
 
       protected
 
-      attr_accessor :_align, :_auto_margin, :_border, :_flow, :_margin, :_padding
+      attr_accessor :_align, :_border, :_flow, :_margin, :_padding
     end
   end
 end

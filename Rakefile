@@ -14,16 +14,10 @@ def screen_test(file, method)
 end
 
 namespace :screen_test do
-  task :run, [:file] do |_, args|
-    screen_test(args[:file], :run)
-  end
-
-  task :save_output, [:file] do |_, args|
-    screen_test(args[:file], :save_output)
-  end
-
-  task :view, [:file] do |_, args|
-    screen_test(args[:file], :view)
+  %i[debug run save_output view].each do |t|
+    task t, [:file] do |_, args|
+      screen_test(args[:file], t)
+    end
   end
 end
 

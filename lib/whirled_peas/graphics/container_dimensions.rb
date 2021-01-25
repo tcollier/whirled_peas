@@ -30,7 +30,6 @@ module WhirledPeas
       attr_reader :settings
 
       def margin_width
-        return 0 if settings.auto_margin?
         settings.margin.left + settings.margin.right
       end
 

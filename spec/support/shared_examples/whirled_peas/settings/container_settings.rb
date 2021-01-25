@@ -39,11 +39,6 @@ module WhirledPeas
         let(:parent) { ContainerSettings.new }
 
         specify do
-          parent.auto_margin = true
-          expect(described_class.inherit(parent).auto_margin?).to eq(false)
-        end
-
-        specify do
           parent.set_border(left: true, top: true, inner_vert: true)
           inherited = described_class.inherit(parent)
           expect(inherited.border.left?).to eq(false)
