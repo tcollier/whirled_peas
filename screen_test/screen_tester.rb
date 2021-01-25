@@ -13,45 +13,54 @@ module WhirledPeas
     def self.run_all
       base_dir = File.dirname(__FILE__)
       test_files = Dir.glob(File.join(base_dir, 'rendered', '**', '*.rb'))
-      failure_count = 0
+      failures = {}
+      pendings = Set.new
       test_files.each do |f|
         tester = new(f)
-        tester.run
-        failure_count += 1 if tester.failed?
+        if tester.pending?
+          print Utils::FormattedString.new('.', Settings::TextColor::YELLOW)
+          pendings << f
+        elsif tester.failed?
+          print Utils::FormattedString.new('.', Settings::TextColor::RED)
+          failures[f] = tester.error
+        else
+          print Utils::FormattedString.new('.', Settings::TextColor::GREEN)
+        end
+        STDOUT.flush
       end
-      if failure_count == 0
-        puts "No failures"
+      puts
+      puts if pendings.count > 0
+      pendings.each do |file|
+        puts Utils::FormattedString.new("PENDING: #{file}", Settings::TextColor::YELLOW)
+      end
+      puts if failures.count > 0
+      failures.each do |file, error|
+        puts Utils::FormattedString.new("Failed: #{file}:\n\n    #{error}\n", Settings::TextColor::RED)
+      end
+
+      if failures.count == 0
+        puts
+        puts Utils::FormattedString.new('No failures', Settings::TextColor::GREEN)
       else
-        puts "#{failure_count} render spec(s) failed"
         exit(1)
       end
     end
+
+    attr_reader :error
 
     def initialize(test_file)
       @test_file = test_file[0] == '/' ? test_file : File.join(Dir.pwd, test_file)
       raise ArgumentError, "File not found: #{@test_file}" unless File.exist?(@test_file)
       @output_file = @test_file.sub(/\.rb$/, '.frame')
-      @failed = false
+    end
+
+    def pending?
+      !File.exist?(output_file)
     end
 
     def failed?
-      @failed
-    end
-
-    def run
-      return pending(test_file) unless File.exist?(output_file)
-
-      string_io = StringIO.new
-      with_template_factory do |template_factory|
-        render_screen(template_factory, string_io)
-      end
-
-      if string_io.string != File.read(output_file)
-        return failure(test_file, 'Rendered output does not match saved output')
-      end
-      puts Utils::FormattedString.new('PASS', Settings::TextColor::GREEN)
-    rescue => e
-      failure(test_file, e.message)
+      render_and_compare
+      !@error.nil?
     end
 
     def view
@@ -88,6 +97,19 @@ module WhirledPeas
 
     attr_reader :test_file, :output_file
 
+    def render_and_compare
+      string_io = StringIO.new
+      with_template_factory do |template_factory|
+        render_screen(template_factory, string_io)
+      end
+
+      if string_io.string != File.read(output_file)
+        @error = 'Rendered output does not match saved output'
+      end
+    rescue => e
+      @error = e.message
+    end
+
     def with_template_factory(&block)
       require test_file
       raise 'TemplateFactory must be defined' unless defined?(TemplateFactory)
@@ -104,15 +126,6 @@ module WhirledPeas
       Frame::Producer.produce(consumer) do |producer|
         producer.send_frame('test', args: {})
       end
-    end
-
-    def pending(test_file)
-      puts "#{Utils::FormattedString.new('PENDING', Settings::TextColor::YELLOW)}: No output for #{test_file}"
-    end
-
-    def failure(test_file, message)
-      @failed = true
-      puts "#{Utils::FormattedString.new('FAILURE', Settings::TextColor::RED)}: #{message} #{test_file}"
     end
   end
 end
