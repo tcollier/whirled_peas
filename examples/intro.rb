@@ -1,10 +1,5 @@
-#!/usr/bin/env ruby
-
 require 'bundler/setup'
 require 'whirled_peas'
-require 'whirled_peas/frame/event_loop'
-require 'whirled_peas/frame/producer'
-require 'whirled_peas/graphics/screen'
 
 class TemplateFactory
   TITLE_FONT = :default #roman
@@ -45,17 +40,13 @@ class TemplateFactory
   end
 end
 
-module WhirledPeas
-  def self.intro
-    template_factory = TemplateFactory.new
-    screen = Graphics::Screen.new
-    consumer = Frame::EventLoop.new(
-      template_factory, refresh_rate: 100000
-    )
-    Frame::Producer.produce(consumer) do |producer|
-      producer.send_frame('intro', args: {})
-    end
+class Driver
+  def start(producer)
+    producer.send_frame('intro', duration: 5)
   end
 end
 
-WhirledPeas.intro
+WhirledPeas.configure do |config|
+  config.template_factory = TemplateFactory.new
+  config.driver = Driver.new
+end

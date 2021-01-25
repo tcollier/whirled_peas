@@ -3,7 +3,7 @@ require_relative 'renderer'
 module WhirledPeas
   module Graphics
     class MockScreen
-      def initialize(width, height)
+      def initialize(width:, height:)
         @width = width
         @height = height
       end

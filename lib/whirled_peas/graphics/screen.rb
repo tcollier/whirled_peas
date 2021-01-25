@@ -12,12 +12,17 @@ module WhirledPeas
         [width || 0, height || 0]
       end
 
-      def initialize(output=STDOUT)
+      def initialize(width: nil, height: nil, output: STDOUT)
         @output = output
         @terminal = HighLine.new.terminal
         @strokes = []
-        refresh_size!
-        Signal.trap('SIGWINCH', proc { self.refresh_size! })
+        if width && height
+          @width = width
+          @height = height
+        else
+          refresh_size!
+          Signal.trap('SIGWINCH', proc { self.refresh_size! })
+        end
       end
 
       def paint(template)

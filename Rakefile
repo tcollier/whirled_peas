@@ -37,5 +37,5 @@ task :screen_test do
   WhirledPeas::ScreenTester.run_all
 end
 
-task default: [:screen_test, :spec]
-task ci: :spec
+task default: :ci
+task ci: [:screen_test, :spec]

@@ -2,7 +2,6 @@ require 'logger'
 
 require 'whirled_peas/errors'
 require 'whirled_peas/config'
-require 'whirled_peas/debugger'
 require 'whirled_peas/frame'
 require 'whirled_peas/graphics'
 require 'whirled_peas/settings'
@@ -16,10 +15,6 @@ module WhirledPeas
 
   def self.configure(&block)
     yield config
-  end
-
-  def self.debug(config_file, option=nil)
-    Debugger.new(config_file, option).debug
   end
 
   def self.template(&block)

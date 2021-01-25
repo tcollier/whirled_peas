@@ -10,6 +10,9 @@ require 'whirled_peas/utils/formatted_string'
 
 module WhirledPeas
   class ScreenTester
+    SCREEN_WIDTH = 80
+    SCREEN_HEIGHT = 32
+
     def self.run_all
       base_dir = File.dirname(__FILE__)
       test_files = Dir.glob(File.join(base_dir, 'rendered', '**', '*.rb'))
@@ -89,8 +92,7 @@ module WhirledPeas
     def debug
       with_template_factory do |template_factory|
         template = template_factory.build('Test', {})
-        painter = Graphics::Renderer.new(template, *Graphics::Screen.current_dimensions).painter
-        puts Graphics::Debugger.new(painter).debug
+        puts Graphics::Debugger.new(template).debug
       end
     end
 
@@ -179,7 +181,7 @@ module WhirledPeas
     end
 
     def render_screen(template_factory, output)
-      screen = Graphics::Screen.new(output)
+      screen = Graphics::Screen.new(output: output, width: SCREEN_WIDTH, height: SCREEN_HEIGHT)
       consumer = Frame::EventLoop.new(
         template_factory, screen: screen, refresh_rate: 100000
       )
