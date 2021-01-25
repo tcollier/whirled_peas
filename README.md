@@ -326,31 +326,53 @@ Child elements can flow in one of 4 directions
 - `:l2r` left-to-right
 
 ```
+# In a Box
 [child 1] [child 2] ... [child N]
+
+# In a Grid
+[child 1] [child 2] [child 3]
+[chiid 4] [child 5]
 ```
 
 - `:r2l` right-to-left
 
 ```
+# In a Box
 [child N] [child N - 1] ... [child 1]
+
+# In a Grid
+[child 3] [child 2] [child 1]
+          [chiid 5] [child 4]
 ```
 
 - `:t2b` top-to-bottom
 
 ```
+# In a Box
 [child 1]
 [child 2]
  ...
 [child N]
+
+# In a Grid
+[child 1] [child 4]
+[child 2] [child 5]
+[child 3]
 ```
 
 - `:b2t` bottom-to-top
 
 ```
+# In a Box
 [child N]
 [child N - 1]
  ...
 [child 1]
+
+# In a Grid
+[child 3]
+[child 2] [child 5]
+[child 1] [child 4]
 ```
 
 ##### Colors

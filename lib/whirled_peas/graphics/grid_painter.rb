@@ -8,8 +8,7 @@ module WhirledPeas
         super
         return unless canvas.writable?
         each_child.with_index do |child, index|
-          col_index = index % dimensions.num_cols
-          row_index = index / dimensions.num_cols
+          col_index, row_index = grid_cell(index)
           content_left = coords(canvas).content_left(col_index)
           if settings.align_center?
             content_left += (dimensions.content_width - child.dimensions.outer_width) / 2
@@ -49,6 +48,19 @@ module WhirledPeas
             settings, content_width, content_height, num_cols, num_rows
           )
         end
+      end
+
+      private
+
+      def grid_cell(index)
+        if settings.horizontal_flow?
+          col_index, row_index = [index % dimensions.num_cols, index / dimensions.num_cols]
+          col_index = dimensions.num_cols - col_index - 1 if settings.reverse_flow?
+        else
+          col_index, row_index = [index / dimensions.num_cols, index % dimensions.num_cols]
+          row_index = dimensions.num_rows - row_index - 1 if settings.reverse_flow?
+        end
+        [col_index, row_index]
       end
     end
     private_constant :BoxPainter
