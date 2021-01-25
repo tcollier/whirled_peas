@@ -1,14 +1,12 @@
 require 'whirled_peas/settings/grid_settings'
 require 'whirled_peas/graphics/grid_painter'
-require 'whirled_peas/template/grid_element'
 
 module WhirledPeas
   module Graphics
     RSpec.describe GridPainter do
       describe '#dimensions' do
-        subject(:painter) { described_class.new(element, settings, 'Subject') }
+        subject(:painter) { described_class.new('Subject', settings) }
 
-        let(:element) { instance_double(Template::GridElement) }
         let(:settings) do
           instance_double(
             Settings::GridSettings, width: nil, height: nil, num_cols: 3

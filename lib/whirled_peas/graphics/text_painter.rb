@@ -7,6 +7,8 @@ require_relative 'text_dimensions'
 module WhirledPeas
   module Graphics
     class TextPainter < Painter
+      attr_reader :content
+
       def paint(canvas, &block)
         return unless canvas.writable?
         formatting = [*settings.color, *settings.bg_color]
@@ -23,13 +25,13 @@ module WhirledPeas
         TextDimensions.new(content)
       end
 
-      def content
-        if settings.title_font
+      def content=(content)
+        @content = if settings.title_font
           Utils::TitleFont.to_s(
-            element.content, settings.title_font
+            content, settings.title_font
           ).split("\n")
         else
-          element.content.split("\n")
+          content.split("\n")
         end
       end
     end

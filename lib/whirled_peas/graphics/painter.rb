@@ -3,8 +3,7 @@ module WhirledPeas
     class Painter
       attr_reader :name, :settings
 
-      def initialize(element, settings, name)
-        @element = element
+      def initialize(name, settings)
         @settings = settings
         @name = name
       end
@@ -14,10 +13,6 @@ module WhirledPeas
 
       def dimensions
       end
-
-      private
-
-      attr_reader :element
     end
     private_constant :Painter
   end

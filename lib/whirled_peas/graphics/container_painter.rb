@@ -8,7 +8,7 @@ module WhirledPeas
     class ContainerPainter < Painter
       PADDING = ' '
 
-      def initialize(element, settings, name)
+      def initialize(name, settings)
         super
         @children = []
       end
@@ -50,6 +50,10 @@ module WhirledPeas
 
       def num_children
         children.length
+      end
+
+      def children?
+        num_children > 0
       end
 
       def each_child(&block)

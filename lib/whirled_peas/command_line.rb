@@ -6,7 +6,6 @@ require 'whirled_peas/graphics/screen'
 require 'whirled_peas/frame/debug_consumer'
 require 'whirled_peas/frame/event_loop'
 require 'whirled_peas/frame/producer'
-require 'whirled_peas/template/debugger'
 
 module WhirledPeas
   class Command
@@ -138,24 +137,17 @@ module WhirledPeas
       super
 
       if args.last == '--template'
-        element = WhirledPeas.config.template_factory.build(frame, frame_args)
-        puts Template::Debugger.new(element).debug
-        exit
-      elsif args.last == '--painter'
-        element = WhirledPeas.config.template_factory.build(frame, frame_args)
-        painter = Graphics::Renderer.new(element, *Graphics::Screen.current_dimensions).painter
-        puts Graphics::Debugger.new(painter).debug
-        exit
-      end
-
-      logger = self.class.build_logger(File.open('whirled_peas.log', 'a'))
-
-      consumer = Frame::EventLoop.new(
-        WhirledPeas.config.template_factory,
-        logger: logger
-      )
-      Frame::Producer.produce(consumer, logger) do |producer|
-        producer.send_frame(frame, args: frame_args)
+        template = WhirledPeas.config.template_factory.build(frame, frame_args)
+        puts Graphics::Debugger.new(template).debug
+      else
+        logger = self.class.build_logger(File.open('whirled_peas.log', 'a'))
+        consumer = Frame::EventLoop.new(
+          WhirledPeas.config.template_factory,
+          logger: logger
+        )
+        Frame::Producer.produce(consumer, logger) do |producer|
+          producer.send_frame(frame, args: frame_args)
+        end
       end
     end
 
@@ -180,7 +172,7 @@ module WhirledPeas
     end
 
     def print_usage
-      puts "Usage: #{$0} #{self.class.command_name} <config file> <frame> [args as a JSON string] [--debug]"
+      puts "Usage: #{$0} #{self.class.command_name} <config file> <frame> [args as a JSON string] [--template]"
     end
   end
 
@@ -189,27 +181,27 @@ module WhirledPeas
       super
       unless WhirledPeas.config.loading_template_factory
         puts 'No loading screen configured'
-        exit
+        exit(1)
       end
 
-      if args.last == '--debug'
-        puts WhirledPeas.config.loading_template_factory.build.inspect
-        exit
+      if args.last == '--template'
+        template = WhirledPeas.config.loading_template_factory.build
+        puts Graphics::Debugger.new(template).debug
+      else
+        logger = self.class.build_logger(File.open('whirled_peas.log', 'a'))
+        consumer = Frame::EventLoop.new(
+          WhirledPeas.config.template_factory,
+          WhirledPeas.config.loading_template_factory,
+          logger: logger
+        )
+        Frame::Producer.produce(consumer, logger) { sleep(5) }
       end
-
-      logger = self.class.build_logger(File.open('whirled_peas.log', 'a'))
-      consumer = Frame::EventLoop.new(
-        WhirledPeas.config.template_factory,
-        WhirledPeas.config.loading_template_factory,
-        logger: logger
-      )
-      Frame::Producer.produce(consumer, logger) { sleep(5) }
     end
 
     private
 
     def print_usage
-      puts "Usage: #{$0} #{self.class.command_name} [--debug]"
+      puts "Usage: #{$0} #{self.class.command_name} [--template]"
     end
   end
 

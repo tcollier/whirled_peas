@@ -4,16 +4,14 @@ require 'whirled_peas/graphics/debugger'
 require 'whirled_peas/graphics/mock_screen'
 require 'whirled_peas/graphics/renderer'
 require 'whirled_peas/graphics/screen'
-require 'whirled_peas/template/debugger'
 
 module WhirledPeas
   class Debugger
     module Option
       DISABLE_SCREEN = :disable_screen
-      PAINTER = :painter
       TEMPLATE = :template
 
-      VALID = [DISABLE_SCREEN, PAINTER, TEMPLATE]
+      VALID = [DISABLE_SCREEN, TEMPLATE]
     end
     private_constant :Option
 
@@ -44,14 +42,9 @@ module WhirledPeas
           producer.send_frame(FRAME, args: {})
         end
         return
-      end
-
-      template = template_factory.build(FRAME, {})
-      if print_painter?
-        painter = Graphics::Renderer.new(template, *Graphics::Screen.current_dimensions).painter
-        puts Graphics::Debugger.new(painter).debug
       elsif print_template?
-        puts Template::Debugger.new(template).debug
+        template = template_factory.build(FRAME, {})
+        puts Graphics::Debugger.new(template).debug
       end
     end
 
@@ -65,10 +58,6 @@ module WhirledPeas
 
     def disable_screen?
       !option.nil? && option == Option::DISABLE_SCREEN
-    end
-
-    def print_painter?
-      !option.nil? && option == Option::PAINTER
     end
 
     def print_template?

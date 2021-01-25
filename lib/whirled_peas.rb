@@ -6,7 +6,6 @@ require 'whirled_peas/debugger'
 require 'whirled_peas/frame'
 require 'whirled_peas/graphics'
 require 'whirled_peas/settings'
-require 'whirled_peas/template'
 require 'whirled_peas/utils'
 require 'whirled_peas/version'
 
@@ -24,7 +23,7 @@ module WhirledPeas
   end
 
   def self.template(&block)
-    require 'whirled_peas/template/composer'
-    Template::Composer.build(&block)
+    require 'whirled_peas/graphics/composer'
+    Graphics::Composer.build(&block)
   end
 end

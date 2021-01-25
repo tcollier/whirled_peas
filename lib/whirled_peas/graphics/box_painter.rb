@@ -7,7 +7,7 @@ module WhirledPeas
       def paint(canvas, &block)
         super
         return unless canvas.writable?
-        if element.settings.horizontal_flow?
+        if settings.horizontal_flow?
           paint_horizontally(canvas, &block)
         else
           paint_vertically(canvas, &block)

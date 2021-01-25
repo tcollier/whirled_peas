@@ -5,7 +5,6 @@ def print_usage
   puts
   puts 'options include'
   puts '    --disable-screen  Disable the screen (useful when printing debug statements)'
-  puts '    --painter         Print the painter debug tree and exit'
   puts '    --template        Print the template debug tree and exit'
 end
 
@@ -16,7 +15,7 @@ elsif !File.exist?(ARGV.first)
   puts "File not found: #{ARGV.first}"
   print_usage
   exit(1)
-elsif ARGV.length == 2 && !%w[--disable-screen --template --painter].include?(ARGV[1])
+elsif ARGV.length == 2 && !%w[--disable-screen --template].include?(ARGV[1])
   puts "Unrecognized option: #{ARGV[1]}"
   print_usage
   exit(1)

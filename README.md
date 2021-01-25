@@ -20,6 +20,8 @@
      ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝    ╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝
 ```
 
+Easily create terminal-based graphics to visual the execution of your code. Whirled Peas offers templating inspired by HTML and CSS and provides a lightweight tie-in for your code to produce visual animations with these templates.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -172,12 +174,12 @@ To render the frame events sent by the driver, the application requires a templa
 
 #### Building Blocks
 
-A template is created with `WhirledPeas.template`, which yields a `Composer` object for a `BoxElement` and `BoxSettings`. The composer allows for attaching child elements and the settings for setting layout options.
+A template is created with `WhirledPeas.template`, which yields a `Composer` object for a `Box` and `BoxSettings`. The composer allows for attaching child elements and the settings for setting layout options.
 
 A `Composer` provides the following methods to add child elements, each of these takes an optional string argument that is set as the name of the element (which can be useful when debugging).
 
-- `add_box` - yields a `Composer` and a `BoxSettings`, which will be added to the parent's children
-- `add_grid` - yields a `Composer` and a `GridSettings`, which will be added to the parent's children
+- `add_box` - yields a `Composer` for a `Box` and a `BoxSettings`, which will be added to the parent's children
+- `add_grid` - yields a `Composer` for a `Grid` and a `GridSettings`, which will be added to the parent's children
 - `add_text` - yields `nil` and a `TextSettings`, which will be added to the parent's children
 
 E.g.
@@ -208,7 +210,7 @@ WhirledPeas.template do |composer, settings|
 end
 ```
 
-Additionally, if no child element is explicitly added to a `GridElement`, but the block returns an array of strings or numbers, those will be converted to `TextElements` and added as children to the `GridElement`. For example, these are identical ways to create a grid of strings
+Additionally, if no child element is explicitly added to a `Grid`, but the block returns an array of strings or numbers, those will be converted to `Text` elements and added as children to the `Grid`. For example, these are identical ways to create a grid of strings
 
 ```ruby
 template.add_grid do |composer|
@@ -222,7 +224,7 @@ template.add_grid do
 end
 ```
 
-Similarly, if no child element is explicilty added to a `BoxElement`, but the block returns a string or number, that value will be converted to a `TextElement` and added as a child. For example, these are identical ways to create a box with string content
+Similarly, if no child element is explicilty added to a `Box`, but the block returns a string or number, that value will be converted to a `Text` and added as a child. For example, these are identical ways to create a box with string content
 
 ```ruby
 template.add_box do |composer|
@@ -376,7 +378,7 @@ Many of these also have a "bright" option:
 
 ##### Large Text
 
-The `title_font` setting for `TextElement`s converts the standard terminal font into a large block font. The available fonts vary from system to system. Every system will have a `:default` font available, this font could look like
+The `title_font` setting for `Text`s converts the standard terminal font into a large block font. The available fonts vary from system to system. Every system will have a `:default` font available, this font could look like
 
 ```
 ██████╗ ███████╗███████╗ █████╗ ██╗   ██╗██╗     ████████╗
@@ -471,25 +473,10 @@ Adding the `--template` flag will result in printing out debug information for t
 
 ```
 $ whirled_peas <config file> play_frame move '{"direction":"N"}' --template
-+ TEMPLATE [WhirledPeas::Template::BoxElement]
-  - Settings
-    WhirledPeas::Settings::BoxSettings
-      <default>
-  - Children
-    + TitleContainer [WhirledPeas::Template::BoxElement]
-...
-```
-
-Adding the `--painter` flag will result in printing out debug information the painter (the rendered template), e.g.
-
-```
-$ whirled_peas <config file> play_frame move '{"direction":"N"}' --painter
 + TEMPLATE [WhirledPeas::Graphics::BoxPainter]
   - Settings
     WhirledPeas::Settings::BoxSettings
       <default>
-  - Dimensions
-  - Canvas:
   - Children
     + TitleContainer [WhirledPeas::Graphics::BoxPainter]
 ...
@@ -503,16 +490,16 @@ Displays the configured loading screen for several seconds
 $ whirled_peas <config file> loading
 ```
 
-Adding the `--debug` flag will result in just printing out the loading template's debug information, e.g.
+Adding the `--template` flag will result in just printing out the loading template's debug information, e.g.
 
 ```
-$ whirled_peas <config file> loading --debug
-+ TEMPLATE [WhirledPeas::UI::Template]
+$ whirled_peas <config file> loading --template
++ TEMPLATE [WhirledPeas::Graphics::BoxPainter]
   - Settings
-    WhirledPeas::UI::TemplateSettings
+    WhirledPeas::Settings::BoxSettings
       <default>
   - Children
-    + TitleContainer [WhirledPeas::UI::BoxElement]
+    + TitleContainer [WhirledPeas::Graphics::BoxPainter]
 ...
 ```
 

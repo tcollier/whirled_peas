@@ -1,29 +1,25 @@
 require 'whirled_peas/graphics/text_painter'
 require 'whirled_peas/settings/text_settings'
-require 'whirled_peas/template/text_element'
 require 'whirled_peas/utils/title_font'
 
 module WhirledPeas
   module Graphics
     RSpec.describe TextPainter do
       describe '#content' do
-        subject(:painter) { described_class.new(element, settings, 'Subject') }
+        subject(:painter) { described_class.new('Subject', settings) }
 
-        let(:element) do
-          instance_double(Template::TextElement, content: 'Hello', settings: settings)
-        end
         let(:settings) do
           instance_double(Settings::TextSettings, title_font: nil)
         end
 
         it 'places the content in an array' do
+          painter.content = 'Hello'
           expect(painter.content).to eq(['Hello'])
         end
 
         context 'with a multi-line string' do
-          before { allow(element).to receive(:content).and_return("first\nsecond") }
-
           it 'splits the string on new lines' do
+            painter.content = "first\nsecond"
             expect(painter.content).to eq(['first', 'second'])
           end
         end
@@ -38,20 +34,19 @@ module WhirledPeas
           end
 
           it 'sets mutliple lines in in the content array' do
+            painter.content = 'Hello'
             expect(painter.content).to eq(['BIG', 'HI!'])
           end
         end
       end
 
       describe '#dimensions' do
-        subject(:painter) { described_class.new(element, settings, 'Subject') }
+        subject(:painter) { described_class.new('Subject', settings) }
 
-        let(:element) do
-          instance_double(Template::TextElement, settings: settings, content: 'Hello')
-        end
         let(:settings) { instance_double(Settings::TextSettings, title_font: nil) }
 
         it 'sets proper dimensions for a plain string' do
+          painter.content = 'Hello'
           dimensions = painter.dimensions
           expect(dimensions.outer_width).to eq(5)
           expect(dimensions.outer_height).to eq(1)
@@ -67,6 +62,7 @@ module WhirledPeas
           end
 
           it 'sets proper dimensions for the multi-line string' do
+            painter.content = 'Hello'
             dimensions = painter.dimensions
             expect(dimensions.outer_width).to eq(3)
             expect(dimensions.outer_height).to eq(2)

@@ -1,13 +1,11 @@
 require 'whirled_peas/graphics/box_painter'
 require 'whirled_peas/settings/box_settings'
-require 'whirled_peas/template/box_element'
 
 module WhirledPeas
   module Graphics
     RSpec.describe BoxPainter do
-      subject(:painter) { described_class.new(element, settings, 'Subject') }
+      subject(:painter) { described_class.new('Subject', settings) }
 
-      let(:element) { instance_double(Template::BoxElement) }
       let(:settings) do
         instance_double(
           Settings::BoxSettings, width: nil, height: nil, reverse_flow?: false
