@@ -1,7 +1,7 @@
 require 'whirled_peas'
 
-module TemplateFactory
-  def self.build(name, args)
+class TemplateFactory
+  def build(*)
     WhirledPeas.template do |composer|
       composer.add_box('Container') do |composer, settings|
         composer.add_box do |composer, settings|
@@ -17,8 +17,4 @@ module TemplateFactory
       end
     end
   end
-end
-
-WhirledPeas.configure do |config|
-  config.template_factory = TemplateFactory
 end

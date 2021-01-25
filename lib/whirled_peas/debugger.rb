@@ -10,55 +10,54 @@ module WhirledPeas
   class Debugger
     module Option
       DISABLE_SCREEN = :disable_screen
-      RENDERED = :rendered
+      PAINTER = :painter
       TEMPLATE = :template
 
-      VALID = [DISABLE_SCREEN, RENDERED, TEMPLATE]
+      VALID = [DISABLE_SCREEN, PAINTER, TEMPLATE]
     end
     private_constant :Option
 
     FRAME = 'debug'
     private_constant :FRAME
 
-    def initialize(config_file, option=nil)
+    def initialize(template_file, option=nil)
       unless option.nil? || Option::VALID.include?(option)
         message =
           "Invalid option: #{option}, expecting one of #{Option::VALID.join(', ')}"
         raise ArgumentError, message
       end
-      @config_file = config_file
+      @template_file = template_file
       @option = option
     end
 
     def debug
-      require config_file
+      require template_file
+      template_factory = TemplateFactory.new
       if play_frame?
         screen = if disable_screen?
           Graphics::MockScreen.new(80, 40)
         else
           Graphics::Screen.new
         end
-        consumer = Frame::EventLoop.new(
-          WhirledPeas.config.template_factory, screen: screen
-        )
+        consumer = Frame::EventLoop.new(template_factory, screen: screen)
         Frame::Producer.produce(consumer) do |producer|
           producer.send_frame(FRAME, args: {})
         end
         return
       end
 
-      element = WhirledPeas.config.template_factory.build(FRAME, {})
-      if print_rendered?
-        painter = Graphics::Renderer.new(element, *Graphics::Screen.current_dimensions).painter
+      template = template_factory.build(FRAME, {})
+      if print_painter?
+        painter = Graphics::Renderer.new(template, *Graphics::Screen.current_dimensions).painter
         puts Graphics::Debugger.new(painter).debug
       elsif print_template?
-        puts Template::Debugger.new(element).debug
+        puts Template::Debugger.new(template).debug
       end
     end
 
     private
 
-    attr_reader :config_file, :option
+    attr_reader :template_file, :option
 
     def play_frame?
       option.nil? || option == Option::DISABLE_SCREEN
@@ -68,8 +67,8 @@ module WhirledPeas
       !option.nil? && option == Option::DISABLE_SCREEN
     end
 
-    def print_rendered?
-      !option.nil? && option == Option::RENDERED
+    def print_painter?
+      !option.nil? && option == Option::PAINTER
     end
 
     def print_template?

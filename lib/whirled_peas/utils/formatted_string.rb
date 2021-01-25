@@ -7,9 +7,9 @@ module WhirledPeas
         new('')
       end
 
-      def initialize(raw, formatting=[])
+      def initialize(raw, formatting=nil)
         @raw = raw
-        @formatting = formatting
+        @formatting = [*formatting]
       end
 
       def length

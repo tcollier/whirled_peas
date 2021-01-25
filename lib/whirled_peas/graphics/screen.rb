@@ -12,7 +12,8 @@ module WhirledPeas
         [width || 0, height || 0]
       end
 
-      def initialize
+      def initialize(output=STDOUT)
+        @output = output
         @terminal = HighLine.new.terminal
         @strokes = []
         refresh_size!
@@ -31,10 +32,10 @@ module WhirledPeas
       end
 
       def finalize
-        print Utils::Ansi.clear
-        print Utils::Ansi.cursor_pos(top: height - 1)
-        print Utils::Ansi.cursor_visible(true)
-        STDOUT.flush
+        output.print Utils::Ansi.clear
+        output.print Utils::Ansi.cursor_pos(top: height - 1)
+        output.print Utils::Ansi.cursor_visible(true)
+        output.flush
       end
 
       protected
@@ -45,7 +46,7 @@ module WhirledPeas
 
       private
 
-      attr_reader :cursor, :terminal, :width, :height
+      attr_reader :output, :cursor, :terminal, :width, :height
 
       def draw
         strokes = [Utils::Ansi.cursor_visible(false), Utils::Ansi.cursor_pos, Utils::Ansi.clear_down]
@@ -54,8 +55,8 @@ module WhirledPeas
           strokes << Utils::Ansi.cursor_pos(left: left, top: top)
           strokes << fstring
         end
-        strokes.each(&method(:print))
-        STDOUT.flush
+        strokes.each { |stroke| output.print(stroke) }
+        output.flush
         @refreshed_width = width
         @refreshed_height = height
       end

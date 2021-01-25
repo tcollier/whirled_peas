@@ -18,6 +18,5 @@ module WhirledPeas
       WHITE = new(Utils::Ansi::WHITE + BG_OFFSET)
       GRAY = BLACK.bright
     end
-    private_constant :BgColor
   end
 end

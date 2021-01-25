@@ -1,7 +1,7 @@
 require 'whirled_peas'
 
-module TemplateFactory
-  def self.build(name, args)
+class TemplateFactory
+  def build(*)
     WhirledPeas.template do |composer, settings|
       settings.flow = :l2r
       settings.full_border
@@ -21,8 +21,4 @@ module TemplateFactory
       end
     end
   end
-end
-
-WhirledPeas.configure do |config|
-  config.template_factory = TemplateFactory
 end

@@ -5,8 +5,8 @@ def print_usage
   puts
   puts 'options include'
   puts '    --disable-screen  Disable the screen (useful when printing debug statements)'
-  puts '    --template        Print the template tree and exit'
-  puts '    --rentered        Print the rendered tree and exit'
+  puts '    --painter         Print the painter debug tree and exit'
+  puts '    --template        Print the template debug tree and exit'
 end
 
 if !(1..2).include?(ARGV.length)
@@ -16,7 +16,7 @@ elsif !File.exist?(ARGV.first)
   puts "File not found: #{ARGV.first}"
   print_usage
   exit(1)
-elsif ARGV.length == 2 && !%w[--disable-screen --template --rendered].include?(ARGV[1])
+elsif ARGV.length == 2 && !%w[--disable-screen --template --painter].include?(ARGV[1])
   puts "Unrecognized option: #{ARGV[1]}"
   print_usage
   exit(1)
@@ -31,5 +31,5 @@ else
   option = ARGV[1].sub(/^--/, '').gsub(/-/, '_').to_sym
 end
 
-config_file = ARGV.first[0] == '/' ? ARGV.first : File.join(Dir.pwd, ARGV.first)
-WhirledPeas.debug(config_file, option)
+template_file = ARGV.first[0] == '/' ? ARGV.first : File.join(Dir.pwd, ARGV.first)
+WhirledPeas.debug(template_file, option)

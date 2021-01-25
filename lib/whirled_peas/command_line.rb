@@ -141,7 +141,7 @@ module WhirledPeas
         element = WhirledPeas.config.template_factory.build(frame, frame_args)
         puts Template::Debugger.new(element).debug
         exit
-      elsif args.last == '--rendered'
+      elsif args.last == '--painter'
         element = WhirledPeas.config.template_factory.build(frame, frame_args)
         painter = Graphics::Renderer.new(element, *Graphics::Screen.current_dimensions).painter
         puts Graphics::Debugger.new(painter).debug

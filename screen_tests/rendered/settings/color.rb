@@ -1,6 +1,6 @@
 require 'whirled_peas'
 
-module TemplateFactory
+class TemplateFactory
   COLORS = %i[
     black
     gray
@@ -19,7 +19,7 @@ module TemplateFactory
     bright_cyan
     bright_white
   ]
-  def self.build(name, _)
+  def build(*)
     WhirledPeas.template do |composer|
       composer.add_grid('Colors') do |composer, settings|
         settings.num_cols = 1
@@ -34,8 +34,4 @@ module TemplateFactory
       end
     end
   end
-end
-
-WhirledPeas.configure do |config|
-  config.template_factory = TemplateFactory
 end

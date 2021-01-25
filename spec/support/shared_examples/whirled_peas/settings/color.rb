@@ -2,7 +2,7 @@ module WhirledPeas
   module Settings
     RSpec.shared_examples_for 'a Color' do
       describe '.validate!' do
-        VALID_SYMBOLS = {
+        {
           black: described_class::BLACK,
           white: described_class::WHITE,
           gray: described_class::GRAY,

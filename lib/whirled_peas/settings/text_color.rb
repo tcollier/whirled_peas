@@ -15,6 +15,5 @@ module WhirledPeas
       WHITE = new(Utils::Ansi::WHITE)
       GRAY = BLACK.bright
     end
-    private_constant :TextColor
   end
 end

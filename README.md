@@ -444,7 +444,7 @@ Displays a single frame for several seconds
 $ whirled_peas <config file> play_frame move '{"direction":"N"}'
 ```
 
-Adding the `--template` flag will result in printing out the template's debug information, e.g.
+Adding the `--template` flag will result in printing out debug information for the template, e.g.
 
 ```
 $ whirled_peas <config file> play_frame move '{"direction":"N"}' --template
@@ -457,10 +457,10 @@ $ whirled_peas <config file> play_frame move '{"direction":"N"}' --template
 ...
 ```
 
-Adding the `--rendered` flag will result in printing out the rendered template's debug information, e.g.
+Adding the `--painter` flag will result in printing out debug information the painter (the rendered template), e.g.
 
 ```
-$ whirled_peas <config file> play_frame move '{"direction":"N"}' --rendered
+$ whirled_peas <config file> play_frame move '{"direction":"N"}' --painter
 + TEMPLATE [WhirledPeas::Graphics::BoxPainter]
   - Settings
     WhirledPeas::Settings::BoxSettings
