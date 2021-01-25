@@ -23,7 +23,7 @@ module WhirledPeas
       end
 
       def paint(&block)
-        painter.paint(Canvas.new(0, 0, width, height), &block)
+        painter.paint(Canvas.new(0, 0, width, height, 0, 0), &block)
       end
 
       def painter

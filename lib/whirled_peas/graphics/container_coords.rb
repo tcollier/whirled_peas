@@ -8,11 +8,11 @@ module WhirledPeas
       end
 
       def left
-        canvas.left
+        canvas.start_left + settings.position.left
       end
 
       def top
-        canvas.top
+        canvas.start_top + settings.position.top
       end
 
       def border_left

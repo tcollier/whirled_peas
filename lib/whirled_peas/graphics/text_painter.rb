@@ -15,7 +15,7 @@ module WhirledPeas
           formatting << Utils::Ansi::UNDERLINE
         end
         content.each.with_index do |line, index|
-          canvas.stroke(canvas.left, canvas.top + index, line, formatting, &block)
+          canvas.stroke(canvas.start_left, canvas.start_top + index, line, formatting, &block)
         end
       end
 

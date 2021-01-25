@@ -9,7 +9,7 @@ module WhirledPeas
       end
 
       describe '#child' do
-        subject(:canvas) { described_class.new(3, 2, 7, 5) }
+        subject(:canvas) { described_class.new(3, 2, 7, 5, 0, 0) }
 
         let(:any_left) { canvas.left }
         let(:any_top) { canvas.top }
@@ -22,22 +22,22 @@ module WhirledPeas
 
         it 'trims off anything to the left of the parent' do
           expect(canvas.child(2, any_top, 4, any_height))
-            .to eq(described_class.new(3, any_top, 3, any_height))
+            .to eq(described_class.new(3, any_top, 3, any_height, 2, any_top))
         end
 
         it 'trims off anything above the parent' do
           expect(canvas.child(any_left, 1, any_width, 2))
-            .to eq(described_class.new(any_left, 2, any_width, 1))
+            .to eq(described_class.new(any_left, 2, any_width, 1, any_left, 1))
         end
 
         it 'trims off anything to the right of the parent' do
           expect(canvas.child(9, any_top, 2, any_height))
-            .to eq(described_class.new(9, any_top, 1, any_height))
+            .to eq(described_class.new(9, any_top, 1, any_height, 9, any_top))
         end
 
         it 'trims off anything below the parent' do
           expect(canvas.child(any_left, 6, any_width, 2))
-            .to eq(described_class.new(any_left, 6, any_width, 1))
+            .to eq(described_class.new(any_left, 6, any_width, 1, any_left, 6))
         end
 
         it 'returns an unwritable canvas if there is no overlap' do
@@ -46,7 +46,7 @@ module WhirledPeas
       end
 
       describe '#stroke' do
-        subject(:canvas) { described_class.new(8, 5, 4, 1) }
+        subject(:canvas) { described_class.new(8, 5, 4, 1, 0, 0) }
 
         let(:any_left) { canvas.left }
         let(:any_top) { canvas.top }

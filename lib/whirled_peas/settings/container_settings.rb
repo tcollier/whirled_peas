@@ -3,6 +3,7 @@ require_relative 'display_flow'
 require_relative 'element_settings'
 require_relative 'margin'
 require_relative 'padding'
+require_relative 'position'
 
 module WhirledPeas
   module Settings
@@ -99,6 +100,16 @@ module WhirledPeas
 
       def padding
         @_padding || Padding.new
+      end
+
+      def set_position(left: nil, top: nil)
+        @_position = Position.new unless @_position
+        @_position.left = left if left
+        @_position.top = top if top
+      end
+
+      def position
+        @_position || Position.new
       end
 
       def inherit(parent)

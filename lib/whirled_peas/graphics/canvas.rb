@@ -4,24 +4,28 @@ module WhirledPeas
   module Graphics
     # Canvas represent the area of the screen a painter can paint on.
     class Canvas
-      attr_reader :left, :top, :width, :height
+      attr_reader :left, :top, :width, :height, :start_left, :start_top
 
       def self.unwritable
-        new(-1, -1, 0, 0)
+        new(-1, -1, 0, 0, -1, -1)
       end
 
-      def initialize(left, top, width, height)
+      def initialize(left, top, width, height, start_left, start_top)
         @left = left
         @top = top
         @width = width
         @height = height
+        @start_left = start_left
+        @start_top = start_top
       end
 
       def writable?
         width > 0 || height > 0
       end
 
-      def child(child_left, child_top, child_width, child_height)
+      def child(start_left, start_top, child_width, child_height)
+        child_left = start_left
+        child_top = start_top
         if child_left >= left + width
           self.class.unwritable
         elsif child_left + child_width <= left
@@ -41,7 +45,14 @@ module WhirledPeas
             child_top = top
           end
           child_height = [height - (child_top - top), child_height].min
-          self.class.new(child_left, child_top, child_width, child_height)
+          self.class.new(
+            child_left,
+            child_top,
+            child_width,
+            child_height,
+            start_left,
+            start_top
+          )
         end
       end
 

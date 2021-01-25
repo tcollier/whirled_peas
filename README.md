@@ -235,9 +235,16 @@ The available settigs are
 | `margin`     | Set the (left, top, right, bottom) margin of the element                        | `0`     | `Box`, `Grid`         | No                   |
 | `num_cols`   | Number of columns in the grid (must be set!)                                    |         | `Grid`                | No                   |
 | `padding`    | Set the (left, top, right, bottom) padding of the element                       | `0`     | `Box`, `Grid`         | No                   |
+| `position`   | Set the (left, top) position of the element relative to parent content area     | `0`     | `Box`, `Grid`         | No                   |
 | `title_font` | Font used for "large" text (see [Large Text](#large-text), ignores `underline`) |         | `Text`                | No                   |
 | `underline`  | `true` underlines the font                                                      | `false` | `Box`, `Grid`, `Text` | Yes                  |
 | `width`      | Override the calculated width of an element's content area                      |         | `Box`, `Grid`         | No                   |
+
+##### Position
+
+Position settings dictate the relative position from where the painter would have preferred to place the container. Negative numbers move the container left/up and positive numbers move it right/down. To set these values, use
+
+- `set_position(left:, top:)`
 
 ##### Margin
 

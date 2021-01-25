@@ -2,6 +2,7 @@ require_relative 'border'
 require_relative 'container_settings'
 require_relative 'margin'
 require_relative 'padding'
+require_relative 'position'
 
 module WhirledPeas
   module Settings
@@ -32,6 +33,8 @@ module WhirledPeas
       def debug_value(value)
         return if value.nil?
         case value
+        when Position
+          position_value(value)
         when Margin
           margin_value(value)
         when Border
@@ -50,6 +53,12 @@ module WhirledPeas
           end
         end
         values.keys.map { |k| "#{k}: #{values[k]}"}.join(', ')
+      end
+
+      def position_value(position)
+        values = non_defaults(position, Position.new, %i[left top])
+        return if values == ''
+        "Position(#{values})"
       end
 
       def margin_value(margin)

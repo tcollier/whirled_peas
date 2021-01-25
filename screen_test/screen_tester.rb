@@ -62,17 +62,19 @@ module WhirledPeas
     attr_reader :error
 
     def initialize(test_file)
-      @test_file = test_file[0] == '/' ? test_file : File.join(Dir.pwd, test_file)
-      raise ArgumentError, "File not found: #{@test_file}" unless File.exist?(@test_file)
-      @output_file = @test_file.sub(/\.rb$/, '.frame')
+      @full_test_file = test_file[0] == '/' ? test_file : File.join(Dir.pwd, test_file)
+      raise ArgumentError, "File not found: #{test_file}" unless File.exist?(@full_test_file)
+      @test_file = test_file.sub(File.dirname(__FILE__), '')[1..-1]
+      @full_output_file = @full_test_file.sub(/\.rb$/, '.frame')
+      @output_file = @full_output_file.sub(File.dirname(__FILE__), '')[1..-1]
     end
 
     def pending?
-      !File.exist?(output_file)
+      !File.exist?(full_output_file)
     end
 
     def failed?
-      if rendered != File.read(output_file)
+      if rendered != File.read(full_output_file)
         @error = 'Rendered output does not match saved output'
       end
       !@error.nil?
@@ -93,16 +95,15 @@ module WhirledPeas
     end
 
     def save
-      if File.exist?(output_file)
-        puts "Existing output file found: #{output_file}"
+      if File.exist?(full_output_file)
+        puts "Existing output file found: #{full_output_file}"
         puts "overwriting..."
       else
-        puts "Writing output to file: #{output_file}"
+        puts "Writing output to file: #{full_output_file}"
       end
 
-
       with_template_factory do |template_factory|
-        File.open(output_file, 'w') do |file|
+        File.open(full_output_file, 'w') do |file|
           render_screen(template_factory, file)
         end
       end
@@ -129,7 +130,7 @@ module WhirledPeas
       print 'View expected output? [Y/q] '
       STDOUT.flush
       exit if 'q' == STDIN.gets.strip.downcase
-      print File.read(output_file)
+      print File.read(full_output_file)
       print 'View actual output? [Y/q] '
       STDOUT.flush
       exit if 'q' == STDIN.gets.strip.downcase
@@ -140,20 +141,22 @@ module WhirledPeas
 
     private
 
-    attr_reader :test_file, :output_file
+    attr_reader :full_test_file, :test_file, :full_output_file, :output_file
 
     def ask_to_save
-      print 'Save actual as the expected test output? [y/N/q] '
+      print "Save actual as the expected test output (#{output_file})? [y/N/q] "
       STDOUT.flush
       response = STDIN.gets.strip.downcase
+      print Utils::Ansi.cursor_pos(left: 0, top: 0)
+      print Utils::Ansi.clear_down
       if response == 'y'
-        File.open(output_file, 'w') { |file| file.print(rendered) }
-        puts 'saved'
+        File.open(full_output_file, 'w') { |file| file.print(rendered) }
+        puts "Saved to #{output_file}"
       elsif response == 'q'
-        puts 'exiting'
+        puts 'Exiting'
         exit
       else
-        puts 'skipped'
+        puts 'Skipped'
       end
     end
 
@@ -168,7 +171,7 @@ module WhirledPeas
     end
 
     def with_template_factory(&block)
-      require test_file
+      require full_test_file
       raise 'TemplateFactory must be defined' unless defined?(TemplateFactory)
       yield TemplateFactory.new
     ensure
