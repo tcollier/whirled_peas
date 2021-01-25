@@ -16,7 +16,7 @@ module WhirledPeas
           elsif settings.align_right?
             content_left += dimensions.content_width - child.dimensions.outer_width
           end
-          child_canvas = Canvas.new(
+          child_canvas = canvas.child(
             content_left,
             coords(canvas).content_top(row_index),
             [dimensions.content_width, child.dimensions.outer_width].min,
