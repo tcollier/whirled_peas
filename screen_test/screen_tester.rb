@@ -15,14 +15,14 @@ module WhirledPeas
       test_files = Dir.glob(File.join(base_dir, 'rendered', '**', '*.rb'))
       failures = {}
       pendings = Set.new
-      test_files.each do |f|
-        tester = new(f)
+      test_files.each do |file|
+        tester = new(file)
         if tester.pending?
           print Utils::FormattedString.new('.', Settings::TextColor::YELLOW)
-          pendings << f
+          pendings << file
         elsif tester.failed?
           print Utils::FormattedString.new('.', Settings::TextColor::RED)
-          failures[f] = tester.error
+          failures[file] = tester.error
         else
           print Utils::FormattedString.new('.', Settings::TextColor::GREEN)
         end
@@ -46,6 +46,19 @@ module WhirledPeas
       end
     end
 
+    def self.update_all
+      base_dir = File.dirname(__FILE__)
+      test_files = Dir.glob(File.join(base_dir, 'rendered', '**', '*.rb'))
+      test_files.each do |file|
+        tester = new(file)
+        if tester.pending?
+          tester.ask_pending
+        elsif tester.failed?
+          tester.ask_failed
+        end
+      end
+    end
+
     attr_reader :error
 
     def initialize(test_file)
@@ -59,7 +72,9 @@ module WhirledPeas
     end
 
     def failed?
-      render_and_compare
+      if rendered != File.read(output_file)
+        @error = 'Rendered output does not match saved output'
+      end
       !@error.nil?
     end
 
@@ -77,7 +92,7 @@ module WhirledPeas
       end
     end
 
-    def save_output
+    def save
       if File.exist?(output_file)
         puts "Existing output file found: #{output_file}"
         puts "overwriting..."
@@ -93,21 +108,63 @@ module WhirledPeas
       end
     end
 
+    def ask_pending
+      puts Utils::FormattedString.new("Frame file does not exist for #{test_file}", Settings::TextColor::YELLOW)
+      print 'View rendered frame? [Y/n/q] '
+      STDOUT.flush
+      response = STDIN.gets.strip.downcase
+      case response
+      when 'q'
+        exit
+      when 'n'
+        return
+      end
+      print rendered
+      STDOUT.flush
+      ask_to_save
+    end
+
+    def ask_failed
+      puts Utils::FormattedString.new("Output from test does not match saved output for #{test_file}", Settings::TextColor::RED)
+      print 'View expected output? [Y/q] '
+      STDOUT.flush
+      exit if 'q' == STDIN.gets.strip.downcase
+      print File.read(output_file)
+      print 'View actual output? [Y/q] '
+      STDOUT.flush
+      exit if 'q' == STDIN.gets.strip.downcase
+      print rendered
+      STDOUT.flush
+      ask_to_save
+    end
+
     private
 
     attr_reader :test_file, :output_file
 
-    def render_and_compare
-      string_io = StringIO.new
-      with_template_factory do |template_factory|
-        render_screen(template_factory, string_io)
+    def ask_to_save
+      print 'Save actual as the expected test output? [y/N/q] '
+      STDOUT.flush
+      response = STDIN.gets.strip.downcase
+      if response == 'y'
+        File.open(output_file, 'w') { |file| file.print(rendered) }
+        puts 'saved'
+      elsif response == 'q'
+        puts 'exiting'
+        exit
+      else
+        puts 'skipped'
       end
+    end
 
-      if string_io.string != File.read(output_file)
-        @error = 'Rendered output does not match saved output'
+    def rendered
+      @rendered ||= begin
+        string_io = StringIO.new
+        with_template_factory do |template_factory|
+          render_screen(template_factory, string_io)
+        end
+        string_io.string
       end
-    rescue => e
-      @error = e.message
     end
 
     def with_template_factory(&block)

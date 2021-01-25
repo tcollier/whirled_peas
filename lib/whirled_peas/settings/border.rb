@@ -77,6 +77,10 @@ module WhirledPeas
         @inner_vert == true
       end
 
+      def outer?
+        left? || top? || right? || bottom?
+      end
+
       def style
         @style || Styles::BOLD
       end

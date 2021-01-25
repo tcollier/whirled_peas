@@ -14,10 +14,18 @@ def screen_test(file, method)
 end
 
 namespace :screen_test do
-  %i[debug run save_output view].each do |t|
+  %i[debug run save view].each do |t|
     task t, [:file] do |_, args|
       screen_test(args[:file], t)
     end
+  end
+
+  task :update_all do
+    require 'bundler/setup'
+    require 'whirled_peas'
+    require_relative 'screen_test/screen_tester'
+
+    WhirledPeas::ScreenTester.update_all
   end
 end
 
