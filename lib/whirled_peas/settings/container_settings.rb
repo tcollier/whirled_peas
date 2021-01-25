@@ -125,7 +125,7 @@ module WhirledPeas
 
       protected
 
-      attr_accessor :_align, :_border, :_flow, :_margin, :_padding
+      attr_accessor :_align, :_flow
     end
   end
 end
