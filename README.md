@@ -504,6 +504,8 @@ $ whirled_peas <config file> play_frame move '{"direction":"N"}' --template
 ...
 ```
 
+Note: the `list_frames` command will print out frame names and arguments formatted for this command
+
 #### loading
 
 Displays the configured loading screen for several seconds
