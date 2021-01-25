@@ -243,21 +243,18 @@ The available settigs are
 
 Margin settings dictate the spacing on the outside (i.e. outside of the border) of each of the 4 sides of the container independently. The set these values, use
 
-- `clear_margin` - sets all margin values to 0
 - `set_margin(left:, top:, right:, bottom:)`
 
 ##### Padding
 
 Padding settings dictate the spacing on the inside (i.e. inside of the border) of each of the 4 sides of the container independently. The set these values, use
 
-- `clear_padding` - sets all padding values to 0
 - `set_padding(left:, top:, right:, bottom:)`
 
 ##### Border
 
 The border settings consist of 6 boolean values (border are either width 1 or not shown), the 4 obvious values (`left`, `top`, `right`, and `bottom`) along with 2 other values for inner borders (`inner_horiz` and `inner_vert`) in a grid. A border also has a foreground color (defaults to `:white`) and a style. The background color is determined by the `bg_color` of the element. Border values can be set with
 
-- `clear_border` - sets all border positions to `false`
 - `set_border(left:, top:, right:, bottom:, inner_horiz:, inner_vert:, color:, style:)`
 - `full_border(style:, color:)`
 

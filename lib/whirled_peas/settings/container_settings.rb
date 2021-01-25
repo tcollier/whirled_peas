@@ -43,12 +43,6 @@ module WhirledPeas
         @_border.color = color unless color.nil?
       end
 
-      def clear_border
-        set_border(
-          left: false, top: false, right: false, bottom: false, inner_horiz: false, inner_vert: false
-        )
-      end
-
       def full_border(style: nil, color: nil)
         set_border(
           left: true, top: true, right: true, bottom: true, inner_horiz: true, inner_vert: true, style: style, color: color
@@ -91,10 +85,6 @@ module WhirledPeas
         @_margin.bottom = bottom if bottom
       end
 
-      def clear_margin
-        set_margin(left: 0, top: 0, right: 0, bottom: 0)
-      end
-
       def margin
         @_margin || Margin.new
       end
@@ -105,10 +95,6 @@ module WhirledPeas
         @_padding.top = top if top
         @_padding.right = right if right
         @_padding.bottom = bottom if bottom
-      end
-
-      def clear_padding
-        set_padding(left: 0, top: 0, right: 0, bottom: 0)
       end
 
       def padding
