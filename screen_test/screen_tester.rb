@@ -93,6 +93,12 @@ module WhirledPeas
 
     def debug
       with_template_factory do |template_factory|
+        render_screen(template_factory, StringIO.new)
+      end
+    end
+
+    def template
+      with_template_factory do |template_factory|
         template = template_factory.build('Test', {})
         puts Graphics::Debugger.new(template).debug
       end

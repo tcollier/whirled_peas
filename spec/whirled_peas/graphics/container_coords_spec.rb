@@ -4,6 +4,7 @@ require 'whirled_peas/graphics/container_coords'
 require 'whirled_peas/settings/container_settings'
 require 'whirled_peas/settings/margin'
 require 'whirled_peas/settings/padding'
+require 'whirled_peas/settings/scrollbar'
 
 module WhirledPeas
   module Graphics
@@ -20,7 +21,8 @@ module WhirledPeas
           position: position,
           margin: margin,
           border: border,
-          padding: padding
+          padding: padding,
+          scrollbar: scrollbar
         )
       end
       let(:position) { instance_double(Settings::Position, left: 3, top: 1) }
@@ -29,6 +31,7 @@ module WhirledPeas
         instance_double(Settings::Border, left?: true, top?: true, inner_horiz?: true, inner_vert?: true)
       end
       let(:padding) { instance_double(Settings::Padding, left: 7, top: 3, right: 4, bottom: 2) }
+      let(:scrollbar) { instance_double(Settings::Scrollbar, vert?: false, horiz?: false) }
 
       describe '#left' do
         it 'returns the left of the canvas' do
@@ -81,23 +84,14 @@ module WhirledPeas
       describe '#grid_width' do
         before { allow(border).to receive(:inner_vert?).and_return(true) }
 
-        context 'when include_border and inner_vert' do
-          it 'returns the width of the content plus left/right padding plus one' do
-            expect(coords.grid_width(true)).to eq(35)
-          end
+        it 'returns the width of the content plus left/right padding plus one' do
+          expect(coords.grid_width).to eq(35)
         end
+      end
 
-        context 'when inner_vert, but not include_border' do
-          it 'returns the width of the content plus left/right padding' do
-            expect(coords.grid_width(false)).to eq(34)
-          end
-        end
-        context 'when include_border, but not inner_vert' do
-          before { allow(border).to receive(:inner_vert?).and_return(false) }
-
-          it 'returns the width of the content plus left/right padding' do
-            expect(coords.grid_width(true)).to eq(34)
-          end
+      describe '#inner_grid_width' do
+        it 'returns the width of the content plus left/right padding' do
+          expect(coords.inner_grid_width).to eq(34)
         end
       end
 
@@ -149,23 +143,14 @@ module WhirledPeas
       describe '#grid_height' do
         before { allow(border).to receive(:inner_horiz?).and_return(true) }
 
-        context 'when include_border and inner_horiz' do
-          it 'returns the height of the content plus top/bottom padding plus one' do
-            expect(coords.grid_height(true)).to eq(15)
-          end
+        it 'returns the height of the content plus top/bottom padding plus one' do
+          expect(coords.grid_height).to eq(15)
         end
+      end
 
-        context 'when inner_horiz, but not include_border' do
-          it 'returns the height of the content plus top/bottom padding' do
-            expect(coords.grid_height(false)).to eq(14)
-          end
-        end
-        context 'when include_border, but not inner_horiz' do
-          before { allow(border).to receive(:inner_horiz?).and_return(false) }
-
-          it 'returns the height of the content plus top/bottom padding' do
-            expect(coords.grid_height(true)).to eq(14)
-          end
+      describe '#inner_grid_height' do
+        it 'returns the height of the content plus top/bottom padding' do
+          expect(coords.inner_grid_height).to eq(14)
         end
       end
     end

@@ -1,11 +1,13 @@
 module WhirledPeas
   module Graphics
     class ContainerDimensions
-      attr_reader :content_width, :content_height, :num_cols, :num_rows
+      attr_reader :content_width, :content_height, :children_width, :children_height, :num_cols, :num_rows
 
       def initialize(settings, content_width, content_height, num_cols=1, num_rows=1)
         @content_width = settings.width || content_width
         @content_height = settings.height || content_height
+        @children_width = content_width
+        @children_height = content_height
         @num_cols = num_cols
         @num_rows = num_rows
         @settings = settings
@@ -14,14 +16,14 @@ module WhirledPeas
       def outer_width
         @outer_width ||= margin_width +
           outer_border_width +
-          num_cols * (padding_width + content_width) +
+          num_cols * (padding_width + content_width + vert_scroll_width) +
           (num_cols - 1) * inner_border_width
       end
 
       def outer_height
         @outer_height ||= margin_height +
           outer_border_height +
-          num_rows * (padding_height + content_height) +
+          num_rows * (padding_height + content_height + horiz_scroll_height) +
           (num_rows - 1) * inner_border_height
       end
 
@@ -59,6 +61,14 @@ module WhirledPeas
 
       def padding_height
         settings.padding.top + settings.padding.bottom
+      end
+
+      def vert_scroll_width
+        settings.scrollbar.vert? ? 1 : 0
+      end
+
+      def horiz_scroll_height
+        settings.scrollbar.horiz? ? 1 : 0
       end
     end
   end

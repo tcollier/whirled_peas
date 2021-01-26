@@ -17,7 +17,16 @@ module WhirledPeas
         info << "#{indent + '  '}- Dimensions(#{dimensions})"
         info << "#{indent + '  '}- Settings"
         info << Settings::Debugger.new(painter.settings).debug(indent + '    ')
-        if painter.is_a?(ContainerPainter)
+        if painter.is_a?(TextPainter)
+          content = if painter.content.length > 1
+            '<multiline>'
+          elsif painter.content.first.length > 12
+            "#{painter.content.first[0..9]}...".inspect
+          else
+            painter.content.first.inspect
+          end
+          info << "#{indent + '  '}- Content(value=#{content})"
+        elsif painter.is_a?(ContainerPainter)
           info << "#{indent + '  '}- Children"
           info += painter.each_child.map { |c| Debugger.new(c).debug(indent + '    ') }
         end

@@ -3,6 +3,7 @@ require_relative 'container_settings'
 require_relative 'margin'
 require_relative 'padding'
 require_relative 'position'
+require_relative 'scrollbar'
 
 module WhirledPeas
   module Settings
@@ -41,6 +42,8 @@ module WhirledPeas
           border_value(value)
         when Padding
           padding_value(value)
+        when Scrollbar
+          scrollbar_value(value)
         else
           value.inspect
         end
@@ -81,6 +84,12 @@ module WhirledPeas
         values = non_defaults(padding, Padding.new, %i[left top right bottom])
         return if values == ''
         "Padding(#{values})"
+      end
+
+      def scrollbar_value(scrollbar)
+        values = non_defaults(scrollbar, Scrollbar.new, %i[horiz? vert?])
+        return if values == ''
+        "Scrollbar(#{values})"
       end
     end
   end

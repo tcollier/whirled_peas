@@ -14,7 +14,7 @@ def screen_test(file, method)
 end
 
 namespace :screen_test do
-  %i[debug run save view].each do |t|
+  %i[template view run save debug].each do |t|
     task t, [:file] do |_, args|
       screen_test(args[:file], t)
     end

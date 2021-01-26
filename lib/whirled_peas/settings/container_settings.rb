@@ -4,6 +4,7 @@ require_relative 'element_settings'
 require_relative 'margin'
 require_relative 'padding'
 require_relative 'position'
+require_relative 'scrollbar'
 
 module WhirledPeas
   module Settings
@@ -110,6 +111,16 @@ module WhirledPeas
 
       def position
         @_position || Position.new
+      end
+
+      def set_scrollbar(horiz: nil, vert: nil)
+        @_scrollbar = Scrollbar.new unless @_scrollbar
+        @_scrollbar.horiz = horiz unless horiz.nil?
+        @_scrollbar.vert = vert unless vert.nil?
+      end
+
+      def scrollbar
+        @_scrollbar || Scrollbar.new
       end
 
       def inherit(parent)

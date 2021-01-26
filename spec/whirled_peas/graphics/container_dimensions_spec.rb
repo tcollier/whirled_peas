@@ -13,12 +13,14 @@ module WhirledPeas
       let(:margin) { Settings::Margin.new }
       let(:border) { Settings::Border.new }
       let(:padding) { Settings::Padding.new }
+      let(:scrollbar) { Settings::Scrollbar.new }
       let(:settings) do
         instance_double(
           Settings::ContainerSettings,
           margin: margin,
           border: border,
           padding: padding,
+          scrollbar: scrollbar,
           width: nil,
           height: nil
         )
