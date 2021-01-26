@@ -1,8 +1,8 @@
-require 'whirled_peas/settings/text_align'
+require 'whirled_peas/settings/alignment'
 
 module WhirledPeas
   module Settings
-    RSpec.describe TextAlign do
+    RSpec.describe Alignment do
       describe '.validate!' do
         specify { expect(described_class.validate!(:left)).to eq(:left) }
         specify { expect(described_class.validate!(:center)).to eq(:center) }
@@ -11,7 +11,7 @@ module WhirledPeas
         specify do
           expect do
             described_class.validate!(:nonexistant)
-          end.to raise_error(ArgumentError, 'Unsupported text alignment: nonexistant')
+          end.to raise_error(ArgumentError, 'Unsupported alignment: :nonexistant')
         end
       end
     end

@@ -12,23 +12,23 @@ module WhirledPeas
       attr_accessor :width, :height
 
       def align
-        @_align || TextAlign::DEFAULT
+        @_align || Alignment::DEFAULT
       end
 
       def align_left?
-        align == TextAlign::LEFT
+        align == Alignment::LEFT
       end
 
       def align_center?
-        align == TextAlign::CENTER
+        align == Alignment::CENTER
       end
 
       def align_right?
-        align == TextAlign::RIGHT
+        align == Alignment::RIGHT
       end
 
       def align=(align)
-        @_align = TextAlign.validate!(align)
+        @_align = Alignment.validate!(align)
       end
 
       def set_border(

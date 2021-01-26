@@ -1,7 +1,7 @@
 require 'json'
 
+require_relative 'alignment'
 require_relative 'bg_color'
-require_relative 'text_align'
 require_relative 'text_color'
 
 module WhirledPeas

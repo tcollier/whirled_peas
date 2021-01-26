@@ -29,8 +29,8 @@ module WhirledPeas
         let(:parent) { ContainerSettings.new }
 
         specify do
-          parent.align = TextAlign::CENTER
-          expect(described_class.inherit(parent).align).to eq(TextAlign::DEFAULT)
+          parent.align = Alignment::CENTER
+          expect(described_class.inherit(parent).align).to eq(Alignment::DEFAULT)
         end
 
         specify do
