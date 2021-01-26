@@ -38,18 +38,16 @@ module WhirledPeas
 
         def self.validate!(style)
           return if style.nil?
+          return style if style.is_a?(Border::Style)
           if style.is_a?(Symbol)
-            error_message = "Unsupported border style: #{style}"
-            begin
-              style = self.const_get(style.upcase)
-              raise ArgumentError, error_message unless style.is_a?(Style)
-              style
-            rescue NameError
-              raise ArgumentError, error_message
-            end
-          else
-            style
+            style_class = self.const_get(style.upcase)
+            return style_class if style_class.is_a?(Border::Style)
           end
+          error_message = "Unsupported border style: #{style.inspect}"
+          raise ArgumentError, error_message
+        rescue NameError
+          error_message = "Unsupported border style: #{style.inspect}"
+          raise ArgumentError, error_message
         end
       end
 
