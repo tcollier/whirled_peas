@@ -2,6 +2,12 @@
 
 ## v0.5.0 - 2021-01-25
 
+- [73df2af](https://github.com/tcollier/whirled_peas/tree/73df2af1f1eac37fe94f720dce16da1ed568dade): Add support for scroll bars along both axes
+- [f4f44e1](https://github.com/tcollier/whirled_peas/tree/f4f44e1ff6c75ed03cd682e3fa9921401dcd2d00): Implement remaining 3 flow directions for grids
+- [c01d083](https://github.com/tcollier/whirled_peas/tree/c01d083e10bf70983109a8def836bb181099f59c): Implement reverse flow directions for grids
+
+## v0.5.0 - 2021-01-25
+
 BREAKING: there was a significant amount of structural refactoring in this release. While that aspect did not add or remove any features, it fixed several layout bugs (some known and some unknown), so most template with moderate complexity will now be laid out slightly differently.
 
 - [3ddfede](https://github.com/tcollier/whirled_peas/tree/3ddfedee4ab2fadeecbe82c7c9caf25c2988f095): Allow relative positioning of containers
