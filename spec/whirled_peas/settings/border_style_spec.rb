@@ -10,8 +10,8 @@ module WhirledPeas
 
         specify do
           expect do
-            described_class.validate!(:nonexistant)
-          end.to raise_error(ArgumentError, 'Unsupported border style: :nonexistant')
+            described_class.validate!(:garbage)
+          end.to raise_error(ArgumentError, 'Unsupported border style: :garbage')
         end
       end
     end
