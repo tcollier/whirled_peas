@@ -13,25 +13,24 @@ module WhirledPeas
       # @return [Color|Symbol] the value passed in if valid, otherwise an ArgumentError
       #   is raised.
       def self.validate!(color)
-        return unless color
+        return if color.nil?
+        return color if color.is_a?(self)
         if color.is_a?(Symbol)
-          error_message = "Unsupported #{self.name.split('::').last}: #{color.inspect}"
           match = color.to_s.match(/^(bright_)?(\w+)$/)
-          begin
-            color = self.const_get(match[2].upcase)
-            raise ArgumentError, error_message unless color.is_a?(Color)
-            if match[1]
-              raise ArgumentError, error_message if color.bright?
-              color.bright
-            else
-              color
+          color_class = self.const_get(match[2].upcase)
+          if color_class.is_a?(self)
+            if !match[1]
+              return color_class
+            elsif !color_class.bright?
+              return color_class.bright
             end
-          rescue NameError
-            raise ArgumentError, error_message
           end
-        else
-          color
         end
+        error_message = "Unsupported #{self.name.split('::').last}: #{color.inspect}"
+        raise ArgumentError, error_message
+      rescue NameError
+        error_message = "Unsupported #{self.name.split('::').last}: #{color.inspect}"
+        raise ArgumentError, error_message
       end
 
       def initialize(code, bright=false)
