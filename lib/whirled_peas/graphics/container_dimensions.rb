@@ -1,11 +1,11 @@
 module WhirledPeas
   module Graphics
     class ContainerDimensions
-      attr_reader :content_width, :content_height, :children_width, :children_height, :num_cols, :num_rows
+      attr_reader :children_width, :children_height, :num_cols, :num_rows
 
       def initialize(settings, content_width, content_height, num_cols=1, num_rows=1)
-        @content_width = settings.width || content_width
-        @content_height = settings.height || content_height
+        @orig_content_width = content_width
+        @orig_content_height = content_height
         @children_width = content_width
         @children_height = content_height
         @num_cols = num_cols
@@ -13,17 +13,35 @@ module WhirledPeas
         @settings = settings
       end
 
+      def content_width
+        return orig_content_width unless settings.width
+        if settings.border_sizing?
+          settings.width - outer_border_width - scrollbar_width - padding_width
+        else
+          settings.width
+        end
+      end
+
+      def content_height
+        return orig_content_height unless settings.height
+        if settings.border_sizing?
+          settings.height - outer_border_height - scrollbar_height - padding_height
+        else
+          settings.height
+        end
+      end
+
       def outer_width
         @outer_width ||= margin_width +
           outer_border_width +
-          num_cols * (padding_width + content_width + vert_scroll_width) +
+          num_cols * (padding_width + content_width + scrollbar_width) +
           (num_cols - 1) * inner_border_width
       end
 
       def outer_height
         @outer_height ||= margin_height +
           outer_border_height +
-          num_rows * (padding_height + content_height + horiz_scroll_height) +
+          num_rows * (padding_height + content_height + scrollbar_height) +
           (num_rows - 1) * inner_border_height
       end
 
@@ -59,17 +77,17 @@ module WhirledPeas
         settings.padding.top + settings.padding.bottom
       end
 
-      def vert_scroll_width
+      def scrollbar_width
         settings.scrollbar.vert? ? 1 : 0
       end
 
-      def horiz_scroll_height
+      def scrollbar_height
         settings.scrollbar.horiz? ? 1 : 0
       end
 
       private
 
-      attr_reader :settings
+      attr_reader :settings, :orig_content_width, :orig_content_height
     end
   end
 end

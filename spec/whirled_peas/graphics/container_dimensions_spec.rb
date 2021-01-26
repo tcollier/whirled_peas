@@ -4,6 +4,7 @@ require 'whirled_peas/settings/container_settings'
 require 'whirled_peas/settings/margin'
 require 'whirled_peas/settings/padding'
 require 'whirled_peas/settings/scrollbar'
+require 'whirled_peas/settings/sizing'
 
 module WhirledPeas
   module Graphics
@@ -39,35 +40,70 @@ module WhirledPeas
           border: border,
           padding: padding,
           scrollbar: scrollbar,
+          border_sizing?: false,
           width: nil,
           height: nil
         )
       end
 
       describe '#content_width' do
-        it 'returns the passed in content_width' do
-          expect(dimensions.content_width).to eq(7)
+        context 'when settings.width is not set' do
+          it 'returns the passed in content_width' do
+            expect(dimensions.content_width).to eq(7)
+          end
         end
 
-        context 'when width is explicitly set' do
+        context 'when settings.width is set with :content sizing' do
           before { allow(settings).to receive(:width).and_return(25) }
 
           it 'returns settings.width' do
             expect(dimensions.content_width).to eq(25)
           end
         end
+
+        context 'when settings.width is set with :border sizing' do
+          before do
+            allow(settings).to receive(:border_sizing?).and_return(true)
+            allow(settings).to receive(:width).and_return(25)
+            allow(border).to receive(:left?).and_return(true)
+            allow(border).to receive(:right?).and_return(true)
+            allow(padding).to receive(:left).and_return(3)
+            allow(padding).to receive(:right).and_return(4)
+          end
+
+          it 'returns settings.width minus border/padding/scrollbar widths' do
+            expect(dimensions.content_width).to eq(16)
+          end
+        end
       end
 
       describe '#content_height' do
-        it 'returns the passed in content_height' do
-          expect(dimensions.content_height).to eq(3)
+        context 'when settings.width is not set' do
+          it 'returns the passed in content_height' do
+            expect(dimensions.content_height).to eq(3)
+          end
         end
 
-        context 'when width is explicitly set' do
+        context 'when settings.height is set with :content sizing' do
           before { allow(settings).to receive(:height).and_return(7) }
 
-          it 'returns settings.width' do
+          it 'returns settings.height' do
             expect(dimensions.content_height).to eq(7)
+          end
+        end
+
+        context 'when settings.height is set with :border sizing' do
+          before do
+            allow(settings).to receive(:border_sizing?).and_return(true)
+            allow(settings).to receive(:height).and_return(7)
+            allow(border).to receive(:top?).and_return(true)
+            allow(border).to receive(:bottom?).and_return(true)
+            allow(padding).to receive(:top).and_return(1)
+            allow(padding).to receive(:bottom).and_return(2)
+          end
+
+          it 'returns settings.height' do
+            expect(dimensions.content_height).to eq(2)
           end
         end
       end

@@ -5,6 +5,7 @@ require_relative 'margin'
 require_relative 'padding'
 require_relative 'position'
 require_relative 'scrollbar'
+require_relative 'sizing'
 
 module WhirledPeas
   module Settings
@@ -121,6 +122,22 @@ module WhirledPeas
 
       def scrollbar
         @_scrollbar || Scrollbar.new
+      end
+
+      def sizing
+        @_sizing || Sizing::DEFAULT
+      end
+
+      def border_sizing?
+        @_sizing == Sizing::BORDER
+      end
+
+      def content_sizing?
+        @_sizing == Sizing::CONTENT
+      end
+
+      def sizing=(sizing)
+        @_sizing = Sizing.validate!(sizing)
       end
 
       def inherit(parent)

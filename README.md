@@ -239,29 +239,69 @@ end
 Each element type has an associated settings type, which provide a custom set of options to format the output. Child settings will inherit from the parent, where applicable
 The available settigs are
 
-| Setting      | Description                                                                     | Default | Availability          | Inherited            |
-| ------------ | ------------------------------------------------------------------------------- | ------- | --------------------- | -------------------- |
-| `align`      | Justifies the content (allowed values: `:left`, `:center`, `:right`)            | `:left` | `Box`, `Grid`         | No                   |
-| `bg_color`   | Background color (see [Colors](#colors))                                        |         | `Box`, `Grid`, `Text` | Yes                  |
-| `bold`       | `true` makes the font bold                                                      | `false` | `Box`, `Grid`, `Text` | Yes                  |
-| `border`     | Set the border for the lements                                                  | none    | `Box`, `Grid`,        | Only style and color |
-| `color`      | Foreground text color (see [Colors](#colors))                                   |         | `Box`, `Grid`, `Text` | Yes                  |
-| `flow`       | Flow to display child elements (see [Display Flow](#display-flow))              | `:l2r`  | `Box`, `Grid`         | No                   |
-| `height`     | Override the calculated height of an element's content area                     |         | `Box`, `Grid`         | No                   |
-| `margin`     | Set the (left, top, right, bottom) margin of the element                        | `0`     | `Box`, `Grid`         | No                   |
-| `num_cols`   | Number of columns in the grid (must be set!)                                    |         | `Grid`                | No                   |
-| `padding`    | Set the (left, top, right, bottom) padding of the element                       | `0`     | `Box`, `Grid`         | No                   |
-| `position`   | Set the (left, top) position of the element relative to parent content area     | `0`     | `Box`, `Grid`         | No                   |
-| `scrollbar`  | Display a scroll bar for vertical or horizontal scrolling                       |         | `Box`                 | No                   |
-| `title_font` | Font used for "large" text (see [Large Text](#large-text), ignores `underline`) |         | `Text`                | No                   |
-| `underline`  | `true` underlines the font                                                      | `false` | `Box`, `Grid`, `Text` | Yes                  |
-| `width`      | Override the calculated width of an element's content area                      |         | `Box`, `Grid`         | No                   |
+| Setting      | Description                                                                      | Default    | Availability          | Inherited            |
+| ------------ | -------------------------------------------------------------------------------- | ---------- | --------------------- | -------------------- |
+| `align`      | Justifies the content (allowed values: `:left`, `:center`, `:right`)             | `:left`    | `Box`, `Grid`         | No                   |
+| `bg_color`   | Background color (see [Colors](#colors))                                         |            | `Box`, `Grid`, `Text` | Yes                  |
+| `bold`       | `true` makes the font bold                                                       | `false`    | `Box`, `Grid`, `Text` | Yes                  |
+| `border`     | Set the border for the lements                                                   | none       | `Box`, `Grid`,        | Only style and color |
+| `color`      | Foreground text color (see [Colors](#colors))                                    |            | `Box`, `Grid`, `Text` | Yes                  |
+| `flow`       | Flow to display child elements (see [Display Flow](#display-flow))               | `:l2r`     | `Box`, `Grid`         | No                   |
+| `height`     | Override the calculated height of an element's content area                      |            | `Box`, `Grid`         | No                   |
+| `margin`     | Set the (left, top, right, bottom) margin of the element                         | `0`        | `Box`, `Grid`         | No                   |
+| `num_cols`   | Number of columns in the grid (must be set!)                                     |            | `Grid`                | No                   |
+| `padding`    | Set the (left, top, right, bottom) padding of the element                        | `0`        | `Box`, `Grid`         | No                   |
+| `position`   | Set the (left, top) position of the element relative to parent content area      | `0`        | `Box`, `Grid`         | No                   |
+| `scrollbar`  | Display a scroll bar for vertical or horizontal scrolling                        |            | `Box`                 | No                   |
+| `sizing`     | Sizing model (`:content` or `:border`) used in conjunction with `width`/`hieght` | `:content` | `Box`, `Grid`         | No                   |
+| `title_font` | Font used for "large" text (see [Large Text](#large-text), ignores `underline`)  |            | `Text`                | No                   |
+| `underline`  | `true` underlines the font                                                       | `false`    | `Box`, `Grid`, `Text` | Yes                  |
+| `width`      | Override the calculated width of an element's content area                       |            | `Box`, `Grid`         | No                   |
 
 ##### Position
 
 Position settings dictate the relative position from where the painter would have preferred to place the container. Negative numbers move the container left/up and positive numbers move it right/down. To set these values, use
 
 - `set_position(left:, top:)`
+
+##### Sizing Model
+
+The sizing model determines how to interpret the `width` and `height` settings. The default sizing model is `:content`, which sets the width and height of the cotent area, whereas `:border` sets the width and height of the element inlcuding the padding and border and scroll bars.
+
+###### Examples
+
+In the examples below, the `~` character represents padding and would not be displayed in the acutal rendered screen.
+
+```ruby
+settings.width = 10
+settings.height = 3
+settings.set_padding(left: 3, top: 1, right: 3, bottom: 1)
+settings.full_border
+
+## Content sizing
+settings.sizing = :content
+
+# Results in the box
+#
+#   ┏━━━━━━━━━━━━━━━━┓
+#   ┃~~~~~~~~~~~~~~~~┃
+#   ┃~~~1234567890~~~┃
+#   ┃~~~1234567890~~~┃
+#   ┃~~~1234567890~~~┃
+#   ┃~~~~~~~~~~~~~~~~┃
+#   ┗━━━━━━━━━━━━━━━━┛
+
+## Border sizing
+settings.sizing = :border
+
+# Results in the box
+#
+#   ┏━━━━━━━━┓
+#   ┃~~~12~~~┃
+#   ┗━━━━━━━━┛
+```
+
+Notice that a box rendered with `:border` sizing would fit exactly in the content area of a box with the same `width` and `height` that is rendered with `:content` sizing. For containers with no padding and no border, the resulting size is the same for either sizing model.
 
 ##### Margin
 

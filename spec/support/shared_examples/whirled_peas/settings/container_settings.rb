@@ -2,6 +2,7 @@ require 'whirled_peas/settings/border'
 require 'whirled_peas/settings/color'
 require 'whirled_peas/settings/container_settings'
 require 'whirled_peas/settings/display_flow'
+require 'whirled_peas/settings/sizing'
 
 module WhirledPeas
   module Settings
@@ -17,6 +18,10 @@ module WhirledPeas
 
         specify do
           expect { subject.flow = :garbage }.to raise_error(ArgumentError, 'Unsupported display flow: :garbage')
+        end
+
+        specify do
+          expect { subject.sizing = :garbage }.to raise_error(ArgumentError, 'Unsupported sizing model: :garbage')
         end
       end
 
@@ -74,6 +79,11 @@ module WhirledPeas
           expect(inherited.padding.right).to eq(0)
           expect(inherited.padding.top).to eq(0)
           expect(inherited.padding.bottom).to eq(0)
+        end
+
+        specify do
+          parent.sizing = :border
+          expect(described_class.inherit(parent).sizing).to eq(Sizing::DEFAULT)
         end
 
         specify do
