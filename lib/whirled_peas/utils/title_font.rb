@@ -6,7 +6,7 @@ module WhirledPeas
 
       class << self
         def validate!(font_key)
-          return unless font_key
+          return if font_key.nil?
           return font_key if fonts.key?(font_key)
           allowed = fonts.keys.map(&:inspect).sort
           message = "Unrecognized font: '#{font_key.inspect}', expecting one of #{allowed.join(', ')}"
