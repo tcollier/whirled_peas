@@ -37,7 +37,7 @@ module WhirledPeas
         DEFAULT = BOLD
 
         def self.validate!(style)
-          return unless style
+          return if style.nil?
           if style.is_a?(Symbol)
             error_message = "Unsupported border style: #{style}"
             begin
