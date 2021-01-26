@@ -1,7 +1,5 @@
 [![Build Status](https://travis-ci.com/tcollier/whirled_peas.svg?branch=main)](https://travis-ci.com/tcollier/whirled_peas)
 
-# WhirledPeas
-
 ```
                 ██╗   ██╗██╗███████╗██╗   ██╗ █████╗ ██╗     ██╗███████╗███████╗
                 ██║   ██║██║██╔════╝██║   ██║██╔══██╗██║     ██║╚══███╔╝██╔════╝
