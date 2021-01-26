@@ -1,5 +1,9 @@
 require 'whirled_peas/graphics/container_dimensions'
+require 'whirled_peas/settings/border'
 require 'whirled_peas/settings/container_settings'
+require 'whirled_peas/settings/margin'
+require 'whirled_peas/settings/padding'
+require 'whirled_peas/settings/scrollbar'
 
 module WhirledPeas
   module Graphics
@@ -10,10 +14,24 @@ module WhirledPeas
 
       let(:num_cols) { 1 }
       let(:num_rows) { 1 }
-      let(:margin) { Settings::Margin.new }
-      let(:border) { Settings::Border.new }
-      let(:padding) { Settings::Padding.new }
-      let(:scrollbar) { Settings::Scrollbar.new }
+      let(:margin) do
+        instance_double(Settings::Margin, left: 0, top: 0, right: 0, bottom: 0)
+      end
+      let(:border) do
+        instance_double(
+          Settings::Border,
+          left?: false,
+          top?: false,
+          right?: false,
+          bottom?: false,
+          inner_horiz?: false,
+          inner_vert?: false
+        )
+      end
+      let(:padding) do
+        instance_double(Settings::Padding, left: 0, top: 0, right: 0, bottom: 0)
+      end
+      let(:scrollbar) { instance_double(Settings::Scrollbar, horiz?: false, vert?: false) }
       let(:settings) do
         instance_double(
           Settings::ContainerSettings,
@@ -60,7 +78,7 @@ module WhirledPeas
         end
 
         context 'when left margin is non zero' do
-          before { margin.left = 4 }
+          before { allow(margin).to receive(:left).and_return(4) }
 
           it 'is included in the total' do
             expect(dimensions.outer_width).to eq(11)
@@ -68,7 +86,7 @@ module WhirledPeas
         end
 
         context 'when right margin is non zero' do
-          before { margin.right = 5 }
+          before { allow(margin).to receive(:right).and_return(5) }
 
           it 'is included in the total' do
             expect(dimensions.outer_width).to eq(12)
@@ -76,7 +94,7 @@ module WhirledPeas
         end
 
         context 'when left border is set' do
-          before { border.left = true }
+          before { allow(border).to receive(:left?).and_return(true) }
 
           it 'adds 1 to the total' do
             expect(dimensions.outer_width).to eq(8)
@@ -84,7 +102,7 @@ module WhirledPeas
         end
 
         context 'when right border is set' do
-          before { border.right = true }
+          before { allow(border).to receive(:right?).and_return(true) }
 
           it 'adds 1 to the total' do
             expect(dimensions.outer_width).to eq(8)
@@ -92,7 +110,7 @@ module WhirledPeas
         end
 
         context 'when left padding is non zero' do
-          before { padding.left = 4 }
+          before { allow(padding).to receive(:left).and_return(4) }
 
           it 'is included in the total' do
             expect(dimensions.outer_width).to eq(11)
@@ -100,7 +118,7 @@ module WhirledPeas
         end
 
         context 'when right padding is non zero' do
-          before { padding.right = 5 }
+          before { allow(padding).to receive(:right).and_return(5) }
 
           it 'is included in the total' do
             expect(dimensions.outer_width).to eq(12)
@@ -109,12 +127,12 @@ module WhirledPeas
 
         context 'when everything is set' do
           before do
-            margin.left = 3
-            margin.right = 5
-            border.left = true
-            border.right = true
-            padding.left = 7
-            padding.right = 9
+            allow(margin).to receive(:left).and_return(3)
+            allow(margin).to receive(:right).and_return(5)
+            allow(border).to receive(:left?).and_return(true)
+            allow(border).to receive(:right?).and_return(true)
+            allow(padding).to receive(:left).and_return(7)
+            allow(padding).to receive(:right).and_return(9)
           end
 
           it 'is includes it all in the total' do
@@ -129,7 +147,7 @@ module WhirledPeas
         end
 
         context 'when top margin is non zero' do
-          before { margin.top = 4 }
+          before { allow(margin).to receive(:top).and_return(4) }
 
           it 'is included in the total' do
             expect(dimensions.outer_height).to eq(7)
@@ -137,7 +155,7 @@ module WhirledPeas
         end
 
         context 'when bottom margin is non zero' do
-          before { margin.bottom = 5 }
+          before { allow(margin).to receive(:bottom).and_return(5) }
 
           it 'is included in the total' do
             expect(dimensions.outer_height).to eq(8)
@@ -145,7 +163,7 @@ module WhirledPeas
         end
 
         context 'when top border is set' do
-          before { border.top = true }
+          before { allow(border).to receive(:top?).and_return(true) }
 
           it 'adds 1 to the total' do
             expect(dimensions.outer_height).to eq(4)
@@ -153,7 +171,7 @@ module WhirledPeas
         end
 
         context 'when bottom border is set' do
-          before { border.bottom = true }
+          before { allow(border).to receive(:bottom?).and_return(true) }
 
           it 'adds 1 to the total' do
             expect(dimensions.outer_height).to eq(4)
@@ -161,7 +179,7 @@ module WhirledPeas
         end
 
         context 'when top padding is non zero' do
-          before { padding.top = 4 }
+          before { allow(padding).to receive(:top).and_return(4) }
 
           it 'is included in the total' do
             expect(dimensions.outer_height).to eq(7)
@@ -169,7 +187,7 @@ module WhirledPeas
         end
 
         context 'when bottom padding is non zero' do
-          before { padding.bottom = 5 }
+          before { allow(padding).to receive(:bottom).and_return(5) }
 
           it 'is included in the total' do
             expect(dimensions.outer_height).to eq(8)
@@ -178,12 +196,12 @@ module WhirledPeas
 
         context 'when everything is set' do
           before do
-            margin.top = 3
-            margin.bottom = 5
-            border.top = true
-            border.bottom = true
-            padding.top = 7
-            padding.bottom = 9
+            allow(margin).to receive(:top).and_return(3)
+            allow(margin).to receive(:bottom).and_return(5)
+            allow(border).to receive(:top?).and_return(true)
+            allow(border).to receive(:bottom?).and_return(true)
+            allow(padding).to receive(:top).and_return(7)
+            allow(padding).to receive(:bottom).and_return(9)
           end
 
           it 'is includes it all in the total' do
@@ -202,7 +220,7 @@ module WhirledPeas
           end
 
           context 'when left margin is non zero' do
-            before { margin.left = 4 }
+            before { allow(margin).to receive(:left).and_return(4) }
 
             it 'is included once in the total' do
               expect(dimensions.outer_width).to eq(25)
@@ -210,7 +228,7 @@ module WhirledPeas
           end
 
           context 'when right margin is non zero' do
-            before { margin.right = 5 }
+            before { allow(margin).to receive(:right).and_return(5) }
 
             it 'is included once in the total' do
               expect(dimensions.outer_width).to eq(26)
@@ -218,7 +236,7 @@ module WhirledPeas
           end
 
           context 'when left border is set' do
-            before { border.left = true }
+            before { allow(border).to receive(:left?).and_return(true) }
 
             it 'adds 1 to the total' do
               expect(dimensions.outer_width).to eq(22)
@@ -226,7 +244,7 @@ module WhirledPeas
           end
 
           context 'when inner vertical border is set' do
-            before { border.inner_vert = true }
+            before { allow(border).to receive(:inner_vert?).and_return(true) }
 
             it 'adds num_col - 1 to the total' do
               expect(dimensions.outer_width).to eq(23)
@@ -234,7 +252,7 @@ module WhirledPeas
           end
 
           context 'when right border is set' do
-            before { border.right = true }
+            before { allow(border).to receive(:right?).and_return(true) }
 
             it 'adds 1 to the total' do
               expect(dimensions.outer_width).to eq(22)
@@ -242,7 +260,7 @@ module WhirledPeas
           end
 
           context 'when left padding is non zero' do
-            before { padding.left = 4 }
+            before { allow(padding).to receive(:left).and_return(4) }
 
             it 'is included num_col times in the total' do
               expect(dimensions.outer_width).to eq(33)
@@ -250,7 +268,7 @@ module WhirledPeas
           end
 
           context 'when right padding is non zero' do
-            before { padding.right = 5 }
+            before { allow(padding).to receive(:right).and_return(5) }
 
             it 'is included num_col times in the total' do
               expect(dimensions.outer_width).to eq(36)
@@ -259,13 +277,13 @@ module WhirledPeas
 
           context 'when everything is set' do
             before do
-              margin.left = 3
-              margin.right = 5
-              border.left = true
-              border.inner_vert = true
-              border.right = true
-              padding.left = 7
-              padding.right = 9
+              allow(margin).to receive(:left).and_return(3)
+              allow(margin).to receive(:right).and_return(5)
+              allow(border).to receive(:left?).and_return(true)
+              allow(border).to receive(:inner_vert?).and_return(true)
+              allow(border).to receive(:right?).and_return(true)
+              allow(padding).to receive(:left).and_return(7)
+              allow(padding).to receive(:right).and_return(9)
             end
 
             it 'is includes it all in the total' do
@@ -280,7 +298,7 @@ module WhirledPeas
           end
 
           context 'when top margin is non zero' do
-            before { margin.top = 4 }
+            before { allow(margin).to receive(:top).and_return(4) }
 
             it 'is included once in the total' do
               expect(dimensions.outer_height).to eq(16)
@@ -288,7 +306,7 @@ module WhirledPeas
           end
 
           context 'when bottom margin is non zero' do
-            before { margin.bottom = 5 }
+            before { allow(margin).to receive(:bottom).and_return(5) }
 
             it 'is included once in the total' do
               expect(dimensions.outer_height).to eq(17)
@@ -296,7 +314,7 @@ module WhirledPeas
           end
 
           context 'when top border is set' do
-            before { border.top = true }
+            before { allow(border).to receive(:top?).and_return(true) }
 
             it 'adds 1 to the total' do
               expect(dimensions.outer_height).to eq(13)
@@ -304,7 +322,7 @@ module WhirledPeas
           end
 
           context 'when bottom inner horizontal is set' do
-            before { border.inner_horiz = true }
+            before { allow(border).to receive(:inner_horiz?).and_return(true) }
 
             it 'adds num_rows - 1 to the total' do
               expect(dimensions.outer_height).to eq(15)
@@ -312,7 +330,7 @@ module WhirledPeas
           end
 
           context 'when bottom border is set' do
-            before { border.bottom = true }
+            before { allow(border).to receive(:bottom?).and_return(true) }
 
             it 'adds 1 to the total' do
               expect(dimensions.outer_height).to eq(13)
@@ -320,7 +338,7 @@ module WhirledPeas
           end
 
           context 'when top padding is non zero' do
-            before { padding.top = 4 }
+            before { allow(padding).to receive(:top).and_return(4) }
 
             it 'is included num_col times in the total' do
               expect(dimensions.outer_height).to eq(28)
@@ -328,7 +346,7 @@ module WhirledPeas
           end
 
           context 'when bottom padding is non zero' do
-            before { padding.bottom = 5 }
+            before { allow(padding).to receive(:bottom).and_return(5) }
 
             it 'is included num_col times in the total' do
               expect(dimensions.outer_height).to eq(32)
@@ -337,13 +355,13 @@ module WhirledPeas
 
           context 'when everything is set' do
             before do
-              margin.top = 3
-              margin.bottom = 5
-              border.top = true
-              border.inner_horiz = true
-              border.bottom = true
-              padding.top = 7
-              padding.bottom = 9
+              allow(margin).to receive(:top).and_return(3)
+              allow(margin).to receive(:bottom).and_return(5)
+              allow(border).to receive(:top?).and_return(true)
+              allow(border).to receive(:inner_horiz?).and_return(true)
+              allow(border).to receive(:bottom?).and_return(true)
+              allow(padding).to receive(:top).and_return(7)
+              allow(padding).to receive(:bottom).and_return(9)
             end
 
             it 'is includes it all in the total' do
