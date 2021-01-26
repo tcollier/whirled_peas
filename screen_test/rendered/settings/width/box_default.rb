@@ -3,11 +3,11 @@ require 'whirled_peas'
 class TemplateFactory
   def build(*)
     WhirledPeas.template do |composer|
-      composer.add_grid('Wide') do |_, settings|
+      composer.add_box('Wide') do |_, settings|
         settings.full_border
-        settings.width = 6
-        settings.num_cols = 2
-        6.times.map { '6' }
+        settings.set_padding(left: 3, right: 4)
+        settings.width = 15
+        '15/default'
       end
     end
   end

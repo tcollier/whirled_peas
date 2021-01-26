@@ -3,7 +3,7 @@ require 'whirled_peas'
 class TemplateFactory
   def build(*)
     WhirledPeas.template do |composer, settings|
-      settings.set_padding(left: 10, top: 10)
+      settings.set_padding(left: 5, top: 5)
       composer.add_box do |composer, settings|
         settings.full_border(color: :green)
         composer.add_grid do |_, settings|

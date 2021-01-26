@@ -10,8 +10,8 @@ require 'whirled_peas/utils/formatted_string'
 
 module WhirledPeas
   class ScreenTester
-    SCREEN_WIDTH = 80
-    SCREEN_HEIGHT = 32
+    SCREEN_WIDTH = 32
+    SCREEN_HEIGHT = 24
 
     def self.run_all
       base_dir = File.dirname(__FILE__)
@@ -130,7 +130,7 @@ module WhirledPeas
       when 'n'
         return
       end
-      print rendered
+      puts rendered
       STDOUT.flush
       ask_to_save
     end
@@ -140,11 +140,11 @@ module WhirledPeas
       print 'View expected output? [Y/q] '
       STDOUT.flush
       exit if 'q' == STDIN.gets.strip.downcase
-      print File.read(full_output_file)
+      puts File.read(full_output_file)
       print 'View actual output? [Y/q] '
       STDOUT.flush
       exit if 'q' == STDIN.gets.strip.downcase
-      print rendered
+      puts rendered
       STDOUT.flush
       ask_to_save
     end

@@ -5,10 +5,10 @@ class TemplateFactory
     WhirledPeas.template do |composer|
       composer.add_box('Wide') do |_, settings|
         settings.full_border
-        settings.set_padding(left: 5, right: 4)
-        settings.width = 20
+        settings.set_padding(left: 3, right: 4)
+        settings.width = 15
         settings.sizing = :border
-        "12345678901234567890"
+        '15/border'
       end
     end
   end

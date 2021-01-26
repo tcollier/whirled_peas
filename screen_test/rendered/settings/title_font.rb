@@ -5,7 +5,7 @@ class TemplateFactory
     WhirledPeas.template do |composer|
       composer.add_text('Title') do |_, settings|
         settings.title_font = :default
-        "Test"
+        "Hi!"
       end
     end
   end

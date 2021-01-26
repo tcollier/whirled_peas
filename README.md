@@ -172,7 +172,12 @@ To render the frame events sent by the driver, the application requires a templa
 
 #### Building Blocks
 
-A template is created with `WhirledPeas.template`, which yields a `Composer` object for a `Box` and `BoxSettings`. The composer allows for attaching child elements and the settings for setting layout options.
+A template is created with `WhirledPeas.template`, which yields a `Composer` object for a `Box` and `BoxSettings`. The composer allows for attaching child elements and the settings for setting layout options. The following attributes of the template's settings will be overridden before it is rendered to ensure that it fills the screen exactly
+
+- `margin` - all margin will be set to 0
+- `width` - will be set to the screen's width
+- `height` - will be set to the screen's height
+- `sizing` - will be set `:border` to ensure the entire box fits on the screen and fills it entirely.
 
 A `Composer` provides the following methods to add child elements, each of these takes an optional string argument that is set as the name of the element (which can be useful when debugging).
 

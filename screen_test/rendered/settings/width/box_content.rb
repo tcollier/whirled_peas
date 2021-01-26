@@ -5,8 +5,10 @@ class TemplateFactory
     WhirledPeas.template do |composer|
       composer.add_box('Wide') do |_, settings|
         settings.full_border
-        settings.width = 50
-        "How big is it?"
+        settings.set_padding(left: 3, right: 4)
+        settings.width = 15
+        settings.sizing = :content
+        '15/content'
       end
     end
   end
