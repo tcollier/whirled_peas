@@ -27,10 +27,6 @@ module WhirledPeas
           (num_rows - 1) * inner_border_height
       end
 
-      private
-
-      attr_reader :settings
-
       def margin_width
         settings.margin.left + settings.margin.right
       end
@@ -70,6 +66,10 @@ module WhirledPeas
       def horiz_scroll_height
         settings.scrollbar.horiz? ? 1 : 0
       end
+
+      private
+
+      attr_reader :settings
     end
   end
 end

@@ -128,7 +128,12 @@ module WhirledPeas
             if dimensions.children_height <= canvas_coords.grid_height || children.first.settings.position.top > 0
               scrollbar_char = GUTTER
             else
-              scrollbar_char = vert_scroll_char(dimensions.children_height, canvas_coords.inner_grid_height, -children.first.settings.position.top, row_within_cell)
+              scrollbar_char = vert_scroll_char(
+                dimensions.children_height + dimensions.padding_height,
+                canvas_coords.inner_grid_height,
+                -children.first.settings.position.top,
+                row_within_cell
+              )
             end
             PADDING * canvas_coords.inner_grid_width + scrollbar_char
           else
@@ -144,7 +149,12 @@ module WhirledPeas
           settings.border.style.right_vert,
         ) do
           canvas_coords.inner_grid_width.times.map do |col_within_cell|
-            horiz_scroll_char(dimensions.children_width, canvas_coords.inner_grid_width, -children.first.settings.position.left, col_within_cell)
+            horiz_scroll_char(
+              dimensions.children_width + dimensions.padding_width,
+              canvas_coords.inner_grid_width,
+              -children.first.settings.position.left,
+              col_within_cell
+            )
           end.join
         end
       end
