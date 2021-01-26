@@ -67,12 +67,13 @@ module WhirledPeas
             allow(settings).to receive(:width).and_return(25)
             allow(border).to receive(:left?).and_return(true)
             allow(border).to receive(:right?).and_return(true)
+            allow(scrollbar).to receive(:vert?).and_return(true)
             allow(padding).to receive(:left).and_return(3)
             allow(padding).to receive(:right).and_return(4)
           end
 
           it 'returns settings.width minus border/padding/scrollbar widths' do
-            expect(dimensions.content_width).to eq(16)
+            expect(dimensions.content_width).to eq(15)
           end
         end
       end
@@ -98,12 +99,13 @@ module WhirledPeas
             allow(settings).to receive(:height).and_return(7)
             allow(border).to receive(:top?).and_return(true)
             allow(border).to receive(:bottom?).and_return(true)
+            allow(scrollbar).to receive(:horiz?).and_return(true)
             allow(padding).to receive(:top).and_return(1)
             allow(padding).to receive(:bottom).and_return(2)
           end
 
-          it 'returns settings.height' do
-            expect(dimensions.content_height).to eq(2)
+          it 'returns settings.height minus border/padding/scrollbar heights' do
+            expect(dimensions.content_height).to eq(1)
           end
         end
       end
