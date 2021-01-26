@@ -12,7 +12,7 @@ module WhirledPeas
         specify do
           expect do
             described_class.validate!(:nonexistant)
-          end.to raise_error(ArgumentError, 'Unsupported display flow: nonexistant')
+          end.to raise_error(ArgumentError, 'Unsupported display flow: :nonexistant')
         end
       end
     end

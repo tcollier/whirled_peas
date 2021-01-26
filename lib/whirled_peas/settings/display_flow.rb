@@ -19,7 +19,7 @@ module WhirledPeas
       def self.validate!(flow)
         return if flow.nil?
         return flow if VALID.include?(flow)
-        raise ArgumentError, "Unsupported display flow: #{flow}"
+        raise ArgumentError, "Unsupported display flow: #{flow.inspect}"
       end
     end
     private_constant :DisplayFlow
