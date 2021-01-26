@@ -34,6 +34,8 @@ module WhirledPeas
           '╚', '═', '╩', '╝'
         )
 
+        DEFAULT = BOLD
+
         def self.validate!(style)
           return unless style
           if style.is_a?(Symbol)
@@ -82,19 +84,19 @@ module WhirledPeas
       end
 
       def style
-        @style || Styles::BOLD
+        @style || Styles::DEFAULT
       end
 
       def style=(val)
         @style = Styles.validate!(val)
       end
 
-      def color
-        @color || TextColor::WHITE
-      end
-
       def color=(val)
         @color = TextColor.validate!(val)
+      end
+
+      def color
+        @color || TextColor::DEFAULT
       end
     end
   end

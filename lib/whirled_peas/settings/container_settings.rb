@@ -12,7 +12,7 @@ module WhirledPeas
       attr_accessor :width, :height
 
       def align
-        @_align || TextAlign::LEFT
+        @_align || TextAlign::DEFAULT
       end
 
       def align_left?
@@ -60,7 +60,7 @@ module WhirledPeas
       end
 
       def flow
-        @_flow || DisplayFlow::LEFT_TO_RIGHT
+        @_flow || DisplayFlow::DEFAULT
       end
 
       def horizontal_flow?
@@ -126,14 +126,10 @@ module WhirledPeas
       def inherit(parent)
         super
         return unless parent.is_a?(ContainerSettings)
-        @_align = parent._align
-        @_flow = parent._flow
         set_border(color: parent.border.color, style: parent.border.style)
       end
 
       protected
-
-      attr_accessor :_align, :_flow
     end
   end
 end

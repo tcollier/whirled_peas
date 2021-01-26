@@ -241,12 +241,12 @@ The available settigs are
 
 | Setting      | Description                                                                     | Default | Availability          | Inherited            |
 | ------------ | ------------------------------------------------------------------------------- | ------- | --------------------- | -------------------- |
-| `align`      | Justifies the content (allowed values: `:left`, `:center`, `:right`)            | `:left` | `Box`, `Grid`         | Yes                  |
+| `align`      | Justifies the content (allowed values: `:left`, `:center`, `:right`)            | `:left` | `Box`, `Grid`         | No                   |
 | `bg_color`   | Background color (see [Colors](#colors))                                        |         | `Box`, `Grid`, `Text` | Yes                  |
 | `bold`       | `true` makes the font bold                                                      | `false` | `Box`, `Grid`, `Text` | Yes                  |
 | `border`     | Set the border for the lements                                                  | none    | `Box`, `Grid`,        | Only style and color |
 | `color`      | Foreground text color (see [Colors](#colors))                                   |         | `Box`, `Grid`, `Text` | Yes                  |
-| `flow`       | Flow to display child elements (see [Display Flow](#display-flow))              | `:l2r`  | `Box`, `Grid`         | Yes                  |
+| `flow`       | Flow to display child elements (see [Display Flow](#display-flow))              | `:l2r`  | `Box`, `Grid`         | No                   |
 | `height`     | Override the calculated height of an element's content area                     |         | `Box`, `Grid`         | No                   |
 | `margin`     | Set the (left, top, right, bottom) margin of the element                        | `0`     | `Box`, `Grid`         | No                   |
 | `num_cols`   | Number of columns in the grid (must be set!)                                    |         | `Grid`                | No                   |

@@ -5,6 +5,8 @@ module WhirledPeas
       CENTER = :center
       RIGHT = :right
 
+      DEFAULT = LEFT
+
       def self.validate!(align)
         return unless align
         if [TextAlign::LEFT, TextAlign::CENTER, TextAlign::RIGHT].include?(align)

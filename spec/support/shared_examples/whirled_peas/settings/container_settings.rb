@@ -18,20 +18,10 @@ module WhirledPeas
         end
 
         specify do
-          parent.align = TextAlign::CENTER
-          expect(described_class.inherit(parent).align).to eq(TextAlign::CENTER)
-        end
-
-        specify do
           parent.set_border(style: Border::Styles::SOFT, color: TextColor::GREEN)
           inherited = described_class.inherit(parent)
           expect(inherited.border.style).to eq(Border::Styles::SOFT)
           expect(inherited.border.color).to eq(TextColor::GREEN)
-        end
-
-        specify do
-          parent.flow = DisplayFlow::BOTTOM_TO_TOP
-          expect(described_class.inherit(parent).flow).to eq(DisplayFlow::BOTTOM_TO_TOP)
         end
       end
 
@@ -39,11 +29,21 @@ module WhirledPeas
         let(:parent) { ContainerSettings.new }
 
         specify do
+          parent.align = TextAlign::CENTER
+          expect(described_class.inherit(parent).align).to eq(TextAlign::DEFAULT)
+        end
+
+        specify do
           parent.set_border(left: true, top: true, inner_vert: true)
           inherited = described_class.inherit(parent)
           expect(inherited.border.left?).to eq(false)
           expect(inherited.border.top?).to eq(false)
           expect(inherited.border.inner_vert?).to eq(false)
+        end
+
+        specify do
+          parent.flow = DisplayFlow::BOTTOM_TO_TOP
+          expect(described_class.inherit(parent).flow).to eq(DisplayFlow::DEFAULT)
         end
 
         specify do

@@ -14,7 +14,7 @@ module WhirledPeas
       end
 
       def bg_color
-        @_bg_color
+        @_bg_color || BgColor::DEFAULT
       end
 
       def bg_color=(color)
@@ -30,7 +30,7 @@ module WhirledPeas
       end
 
       def color
-        @_color
+        @_color || TextColor::DEFAULT
       end
 
       def color=(color)

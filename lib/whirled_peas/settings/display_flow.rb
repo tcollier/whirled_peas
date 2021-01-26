@@ -6,6 +6,8 @@ module WhirledPeas
       TOP_TO_BOTTOM = :t2b
       BOTTOM_TO_TOP = :b2t
 
+      DEFAULT = LEFT_TO_RIGHT
+
       def self.validate!(flow)
         return unless flow
         if [

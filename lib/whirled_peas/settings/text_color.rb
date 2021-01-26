@@ -14,6 +14,8 @@ module WhirledPeas
       CYAN = new(Utils::Ansi::CYAN)
       WHITE = new(Utils::Ansi::WHITE)
       GRAY = BLACK.bright
+
+      DEFAULT = nil  # Use system defined default
     end
   end
 end
