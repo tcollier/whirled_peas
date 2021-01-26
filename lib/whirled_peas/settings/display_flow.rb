@@ -8,18 +8,18 @@ module WhirledPeas
 
       DEFAULT = LEFT_TO_RIGHT
 
+      VALID = [
+        DisplayFlow::LEFT_TO_RIGHT,
+        DisplayFlow::RIGHT_TO_LEFT,
+        DisplayFlow::TOP_TO_BOTTOM,
+        DisplayFlow::BOTTOM_TO_TOP
+      ]
+      private_constant :VALID
+
       def self.validate!(flow)
-        return unless flow
-        if [
-          DisplayFlow::LEFT_TO_RIGHT,
-          DisplayFlow::RIGHT_TO_LEFT,
-          DisplayFlow::TOP_TO_BOTTOM,
-          DisplayFlow::BOTTOM_TO_TOP
-        ].include?(flow)
-          flow
-        else
-          raise ArgumentError, "Unsupported display flow: #{flow}"
-        end
+        return if flow.nil?
+        return flow if VALID.include?(flow)
+        raise ArgumentError, "Unsupported display flow: #{flow}"
       end
     end
     private_constant :DisplayFlow
