@@ -1,9 +1,21 @@
+require 'whirled_peas/settings/alignment'
 require 'whirled_peas/settings/color'
-require 'whirled_peas/settings/text_align'
 
 module WhirledPeas
   module Settings
     RSpec.shared_examples_for 'an ElementSettings' do
+      context 'validated attributes' do
+        subject(:settings) { described_class.new }
+
+        specify do
+          expect { subject.bg_color = :garbage }.to raise_error(ArgumentError, 'Unsupported BgColor: :garbage')
+        end
+
+        specify do
+          expect { subject.color = :garbage }.to raise_error(ArgumentError, 'Unsupported TextColor: :garbage')
+        end
+      end
+
       context 'inherited attributes' do
         let(:parent) { ElementSettings.new }
 

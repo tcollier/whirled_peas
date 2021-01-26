@@ -8,6 +8,18 @@ module WhirledPeas
     RSpec.shared_examples_for 'a ContainerSettings' do
       it_behaves_like 'an ElementSettings'
 
+      context 'validated attributes' do
+        subject(:settings) { described_class.new }
+
+        specify do
+          expect { subject.align = :garbage }.to raise_error(ArgumentError, 'Unsupported alignment: :garbage')
+        end
+
+        specify do
+          expect { subject.flow = :garbage }.to raise_error(ArgumentError, 'Unsupported display flow: :garbage')
+        end
+      end
+
       context 'inherited attributes' do
         let(:parent) { ContainerSettings.new }
 
