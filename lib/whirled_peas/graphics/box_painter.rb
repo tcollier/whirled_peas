@@ -68,7 +68,7 @@ module WhirledPeas
             stroke_left,
             stroke_top + top_offset,
             child_width,
-            [dimensions.content_height, child.dimensions.outer_height].min
+            child.dimensions.outer_height
           )
           child.paint(child_canvas, stroke_left, stroke_top + top_offset, &block)
           stroke_left += child_width + spacing_offset
@@ -88,7 +88,7 @@ module WhirledPeas
           child_canvas = canvas.child(
             stroke_left + left_offset,
             stroke_top ,
-            [dimensions.content_width, child.dimensions.outer_width].min,
+            child.dimensions.outer_width,
             child_height
           )
           child.paint(child_canvas, stroke_left + left_offset, stroke_top, &block)
