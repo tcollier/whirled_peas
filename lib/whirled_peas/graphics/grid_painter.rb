@@ -4,7 +4,7 @@ require_relative 'container_painter'
 module WhirledPeas
   module Graphics
     class GridPainter < ContainerPainter
-      def paint(canvas, &block)
+      def paint(canvas, left, top, &block)
         super
         return unless canvas.writable?
         each_child.with_index do |child, index|
@@ -12,12 +12,17 @@ module WhirledPeas
           left_offset, _ = horiz_justify_offset(child.dimensions.outer_width)
           top_offset, _ = vert_justify_offset(child.dimensions.outer_height)
           child_canvas = canvas.child(
-            coords(canvas).content_left(col_index) + left_offset,
-            coords(canvas).content_top(row_index) + top_offset,
+            coords(left, top).content_left(col_index) + left_offset,
+            coords(left, top).content_top(row_index) + top_offset,
             [dimensions.content_width, child.dimensions.outer_width].min,
             [dimensions.content_height, child.dimensions.outer_height].min
           )
-          child.paint(child_canvas, &block)
+          child.paint(
+            child_canvas,
+            coords(left, top).content_left(col_index) + left_offset,
+            coords(left, top).content_top(row_index) + top_offset,
+            &block
+          )
         end
       end
 

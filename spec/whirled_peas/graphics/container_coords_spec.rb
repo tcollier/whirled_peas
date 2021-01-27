@@ -9,9 +9,8 @@ require 'whirled_peas/settings/scrollbar'
 module WhirledPeas
   module Graphics
     RSpec.describe ContainerCoords do
-      subject(:coords) { described_class.new(canvas, dimensions, settings) }
+      subject(:coords) { described_class.new(dimensions, settings, 21, 17) }
 
-      let(:canvas) { instance_double(Canvas, start_left: 21, start_top: 17, width: 100) }
       let(:dimensions) do
         instance_double(ContainerDimensions, outer_width: 50, content_width: 23, content_height: 9)
       end
@@ -34,13 +33,13 @@ module WhirledPeas
       let(:scrollbar) { instance_double(Settings::Scrollbar, vert?: false, horiz?: false) }
 
       describe '#left' do
-        it 'returns the left of the canvas' do
+        it 'returns start_left + position.left' do
           expect(coords.left).to eq(24)
         end
       end
 
       describe '#border_left' do
-        it 'returns #left of the canvas plus the left margin' do
+        it 'returns #left plus the left margin' do
           expect(coords.border_left).to eq(37)
         end
       end
@@ -96,13 +95,13 @@ module WhirledPeas
       end
 
       describe '#top' do
-        it 'returns the top of the canvas' do
+        it 'returns #start_top plus position.top' do
           expect(coords.top).to eq(18)
         end
       end
 
       describe '#border_top' do
-        it 'returns #top of the canvas plus the top margin' do
+        it 'returns #top plus the top margin' do
           expect(coords.border_top).to eq(23)
         end
       end

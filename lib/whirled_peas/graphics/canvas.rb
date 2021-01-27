@@ -4,33 +4,29 @@ module WhirledPeas
   module Graphics
     # Canvas represent the area of the screen a painter can paint on.
     class Canvas
-      attr_reader :left, :top, :width, :height, :start_left, :start_top
+      attr_reader :left, :top, :width, :height
 
       def self.unwritable
-        new(-1, -1, 0, 0, -1, -1)
+        new(-1, -1, 0, 0)
       end
 
-      def initialize(left, top, width, height, start_left, start_top)
+      def initialize(left, top, width, height)
         @left = left
         @top = top
         @width = width
         @height = height
-        @start_left = start_left
-        @start_top = start_top
       end
 
       def writable?
         width > 0 || height > 0
       end
 
-      def child(start_left, start_top, child_width, child_height)
+      def child(child_left, child_top, child_width, child_height)
         Graphics.debugger(
           proc do
-            "Create child: #{self.inspect}.child(start_left=#{start_left}, start_top=#{start_top}, width=#{child_width}, height=#{child_height})"
+            "Create child: #{self.inspect}.child(left=#{child_left}, top=#{child_top}, width=#{child_width}, height=#{child_height})"
           end
         )
-        child_left = start_left
-        child_top = start_top
         if child_left >= left + width
           self.class.unwritable
         elsif child_left + child_width <= left
@@ -55,8 +51,6 @@ module WhirledPeas
             child_top,
             child_width,
             child_height,
-            start_left,
-            start_top
           )
           Graphics.debugger(proc { "  -> #{child_canvas.inspect}" })
           child_canvas
@@ -117,7 +111,7 @@ module WhirledPeas
       end
 
       def inspect
-        "Canvas(left=#{left}, top=#{top}, width=#{width}, height=#{height}, start_left=#{start_left}, start_top=#{start_top})"
+        "Canvas(left=#{left}, top=#{top}, width=#{width}, height=#{height})"
       end
     end
   end

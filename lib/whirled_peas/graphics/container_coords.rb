@@ -1,18 +1,19 @@
 module WhirledPeas
   module Graphics
     class ContainerCoords
-      def initialize(canvas, dimensions, settings)
-        @canvas = canvas
+      def initialize(dimensions, settings, start_left, start_top)
         @dimensions = dimensions
         @settings = settings
+        @start_left = start_left
+        @start_top = start_top
       end
 
       def left
-        canvas.start_left + settings.position.left
+        start_left + settings.position.left
       end
 
       def top
-        canvas.start_top + settings.position.top
+        start_top + settings.position.top
       end
 
       def border_left
@@ -65,7 +66,7 @@ module WhirledPeas
 
       private
 
-      attr_reader :canvas, :settings, :dimensions
+      attr_reader :settings, :dimensions, :start_left, :start_top
     end
   end
 end

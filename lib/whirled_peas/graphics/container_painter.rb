@@ -13,10 +13,10 @@ module WhirledPeas
         @children = []
       end
 
-      def paint(canvas, &block)
+      def paint(canvas, left, top, &block)
         return unless canvas.writable?
         return unless needs_printing?
-        canvas_coords = coords(canvas)
+        canvas_coords = coords(left, top)
         stroke_left = canvas_coords.border_left
         stroke_top = canvas_coords.border_top
         formatting = [*settings.border.color, *settings.bg_color]
@@ -73,8 +73,8 @@ module WhirledPeas
         settings.scrollbar.horiz? || settings.scrollbar.vert?
       end
 
-      def coords(canvas)
-        ContainerCoords.new(canvas, dimensions, settings)
+      def coords(left, top)
+        ContainerCoords.new(dimensions, settings, left, top)
       end
 
       def horiz_justify_offset(containing_width)

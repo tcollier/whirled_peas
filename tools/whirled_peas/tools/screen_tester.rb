@@ -21,8 +21,11 @@ module WhirledPeas
       SCREEN_WIDTH = 32
       SCREEN_HEIGHT = 24
 
+      def self.base_dir
+        Tools.parent_directory(__FILE__, 3)
+      end
+
       def self.test_files
-        base_dir = Tools.parent_directory(__FILE__, 3)
         Dir.glob(File.join(base_dir, 'screen_test', '**', '*.rb'))
       end
 
@@ -77,9 +80,9 @@ module WhirledPeas
       def initialize(test_file)
         @full_test_file = test_file[0] == '/' ? test_file : File.join(Dir.pwd, test_file)
         raise ArgumentError, "File not found: #{test_file}" unless File.exist?(@full_test_file)
-        @test_file = test_file.sub(File.dirname(__FILE__), '').sub(/^\//, '')
+        @test_file = @full_test_file.sub(self.class.base_dir, '').sub(/^\//, '')
         @full_output_file = @full_test_file.sub(/\.rb$/, '.frame')
-        @output_file = @full_output_file.sub(File.dirname(__FILE__), '').sub(/^\//, '')
+        @output_file = @full_output_file.sub(self.class.base_dir, '').sub(/^\//, '')
       end
 
       def update(report_passing=true)
@@ -144,7 +147,8 @@ module WhirledPeas
       end
 
       def ask_pending
-        puts Utils::FormattedString.new("Frame file does not exist for #{test_file}", Settings::TextColor::YELLOW)
+        puts "File: #{test_file}"
+        puts Utils::FormattedString.new('Frame file does not exist', Settings::TextColor::YELLOW)
         print 'View rendered frame? [Y/n/q] '
         STDOUT.flush
         response = STDIN.gets.strip.downcase
@@ -160,11 +164,13 @@ module WhirledPeas
       end
 
       def ask_failed
-        puts Utils::FormattedString.new("Output from test does not match saved output for #{test_file}", Settings::TextColor::RED)
+        puts "File: #{test_file}"
+        puts Utils::FormattedString.new('Output from test does not match saved output', Settings::TextColor::RED)
         print 'View expected output? [Y/q] '
         STDOUT.flush
         exit if 'q' == STDIN.gets.strip.downcase
         puts File.read(full_output_file)
+        puts "File: #{test_file}"
         print 'View actual output? [Y/q] '
         STDOUT.flush
         exit if 'q' == STDIN.gets.strip.downcase
@@ -178,7 +184,8 @@ module WhirledPeas
       attr_reader :full_test_file, :test_file, :full_output_file, :output_file
 
       def ask_to_save
-        print "Save actual as the expected test output (#{output_file})? [y/N/q] "
+        puts "File: #{test_file}"
+        print 'Save actual as the expected test output? [y/N/q] '
         STDOUT.flush
         response = STDIN.gets.strip.downcase
         print Utils::Ansi.cursor_pos(left: 0, top: 0)

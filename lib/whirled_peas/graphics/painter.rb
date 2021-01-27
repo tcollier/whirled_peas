@@ -8,7 +8,7 @@ module WhirledPeas
         @name = name
       end
 
-      def paint(canvas, &block)
+      def paint(canvas, left, top, &block)
       end
 
       def dimensions

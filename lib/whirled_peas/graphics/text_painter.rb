@@ -9,7 +9,7 @@ module WhirledPeas
     class TextPainter < Painter
       attr_reader :content
 
-      def paint(canvas, &block)
+      def paint(canvas, left, top, &block)
         return unless canvas.writable?
         formatting = [*settings.color, *settings.bg_color]
         formatting << Utils::Ansi::BOLD if settings.bold?
@@ -17,7 +17,7 @@ module WhirledPeas
           formatting << Utils::Ansi::UNDERLINE
         end
         content.each.with_index do |line, index|
-          canvas.stroke(canvas.start_left, canvas.start_top + index, line, formatting, &block)
+          canvas.stroke(left, top + index, line, formatting, &block)
         end
       end
 
