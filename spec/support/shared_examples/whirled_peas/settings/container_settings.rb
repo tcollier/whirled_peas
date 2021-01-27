@@ -19,6 +19,46 @@ module WhirledPeas
         specify do
           expect { subject.flow = :garbage }.to raise_error(ArgumentError, 'Unsupported display flow: :garbage')
         end
+
+        specify do
+          expect { subject.set_margin(left: 1, horiz: 1) }
+            .to raise_error(ArgumentError, 'Cannot set horizontal margin when setting left/right')
+        end
+
+        specify do
+          expect { subject.set_margin(right: 1, horiz: 1) }
+            .to raise_error(ArgumentError, 'Cannot set horizontal margin when setting left/right')
+        end
+
+        specify do
+          expect { subject.set_margin(top: 1, vert: 1) }
+            .to raise_error(ArgumentError, 'Cannot set vertical margin when setting top/bottom')
+        end
+
+        specify do
+          expect { subject.set_margin(bottom: 1, vert: 1) }
+            .to raise_error(ArgumentError, 'Cannot set vertical margin when setting top/bottom')
+        end
+
+        specify do
+          expect { subject.set_padding(left: 1, horiz: 1) }
+            .to raise_error(ArgumentError, 'Cannot set horizontal padding when setting left/right')
+        end
+
+        specify do
+          expect { subject.set_padding(right: 1, horiz: 1) }
+            .to raise_error(ArgumentError, 'Cannot set horizontal padding when setting left/right')
+        end
+
+        specify do
+          expect { subject.set_padding(top: 1, vert: 1) }
+            .to raise_error(ArgumentError, 'Cannot set vertical padding when setting top/bottom')
+        end
+
+        specify do
+          expect { subject.set_padding(bottom: 1, vert: 1) }
+            .to raise_error(ArgumentError, 'Cannot set vertical padding when setting top/bottom')
+        end
       end
 
       context 'inherited attributes' do

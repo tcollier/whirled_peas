@@ -7,7 +7,7 @@ class TemplateFactory
       composer.add_box do |composer, settings|
         settings.full_border(color: :green)
         composer.add_box do |_, settings|
-          settings.set_position(left: -3)
+          settings.position.left = -3
           settings.full_border(color: :red)
           %w[12345 22344 33333 44322 54321].join("\n")
         end

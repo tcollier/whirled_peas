@@ -6,7 +6,7 @@ class TemplateFactory
       composer.add_box('Outer') do |composer, settings|
         settings.full_border
         settings.align = :right
-        settings.set_scrollbar(horiz: true)
+        settings.scrollbar.horiz = true
         settings.width = 5
         composer.add_box('Inner') do |composer, settings|
           settings.set_position(left: -4)

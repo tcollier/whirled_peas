@@ -499,7 +499,13 @@ Notice that a box rendered with `:border` sizing would fit exactly in the conten
 
 Margin settings dictate the spacing on the outside (i.e. outside of the border) of each of the 4 sides of the container independently. To set these values, use
 
-- `set_margin(left:, top:, right:, bottom:)`
+- `set_margin(left:, top:, right:, bottom:, horiz:, vert:)` - set any combination of margin (note: setting `horiz` and `left`/`right` or setting `vert` and `top`/`bottom` is not allowed)
+- `margin.left=(value)` - set left margin
+- `margin.top=(value)` - set top margin
+- `margin.right=(value)` - set right margin
+- `margin.bottom=(value)` - set bottom margin
+- `margin.horiz=(value)` - set left and right margin to the same value
+- `margin.vert=(value)` - set top and bottom margin to the same value
 
 Note: values cannot be negative
 
@@ -507,7 +513,13 @@ Note: values cannot be negative
 
 Padding settings dictate the spacing on the inside (i.e. inside of the border) of each of the 4 sides of the container independently. To set these values, use
 
-- `set_padding(left:, top:, right:, bottom:)`
+- `set_padding(left:, top:, right:, bottom:, horiz:, vert:)` - set any combination of padding (note: setting `horiz` and `left`/`right` or setting `vert` and `top`/`bottom` is not allowed)
+- `padding.left=(value)` - set left padding
+- `padding.top=(value)` - set top padding
+- `padding.right=(value)` - set right padding
+- `padding.bottom=(value)` - set bottom padding
+- `padding.horiz=(value)` - set left and right padding to the same value
+- `padding.vert=(value)` - set top and bottom padding to the same value
 
 Note: values cannot be negative
 
@@ -515,14 +527,24 @@ Note: values cannot be negative
 
 Scroll settings dictate whether the scrollbar will be shown when child content is larger the the container's viewport. A scrollbar adds a unit to the dimensions of a container (as opposed to overwriting the leftmost/bottommost padding)
 
-- `set_padding(horiz:, vert:)`
+- `set_scrollbar(horiz:, vert:)` - set both scrollbar settings
+- `scrollbar.horiz=(flag)` - show/hide the horizontal scrollbar
+- `scrollbar.vert=(flag)` - show/hide the vertical scrollbar
 
 ##### Border
 
 The border settings consist of 6 boolean values (border are either width 1 or not shown), the 4 obvious values (`left`, `top`, `right`, and `bottom`) along with 2 other values for inner borders (`inner_horiz` and `inner_vert`) in a grid. A border also has a foreground color (defaults to `:white`) and a style. The background color is determined by the `bg_color` of the element. Border values can be set with
 
-- `set_border(left:, top:, right:, bottom:, inner_horiz:, inner_vert:, color:, style:)`
-- `full_border(style:, color:)`
+- `set_border(left:, top:, right:, bottom:, inner_horiz:, inner_vert:, color:, style:)` - set any combination of border settings
+- `full_border(style:, color:)` - set all borders to true and optionally set the style or color
+- `border.left=(flag)` - show/hide left border
+- `border.top=(flag)` - show/hide top border
+- `border.right=(flag)` - show/hide right border
+- `border.bottom=(flag)` - show/hide bottom border
+- `border.inner_horiz=(flag)` - show/hide inner horizontal border (dividing grid rows)
+- `border.inner_vert=(flag)` - show/hide inner vertical border (dividing grid columns)
+- `border.color=(flag)` - set the border color
+- `border.style=(flag)` - set the border style
 
 Available border styles are
 

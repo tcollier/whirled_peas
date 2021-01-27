@@ -5,7 +5,7 @@ class TemplateFactory
     WhirledPeas.template do |composer|
       composer.add_box('Outer') do |composer, settings|
         settings.full_border
-        settings.set_scrollbar(vert: true)
+        settings.scrollbar.vert = true
         settings.height = 5
         composer.add_box('Inner') do |composer, settings|
           settings.flow = :t2b

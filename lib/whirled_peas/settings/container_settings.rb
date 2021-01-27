@@ -81,15 +81,14 @@ module WhirledPeas
       def set_border(
         left: nil, top: nil, right: nil, bottom: nil, inner_horiz: nil, inner_vert: nil, style: nil, color: nil
       )
-        @_border = Border.new unless @_border
-        @_border.left = left unless left.nil?
-        @_border.top = top unless top.nil?
-        @_border.right = right unless right.nil?
-        @_border.bottom = bottom unless bottom.nil?
-        @_border.inner_horiz = inner_horiz unless inner_horiz.nil?
-        @_border.inner_vert = inner_vert unless inner_vert.nil?
-        @_border.style = style unless style.nil?
-        @_border.color = color unless color.nil?
+        border.left = left unless left.nil?
+        border.top = top unless top.nil?
+        border.right = right unless right.nil?
+        border.bottom = bottom unless bottom.nil?
+        border.inner_horiz = inner_horiz unless inner_horiz.nil?
+        border.inner_vert = inner_vert unless inner_vert.nil?
+        border.style = style unless style.nil?
+        border.color = color unless color.nil?
       end
 
       def full_border(style: nil, color: nil)
@@ -99,7 +98,7 @@ module WhirledPeas
       end
 
       def border
-        @_border || Border.new
+        @_border ||= Border.new
       end
 
       def flow=(flow)
@@ -126,48 +125,74 @@ module WhirledPeas
         !forward_flow?
       end
 
-      def set_margin(left: nil, top: nil, right: nil, bottom: nil)
-        @_margin = Margin.new unless @_margin
-        @_margin.left = left if left
-        @_margin.top = top if top
-        @_margin.right = right if right
-        @_margin.bottom = bottom if bottom
+      def set_margin(left: nil, top: nil, right: nil, bottom: nil, horiz: nil, vert: nil)
+        if horiz && (left || right)
+          raise ArgumentError, 'Cannot set horizontal margin when setting left/right'
+        elsif vert && (top || bottom)
+          raise ArgumentError, 'Cannot set vertical margin when setting top/bottom'
+        end
+
+        if horiz
+          margin.horiz = horiz
+        else
+          margin.left = left if left
+          margin.right = right if right
+        end
+
+        if vert
+          margin.vert = vert
+        else
+          margin.top = top if top
+          margin.bottom = bottom if bottom
+        end
       end
 
       def margin
-        @_margin || Margin.new
+        @_margin ||= Margin.new
       end
 
-      def set_padding(left: nil, top: nil, right: nil, bottom: nil)
-        @_padding = Padding.new unless @_padding
-        @_padding.left = left if left
-        @_padding.top = top if top
-        @_padding.right = right if right
-        @_padding.bottom = bottom if bottom
+      def set_padding(left: nil, top: nil, right: nil, bottom: nil, horiz: nil, vert: nil)
+        if horiz && (left || right)
+          raise ArgumentError, 'Cannot set horizontal padding when setting left/right'
+        elsif vert && (top || bottom)
+          raise ArgumentError, 'Cannot set vertical padding when setting top/bottom'
+        end
+
+        if horiz
+          padding.horiz = horiz
+        else
+          padding.left = left if left
+          padding.right = right if right
+        end
+
+        if vert
+          padding.vert = vert
+        else
+          padding.top = top if top
+          padding.bottom = bottom if bottom
+        end
       end
 
       def padding
-        @_padding || Padding.new
+        @_padding ||= Padding.new
       end
 
       def set_position(left: nil, top: nil)
-        @_position = Position.new unless @_position
-        @_position.left = left if left
-        @_position.top = top if top
+        position.left = left if left
+        position.top = top if top
       end
 
       def position
-        @_position || Position.new
+        @_position ||= Position.new
       end
 
       def set_scrollbar(horiz: nil, vert: nil)
-        @_scrollbar = Scrollbar.new unless @_scrollbar
-        @_scrollbar.horiz = horiz unless horiz.nil?
-        @_scrollbar.vert = vert unless vert.nil?
+        scrollbar.horiz = horiz unless horiz.nil?
+        scrollbar.vert = vert unless vert.nil?
       end
 
       def scrollbar
-        @_scrollbar || Scrollbar.new
+        @_scrollbar ||= Scrollbar.new
       end
 
       def sizing

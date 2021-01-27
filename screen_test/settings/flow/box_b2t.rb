@@ -8,12 +8,12 @@ class TemplateFactory
         settings.full_border
         composer.add_box('Medium') do |composer, settings|
           settings.full_border
-          settings.set_padding(left:  3, right: 3)
+          settings.padding.horiz = 3
           '1. MEDIUM'
         end
         composer.add_box('Wide') do |composer, settings|
           settings.full_border
-          settings.set_padding(left:  7, right: 7)
+          settings.padding.horiz = 7
           '2. WIDE'
         end
         composer.add_box('Narrow') do |composer, settings|
