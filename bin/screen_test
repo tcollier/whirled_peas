@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'whirled_peas'
+require 'whirled_peas/utils/formatted_string'
+
+require_relative '../tools/whirled_peas/tools/screen_tester'
+
+def print_usage(exit_code=0)
+  puts "Usage: #{$0} [file] [options]"
+  puts
+  puts 'If not file or options are provide, all tests are run'
+  puts
+  puts 'If no file is provided, the supported options are'
+  puts '    --help             print this usage statement and exit'
+  puts '    --view-pending     interactively display and optionally save rendered output for each pending test'
+  puts '    --view-failed      interactively display and optionally save rendered output for each faiing test'
+  puts
+  puts 'If the file provide is a screen test, the supported options are'
+  puts '    --run        run screen test for given file'
+  puts '    --view       interactively display and optionally save the file\'s test output'
+  puts '    --template   print out template tree for the test template'
+  puts '    --debug      render the test template without displying it, printing out debug information'
+  exit(exit_code)
+end
+
+module WhirledPeas
+  if ARGV.length == 0
+    Tools::ScreenTester.run_all
+  elsif ARGV.length == 1
+    option = ARGV[0]
+    case option
+    when '--help'
+      print_usage
+    when '--view-pending'
+      Tools::ScreenTester.view_pending
+    when '--view-failed'
+      Tools::ScreenTester.view_failed
+    else
+      print_usage(1)
+    end
+  elsif ARGV.length == 2
+    file, option = ARGV
+    case option
+    when '--run'
+      tester = Tools::ScreenTester.new(file)
+      if tester.pending?
+        puts Utils::FormattedString.new('Pending', Settings::TextColor::YELLOW)
+        puts "Run `#{$0} #{file} --view` to view and optionally save ouput."
+      elsif tester.failed?
+        puts Utils::FormattedString.new('Failed', Settings::TextColor::RED)
+        puts "Run `#{$0} #{file} --view` to compare and optionally save ouput."
+      else
+        puts Utils::FormattedString.new('Pass', Settings::TextColor::GREEN)
+      end
+    when '--view'
+      Tools::ScreenTester.new(file).view
+    when '--template'
+      Tools::ScreenTester.new(file).template
+    when '--debug'
+      Tools::ScreenTester.new(file).debug
+    else
+      print_usage(1)
+    end
+  else
+    print_usage(1)
+  end
+end

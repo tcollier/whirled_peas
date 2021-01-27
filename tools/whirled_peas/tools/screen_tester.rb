@@ -60,22 +60,57 @@ module WhirledPeas
         if failures.count == 0
           puts
           puts Utils::FormattedString.new('No failures', Settings::TextColor::GREEN)
+          exit(0)
         else
           exit(1)
         end
       end
 
-      def self.update_all
+      def self.view_pending
         num_attempted = 0
         test_files.map do |file|
-          num_attempted += 1 if new(file).update(false)
+          tester = new(file)
+          if tester.pending?
+            puts "File: #{tester.test_file}"
+            puts Utils::FormattedString.new('Frame file does not exist', Settings::TextColor::YELLOW)
+            print 'View rendered frame? [Y/n/q] '
+            STDOUT.flush
+            response = STDIN.gets.strip.downcase
+            case response
+            when 'q'
+              exit
+            when 'n'
+              return
+            end
+            tester.ask_pending
+            num_attempted += 1
+          end
+        end
+        if num_attempted == 0
+          puts 'No pending tests.'
+        end
+      end
+
+      def self.view_failed
+        num_attempted = 0
+        test_files.map do |file|
+          tester = new(file)
+          if tester.failed?
+            puts "File: #{tester.test_file}"
+            puts Utils::FormattedString.new('Output from test does not match saved output', Settings::TextColor::RED)
+            print 'View expected output? [Y/q] '
+            STDOUT.flush
+            exit if 'q' == STDIN.gets.strip.downcase
+            tester.ask_failed
+            num_attempted += 1
+          end
         end
         if num_attempted == 0
           puts 'All rendered output matched expected.'
         end
       end
 
-      attr_reader :error
+      attr_reader :error, :test_file
 
       def initialize(test_file)
         @full_test_file = test_file[0] == '/' ? test_file : File.join(Dir.pwd, test_file)
@@ -85,17 +120,14 @@ module WhirledPeas
         @output_file = @full_output_file.sub(self.class.base_dir, '').sub(/^\//, '')
       end
 
-      def update(report_passing=true)
+      def view
         if pending?
           ask_pending
-          return true
         elsif failed?
           ask_failed
-          return true
         elsif report_passing
           puts "Actual rendered output for #{test_file} matches expected."
         end
-        false
       end
 
       def pending?
@@ -103,16 +135,11 @@ module WhirledPeas
       end
 
       def failed?
+        return false if pending?
         if rendered != File.read(full_output_file)
           @error = 'Rendered output does not match saved output'
         end
         !@error.nil?
-      end
-
-      def view
-        with_template_factory do |template_factory|
-          render_screen(template_factory, STDOUT)
-        end
       end
 
       def debug
@@ -131,44 +158,13 @@ module WhirledPeas
         end
       end
 
-      def save
-        if File.exist?(full_output_file)
-          puts "Existing output file found: #{full_output_file}"
-          puts "overwriting..."
-        else
-          puts "Writing output to file: #{full_output_file}"
-        end
-
-        with_template_factory do |template_factory|
-          File.open(full_output_file, 'w') do |file|
-            render_screen(template_factory, file)
-          end
-        end
-      end
-
       def ask_pending
-        puts "File: #{test_file}"
-        puts Utils::FormattedString.new('Frame file does not exist', Settings::TextColor::YELLOW)
-        print 'View rendered frame? [Y/n/q] '
-        STDOUT.flush
-        response = STDIN.gets.strip.downcase
-        case response
-        when 'q'
-          exit
-        when 'n'
-          return
-        end
         puts rendered
         STDOUT.flush
         ask_to_save
       end
 
       def ask_failed
-        puts "File: #{test_file}"
-        puts Utils::FormattedString.new('Output from test does not match saved output', Settings::TextColor::RED)
-        print 'View expected output? [Y/q] '
-        STDOUT.flush
-        exit if 'q' == STDIN.gets.strip.downcase
         puts File.read(full_output_file)
         puts "File: #{test_file}"
         print 'View actual output? [Y/q] '
@@ -181,15 +177,13 @@ module WhirledPeas
 
       private
 
-      attr_reader :full_test_file, :test_file, :full_output_file, :output_file
+      attr_reader :full_test_file, :full_output_file, :output_file
 
       def ask_to_save
         puts "File: #{test_file}"
         print 'Save actual as the expected test output? [y/N/q] '
         STDOUT.flush
         response = STDIN.gets.strip.downcase
-        print Utils::Ansi.cursor_pos(left: 0, top: 0)
-        print Utils::Ansi.clear_down
         if response == 'y'
           File.open(full_output_file, 'w') { |file| file.print(rendered) }
           puts "Saved to #{output_file}"
