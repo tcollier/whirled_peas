@@ -9,7 +9,7 @@ class TemplateFactory
         settings.width = 5
         composer.add_box('Inner') do |composer, settings|
           settings.set_position(left: -4)
-          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+          'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         end
       end
     end
