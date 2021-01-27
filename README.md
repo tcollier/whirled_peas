@@ -271,49 +271,49 @@ The `align` setting takes one of several values
 - `:left` - align content starting at the leftmost edge of the container's content area
 
 ```
-+---------------------------------------+
-|[child 1][child 2][child 3]            |
-+---------------------------------------+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃[child 1][child 2][child 3]            ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
 
 - `:right` - align content starting at the rightmost edge of the container's content area
 
 ```
-+---------------------------------------+
-|            [child 1][child 2][child 3]|
-+---------------------------------------+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃            [child 1][child 2][child 3]┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
 
 - `:center` - align content starting in the horizontal center of the container's content area
 
 ```
-+---------------------------------------+
-|      [child 1][child 2][child 3]      |
-+---------------------------------------+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃      [child 1][child 2][child 3]      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
 
 - `:between` - distribute children so there is equal space between children no space outside of the children
 
 ```
-+---------------------------------------+
-|[child 1]      [child 2]      [child 3]|
-+---------------------------------------+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃[child 1]      [child 2]      [child 3]┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
 
 - `:around` - distribute children so that they have equal spacing around them, space between two children is twice the space between an edge and a child.
 
 ```
-+---------------------------------------+
-|  [child 1]    [child 2]    [child 3]  |
-+---------------------------------------+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  [child 1]    [child 2]    [child 3]  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
 
 - `:evenly` - distribute children so there is even spacing between any two children (or space to the edge)
 
 ```
-+---------------------------------------+
-|   [child 1]   [child 2]   [child 3]   |
-+---------------------------------------+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃   [child 1]   [child 2]   [child 3]   ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
 
 The `valign` setting takes one of several values
@@ -321,133 +321,133 @@ The `valign` setting takes one of several values
 - `:top` - align content starting at the top of the container's content area
 
 ```
-+---------+
-|[child 1]|
-|[child 2]|
-|[child 3]|
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-+---------+
+┏━━━━━━━━━┓
+┃[child 1]┃
+┃[child 2]┃
+┃[child 3]┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┗━━━━━━━━━┛
 ```
 
 - `:bottom` - align content starting at the bottom of the container's content area
 
 ```
-+---------+
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|[child 1]|
-|[child 2]|
-|[child 3]|
-+---------+
+┏━━━━━━━━━┓
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃[child 1]┃
+┃[child 2]┃
+┃[child 3]┃
+┗━━━━━━━━━┛
 ```
 
 - `:middle` - align content starting in the vertical middle of the container's content area
 
 ```
-+---------+
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|[child 1]|
-|[child 2]|
-|[child 3]|
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-+---------+
+┏━━━━━━━━━┓
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃[child 1]┃
+┃[child 2]┃
+┃[child 3]┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┗━━━━━━━━━┛
 ```
 
 - `:between` - distribute children so there is equal space between children no space outside of the children
 
 ```
-+---------+
-|[child 1]|
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|[child 2]|
-|         |
-|         |
-|         |
-|         |
-|         |
-|         |
-|[child 3]|
-+---------+
+┏━━━━━━━━━┓
+┃[child 1]┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃[child 2]┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃[child 3]┃
+┗━━━━━━━━━┛
 ```
 
 - `:around` - distribute children so that they have equal spacing around them, space between two children is twice the space between an edge and a child.
 
 ```
-+---------+
-|         |
-|         |
-|[child 1]|
-|         |
-|         |
-|         |
-|         |
-|[child 2]|
-|         |
-|         |
-|         |
-|         |
-|[child 3]|
-|         |
-|         |
-+---------+
+┏━━━━━━━━━┓
+┃         ┃
+┃         ┃
+┃[child 1]┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃[child 2]┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃[child 3]┃
+┃         ┃
+┃         ┃
+┗━━━━━━━━━┛
 ```
 
 - `:evenly` - distribute children so there is even spacing between any two children (or space to the edge)
 
 ```
-+---------+
-|         |
-|         |
-|         |
-|[child 1]|
-|         |
-|         |
-|         |
-|[child 2]|
-|         |
-|         |
-|         |
-|[child 3]|
-|         |
-|         |
-|         |
-+---------+
+┏━━━━━━━━━┓
+┃         ┃
+┃         ┃
+┃         ┃
+┃[child 1]┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃[child 2]┃
+┃         ┃
+┃         ┃
+┃         ┃
+┃[child 3]┃
+┃         ┃
+┃         ┃
+┃         ┃
+┗━━━━━━━━━┛
 ```
 
 ##### Position
@@ -586,52 +586,70 @@ Child elements can flow in one of 4 directions
 
 ```
 # In a Box
-[child 1] [child 2] ... [child N]
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃[child 1] [child 2] ... [child N]┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 # In a Grid
-[child 1] [child 2] [child 3]
-[chiid 4] [child 5]
+┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
+┃[child 1]┃[child 2]┃[child 3]┃
+┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
+┃[chiid 4]┃[child 5]┃         ┃
+┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
 ```
 
 - `:r2l` right-to-left
 
 ```
 # In a Box
-[child N] [child N - 1] ... [child 1]
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃[child N] [child N - 1] ... [child 1]┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 # In a Grid
-[child 3] [child 2] [child 1]
-          [chiid 5] [child 4]
+┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
+┃[child 3]┃[child 2]┃[child 1]┃
+┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
+┃         ┃[chiid 5]┃[child 4]┃
+┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
 ```
 
 - `:t2b` top-to-bottom
 
 ```
 # In a Box
-[child 1]
-[child 2]
- ...
-[child N]
+┏━━━━━━━━━┓
+┃[child 1]┃
+┃[child 2]┃
+┃ ...     ┃
+┃[child N]┃
+┗━━━━━━━━━┛
 
 # In a Grid
-[child 1] [child 4]
-[child 2] [child 5]
-[child 3]
+┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
+┃[child 1]┃[child 3]┃[child 5]┃
+┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
+┃[child 2]┃[child 4]┃         ┃
+┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
 ```
 
 - `:b2t` bottom-to-top
 
 ```
 # In a Box
-[child N]
-[child N - 1]
- ...
-[child 1]
+┏━━━━━━━━━━━━━┓
+┃[child N]    ┃
+┃[child N - 1]┃
+┃ ...         ┃
+┃[child 1]    ┃
+┗━━━━━━━━━━━━━┛
 
 # In a Grid
-[child 3]
-[child 2] [child 5]
-[child 1] [child 4]
+┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
+┃[child 2]┃[child 4]┃         ┃
+┣━━━━━━━━━╋━━━━━━━━━╋━━━━━━━━━┫
+┃[child 1]┃[child 3]┃[child 5]┃
+┗━━━━━━━━━┻━━━━━━━━━┻━━━━━━━━━┛
 ```
 
 ##### Colors
