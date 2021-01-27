@@ -77,6 +77,16 @@ module WhirledPeas
         ContainerCoords.new(canvas, dimensions, settings)
       end
 
+      def justify_offset(containing_width)
+        if settings.align_center?
+          (dimensions.content_width - containing_width) / 2
+        elsif settings.align_right?
+          dimensions.content_width - containing_width
+        else
+          0
+        end
+      end
+
       def line_stroke(left_border, junc_border, right_border, &block)
         stroke = ''
         stroke += left_border if settings.border.left?

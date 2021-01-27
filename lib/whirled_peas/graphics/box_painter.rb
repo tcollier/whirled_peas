@@ -50,13 +50,9 @@ module WhirledPeas
       def paint_horizontally(canvas, &block)
         stroke_top = coords(canvas).content_top
         stroke_left = coords(canvas).content_left
-        total_child_width = 0
-        each_child { |c| total_child_width += c.dimensions.outer_width }
-        if settings.align_center?
-          stroke_left += (dimensions.content_width - total_child_width) / 2
-        elsif settings.align_right?
-          stroke_left += dimensions.content_width - total_child_width
-        end
+        children_width = 0
+        each_child { |c| children_width += c.dimensions.outer_width }
+        stroke_left += justify_offset(children_width)
         given_width = 0
         each_child do |child|
           child_width = [
@@ -80,19 +76,13 @@ module WhirledPeas
         stroke_left = coords(canvas).content_left
         given_height = 0
         each_child do |child|
-          if settings.align_center?
-            justify_offset = (dimensions.content_width - child.dimensions.outer_width) / 2
-          elsif settings.align_right?
-            justify_offset = dimensions.content_width - child.dimensions.outer_width
-          else
-            justify_offset = 0
-          end
+          left_offset = justify_offset(child.dimensions.outer_width)
           child_height = [
             child.dimensions.outer_height,
             dimensions.content_height - given_height
           ].min
           child_canvas = canvas.child(
-            stroke_left + justify_offset,
+            stroke_left + left_offset,
             stroke_top + given_height,
             [dimensions.content_width, child.dimensions.outer_width].min,
             child_height
