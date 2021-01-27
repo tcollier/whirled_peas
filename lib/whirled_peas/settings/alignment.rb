@@ -4,10 +4,13 @@ module WhirledPeas
       LEFT = :left
       CENTER = :center
       RIGHT = :right
+      BETWEEN = :between
+      AROUND = :around
+      EVENLY = :evenly
 
       DEFAULT = LEFT
 
-      VALID = [LEFT, CENTER, RIGHT]
+      VALID = [LEFT, CENTER, RIGHT, BETWEEN, AROUND, EVENLY]
       private_constant :VALID
 
       def self.validate!(align)

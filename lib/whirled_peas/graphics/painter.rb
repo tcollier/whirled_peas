@@ -15,7 +15,7 @@ module WhirledPeas
       end
 
       def inspect
-        "#{self.class.name.split('::').last}(name=#{name})"
+        "#{self.class.name.split('::').last}(name=#{name.inspect})"
       end
     end
     private_constant :Painter

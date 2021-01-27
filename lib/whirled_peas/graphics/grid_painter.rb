@@ -9,8 +9,8 @@ module WhirledPeas
         return unless canvas.writable?
         each_child.with_index do |child, index|
           col_index, row_index = grid_cell(index)
-          content_left = coords(canvas).content_left(col_index) +
-            justify_offset(child.dimensions.outer_width)
+          start_offset, _ = justify_offset(child.dimensions.outer_width)
+          content_left = coords(canvas).content_left(col_index) + start_offset
           child_canvas = canvas.child(
             content_left,
             coords(canvas).content_top(row_index),

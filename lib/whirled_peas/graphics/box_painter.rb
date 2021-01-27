@@ -52,7 +52,8 @@ module WhirledPeas
         stroke_left = coords(canvas).content_left
         children_width = 0
         each_child { |c| children_width += c.dimensions.outer_width }
-        stroke_left += justify_offset(children_width)
+        start_offset, spacing_offset = justify_offset(children_width)
+        stroke_left += start_offset
         given_width = 0
         each_child do |child|
           child_width = [
@@ -66,7 +67,7 @@ module WhirledPeas
             [dimensions.content_height, child.dimensions.outer_height].min
           )
           child.paint(child_canvas, &block)
-          given_width += child_width
+          given_width += child_width + spacing_offset
           break if given_width == dimensions.content_width
         end
       end
@@ -76,13 +77,13 @@ module WhirledPeas
         stroke_left = coords(canvas).content_left
         given_height = 0
         each_child do |child|
-          left_offset = justify_offset(child.dimensions.outer_width)
+          start_offset, _ = justify_offset(child.dimensions.outer_width)
           child_height = [
             child.dimensions.outer_height,
             dimensions.content_height - given_height
           ].min
           child_canvas = canvas.child(
-            stroke_left + left_offset,
+            stroke_left + start_offset,
             stroke_top + given_height,
             [dimensions.content_width, child.dimensions.outer_width].min,
             child_height

@@ -246,7 +246,7 @@ The available settigs are
 
 | Setting      | Description                                                                      | Default    | Availability          | Inherited            |
 | ------------ | -------------------------------------------------------------------------------- | ---------- | --------------------- | -------------------- |
-| `align`      | Justifies the content (allowed values: `:left`, `:center`, `:right`)             | `:left`    | `Box`, `Grid`         | No                   |
+| `align`      | Justifies the content in the horizontal direction                                | `:left`    | `Box`, `Grid`         | No                   |
 | `bg_color`   | Background color (see [Colors](#colors))                                         |            | `Box`, `Grid`, `Text` | Yes                  |
 | `bold`       | `true` makes the font bold                                                       | `false`    | `Box`, `Grid`, `Text` | Yes                  |
 | `border`     | Set the border for the lements                                                   | none       | `Box`, `Grid`,        | Only style and color |
@@ -262,6 +262,58 @@ The available settigs are
 | `title_font` | Font used for "large" text (see [Large Text](#large-text), ignores `underline`)  |            | `Text`                | No                   |
 | `underline`  | `true` underlines the font                                                       | `false`    | `Box`, `Grid`, `Text` | Yes                  |
 | `width`      | Override the calculated width of an element's content area                       |            | `Box`, `Grid`         | No                   |
+
+##### Alignment
+
+The `align` setting takes one of several values
+
+- `:left` - align content starting at the leftmost edge of the container's content area
+
+```
++---------------------------------------+
+|[child 1][child 2][child 3]            |
++---------------------------------------+
+```
+
+- `:right` - align content starting at the rightmost edge of the container's content area
+
+```
++---------------------------------------+
+|            [child 1][child 2][child 3]|
++---------------------------------------+
+```
+
+- `:center` - align content starting in the center of the container's content area
+
+```
++---------------------------------------+
+|      [child 1][child 2][child 3]      |
++---------------------------------------+
+```
+
+- `:between` - distribute children so there is equal space between children no space outside of the children
+
+```
++---------------------------------------+
+|[child 1]      [child 2]      [child 3]|
++---------------------------------------+
+```
+
+- `:around` - distribute children so that they have equal spacing around them, space between two children is twice the space between an edge and a child.
+
+```
++---------------------------------------+
+|  [child 1]    [child 2]    [child 3]  |
++---------------------------------------+
+```
+
+- `:evenly` - distribute children so there is even spacing between any two children (or space to the edge)
+
+```
++---------------------------------------+
+|   [child 1]   [child 2]   [child 3]   |
++---------------------------------------+
+```
 
 ##### Position
 

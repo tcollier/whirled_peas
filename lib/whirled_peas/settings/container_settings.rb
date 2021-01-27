@@ -28,6 +28,18 @@ module WhirledPeas
         align == Alignment::RIGHT
       end
 
+      def align_between?
+        align == Alignment::BETWEEN
+      end
+
+      def align_around?
+        align == Alignment::AROUND
+      end
+
+      def align_evenly?
+        align == Alignment::EVENLY
+      end
+
       def align=(align)
         @_align = Alignment.validate!(align)
       end

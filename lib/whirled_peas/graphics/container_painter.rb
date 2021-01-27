@@ -79,11 +79,20 @@ module WhirledPeas
 
       def justify_offset(containing_width)
         if settings.align_center?
-          (dimensions.content_width - containing_width) / 2
+          [(dimensions.content_width - containing_width) / 2, 0]
         elsif settings.align_right?
-          dimensions.content_width - containing_width
+          [dimensions.content_width - containing_width, 0]
+        elsif settings.align_between?
+          return [0, 0] if num_children == 1
+          [0, (dimensions.content_width - containing_width) / (num_children - 1)]
+        elsif settings.align_around?
+          full_spacing = (dimensions.content_width - containing_width) / num_children
+          [full_spacing / 2, full_spacing]
+        elsif settings.align_evenly?
+          spacing = (dimensions.content_width - containing_width) / (num_children + 1)
+          [spacing, spacing]
         else
-          0
+          [0, 0]
         end
       end
 

@@ -4,10 +4,12 @@ class TemplateFactory
   def build(*)
     WhirledPeas.template do |composer|
       composer.add_box do |composer, settings|
-        settings.width = 3
-        settings.align = :right
         settings.full_border
-        '123456'
+        settings.align = :between
+        settings.width = 15
+        composer.add_text { 'A' }
+        composer.add_text { 'B' }
+        composer.add_text { 'C' }
       end
     end
   end
