@@ -117,7 +117,7 @@ module WhirledPeas
       end
 
       def inspect
-        "Canvas(left=#{left}, top=#{top}, width=#{width}, height=#{height})"
+        "Canvas(left=#{left}, top=#{top}, width=#{width}, height=#{height}, start_left=#{start_left}, start_top=#{start_top})"
       end
     end
   end

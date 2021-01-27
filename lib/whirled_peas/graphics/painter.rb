@@ -13,6 +13,10 @@ module WhirledPeas
 
       def dimensions
       end
+
+      def inspect
+        "#{self.class.name.split('::').last}(name=#{name})"
+      end
     end
     private_constant :Painter
   end
