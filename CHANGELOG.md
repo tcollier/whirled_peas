@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.1 - 2021-01-27
+
+- [b98781d](https://github.com/tcollier/whirled_peas/tree/b98781de23a24b596955f25cfc48936c0cc1efac): Fix num_cols bug for vertical grid flow
+
 ## v0.7.0 - 2021-01-27
 
 BREAKING: the settings for the template now fills the full screen and disallows margin.
