@@ -1,6 +1,14 @@
 # Changelog
 
-## v0.5.0 - 2021-01-25
+## v0.7.0 - 2021-01-27
+
+BREAKING: the settings for the template now fills the full screen and disallows margin.
+
+- [b7c12c2](https://github.com/tcollier/whirled_peas/tree/b7c12c2c34d7077b9c2496d05ddd0c6d1eb90699): Update template to fill full screen with border sizing
+- [963b819](https://github.com/tcollier/whirled_peas/tree/963b8196f0d046ba03c893f07e5578bf8c88b7a3): Implement vertical alignment
+- [4bddd54](https://github.com/tcollier/whirled_peas/tree/4bddd54bec5c8f93d145c285379c1816f313f35e): Add `between`, `around`, and `evenly` alignments
+
+## v0.6.0 - 2021-01-25
 
 - [73df2af](https://github.com/tcollier/whirled_peas/tree/73df2af1f1eac37fe94f720dce16da1ed568dade): Add support for scroll bars along both axes
 - [f4f44e1](https://github.com/tcollier/whirled_peas/tree/f4f44e1ff6c75ed03cd682e3fa9921401dcd2d00): Implement remaining 3 flow directions for grids
