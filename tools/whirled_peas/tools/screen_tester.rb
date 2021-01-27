@@ -114,7 +114,10 @@ module WhirledPeas
 
       def debug
         with_template_factory do |template_factory|
+          orig_debug = Graphics.debug
+          Graphics.debug = true
           render_screen(template_factory, StringIO.new)
+          Graphics.debug = orig_debug
         end
       end
 

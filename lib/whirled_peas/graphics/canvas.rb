@@ -24,6 +24,11 @@ module WhirledPeas
       end
 
       def child(start_left, start_top, child_width, child_height)
+        Graphics.debugger(
+          proc do
+            "Create child: #{self.inspect}.child(start_left=#{start_left}, start_top=#{start_top}, width=#{child_width}, height=#{child_height})"
+          end
+        )
         child_left = start_left
         child_top = start_top
         if child_left >= left + width
@@ -45,7 +50,7 @@ module WhirledPeas
             child_top = top
           end
           child_height = [height - (child_top - top), child_height].min
-          self.class.new(
+          child_canvas = self.class.new(
             child_left,
             child_top,
             child_width,
@@ -53,12 +58,19 @@ module WhirledPeas
             start_left,
             start_top
           )
+          Graphics.debugger(proc { "  -> #{child_canvas.inspect}" })
+          child_canvas
         end
       end
 
       # Yields a single line of formatted characters positioned on the canvas,
       # verifying only characters within the canvas are included.
       def stroke(stroke_left, stroke_top, raw, formatting=[], &block)
+        Graphics.debugger(
+          proc do
+            "Stroke: #{self.inspect}.stroke(left=#{stroke_left}, top=#{stroke_top}, length=#{raw.length})"
+          end
+        )
         if stroke_left >= left + width
           # The stroke starts to the right of the canvas
           fstring = Utils::FormattedString.blank
@@ -88,6 +100,11 @@ module WhirledPeas
           end_index = start_index + visible_length - 1
           fstring = Utils::FormattedString.new(raw[start_index..end_index], formatting)
         end
+        Graphics.debugger(
+          proc do
+            "  -> Stroke(left=#{stroke_left}, top=#{stroke_top}, length=#{fstring.length})"
+          end
+        )
         yield stroke_left, stroke_top, fstring
       end
 
