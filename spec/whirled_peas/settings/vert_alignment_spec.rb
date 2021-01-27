@@ -1,12 +1,12 @@
-require 'whirled_peas/settings/alignment'
+require 'whirled_peas/settings/vert_alignment'
 
 module WhirledPeas
   module Settings
-    RSpec.describe Alignment do
+    RSpec.describe VertAlignment do
       describe '.validate!' do
-        specify { expect(described_class.validate!(:left)).to eq(:left) }
-        specify { expect(described_class.validate!(:center)).to eq(:center) }
-        specify { expect(described_class.validate!(:right)).to eq(:right) }
+        specify { expect(described_class.validate!(:top)).to eq(:top) }
+        specify { expect(described_class.validate!(:middle)).to eq(:middle) }
+        specify { expect(described_class.validate!(:bottom)).to eq(:bottom) }
         specify { expect(described_class.validate!(:between)).to eq(:between) }
         specify { expect(described_class.validate!(:around)).to eq(:around) }
         specify { expect(described_class.validate!(:evenly)).to eq(:evenly) }
@@ -14,7 +14,7 @@ module WhirledPeas
         specify do
           expect do
             described_class.validate!(:garbage)
-          end.to raise_error(ArgumentError, 'Unsupported alignment: :garbage')
+          end.to raise_error(ArgumentError, 'Unsupported vertical alignment: :garbage')
         end
       end
     end

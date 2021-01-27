@@ -1,3 +1,4 @@
+require_relative 'alignment'
 require_relative 'border'
 require_relative 'display_flow'
 require_relative 'element_settings'
@@ -6,6 +7,7 @@ require_relative 'padding'
 require_relative 'position'
 require_relative 'scrollbar'
 require_relative 'sizing'
+require_relative 'vert_alignment'
 
 module WhirledPeas
   module Settings
@@ -42,6 +44,38 @@ module WhirledPeas
 
       def align=(align)
         @_align = Alignment.validate!(align)
+      end
+
+      def valign
+        @_valign || VertAlignment::DEFAULT
+      end
+
+      def valign_top?
+        valign == VertAlignment::TOP
+      end
+
+      def valign_middle?
+        valign == VertAlignment::MIDDLE
+      end
+
+      def valign_bottom?
+        valign == VertAlignment::BOTTOM
+      end
+
+      def valign_between?
+        valign == VertAlignment::BETWEEN
+      end
+
+      def valign_around?
+        valign == VertAlignment::AROUND
+      end
+
+      def valign_evenly?
+        valign == VertAlignment::EVENLY
+      end
+
+      def valign=(valign)
+        @_valign = VertAlignment.validate!(valign)
       end
 
       def set_border(

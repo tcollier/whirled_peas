@@ -77,7 +77,7 @@ module WhirledPeas
         ContainerCoords.new(canvas, dimensions, settings)
       end
 
-      def justify_offset(containing_width)
+      def horiz_justify_offset(containing_width)
         if settings.align_center?
           [(dimensions.content_width - containing_width) / 2, 0]
         elsif settings.align_right?
@@ -90,6 +90,25 @@ module WhirledPeas
           [full_spacing / 2, full_spacing]
         elsif settings.align_evenly?
           spacing = (dimensions.content_width - containing_width) / (num_children + 1)
+          [spacing, spacing]
+        else
+          [0, 0]
+        end
+      end
+
+      def vert_justify_offset(containing_height)
+        if settings.valign_middle?
+          [(dimensions.content_height - containing_height) / 2, 0]
+        elsif settings.valign_bottom?
+          [dimensions.content_height - containing_height, 0]
+        elsif settings.valign_between?
+          return [0, 0] if num_children == 1
+          [0, (dimensions.content_height - containing_height) / (num_children - 1)]
+        elsif settings.valign_around?
+          full_spacing = (dimensions.content_height - containing_height) / num_children
+          [full_spacing / 2, full_spacing]
+        elsif settings.valign_evenly?
+          spacing = (dimensions.content_height - containing_height) / (num_children + 1)
           [spacing, spacing]
         else
           [0, 0]
