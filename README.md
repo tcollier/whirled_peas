@@ -543,8 +543,8 @@ The border settings consist of 6 boolean values (border are either width 1 or no
 - `border.bottom=(flag)` - show/hide bottom border
 - `border.inner_horiz=(flag)` - show/hide inner horizontal border (dividing grid rows)
 - `border.inner_vert=(flag)` - show/hide inner vertical border (dividing grid columns)
-- `border.color=(flag)` - set the border color
-- `border.style=(flag)` - set the border style
+- `border.color=(text_color)` - set the border color
+- `border.style=(style)` - set the border style
 
 Available border styles are
 
