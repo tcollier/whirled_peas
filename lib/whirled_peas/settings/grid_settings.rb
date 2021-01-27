@@ -8,7 +8,11 @@ module WhirledPeas
       attr_accessor :num_cols
 
       def set_scrollbar(*)
-        raise NotImplemented, 'Grids do not currently support scrollbars'
+        raise NotImplementedError, 'Grids do not support scrollbars'
+      end
+
+      def sizing=(*)
+        raise NotImplementedError, 'Grids only support the default sizing model'
       end
     end
   end

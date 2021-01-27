@@ -19,10 +19,6 @@ module WhirledPeas
         specify do
           expect { subject.flow = :garbage }.to raise_error(ArgumentError, 'Unsupported display flow: :garbage')
         end
-
-        specify do
-          expect { subject.sizing = :garbage }.to raise_error(ArgumentError, 'Unsupported sizing model: :garbage')
-        end
       end
 
       context 'inherited attributes' do

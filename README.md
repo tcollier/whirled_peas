@@ -258,7 +258,7 @@ The available settigs are
 | `padding`    | Set the (left, top, right, bottom) padding of the element                        | `0`        | `Box`, `Grid`         | No                   |
 | `position`   | Set the (left, top) position of the element relative to parent content area      | `0`        | `Box`, `Grid`         | No                   |
 | `scrollbar`  | Display a scroll bar for vertical or horizontal scrolling                        |            | `Box`                 | No                   |
-| `sizing`     | Sizing model (`:content` or `:border`) used in conjunction with `width`/`hieght` | `:content` | `Box`, `Grid`         | No                   |
+| `sizing`     | Sizing model (`:content` or `:border`) used in conjunction with `width`/`hieght` | `:content` | `Box`                 | No                   |
 | `title_font` | Font used for "large" text (see [Large Text](#large-text), ignores `underline`)  |            | `Text`                | No                   |
 | `underline`  | `true` underlines the font                                                       | `false`    | `Box`, `Grid`, `Text` | Yes                  |
 | `width`      | Override the calculated width of an element's content area                       |            | `Box`, `Grid`         | No                   |
