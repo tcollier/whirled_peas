@@ -18,7 +18,7 @@
      ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝    ╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝
 ```
 
-Easily create terminal-based graphics to visual the execution of your code. Whirled Peas offers templating inspired by HTML and CSS and provides a lightweight tie-in for your code to produce visual animations with these templates.
+Easily create terminal-based graphics to visualize the execution of your code. Whirled Peas offers templating inspired by HTML and CSS and provides a lightweight tie-in for your code to produce visual animations with these templates.
 
 ## Installation
 
