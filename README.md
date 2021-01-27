@@ -531,6 +531,8 @@ Scroll settings dictate whether the scrollbar will be shown when child content i
 - `scrollbar.horiz=(flag)` - show/hide the horizontal scrollbar
 - `scrollbar.vert=(flag)` - show/hide the vertical scrollbar
 
+Note: there is a know bug with scrollbars and `center`/`right` alignments. Using `left` alignment is the supported workaround
+
 ##### Border
 
 The border settings consist of 6 boolean values (border are either width 1 or not shown), the 4 obvious values (`left`, `top`, `right`, and `bottom`) along with 2 other values for inner borders (`inner_horiz` and `inner_vert`) in a grid. A border also has a foreground color (defaults to `:white`) and a style. The background color is determined by the `bg_color` of the element. Border values can be set with

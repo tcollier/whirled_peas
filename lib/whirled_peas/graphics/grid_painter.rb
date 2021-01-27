@@ -58,7 +58,7 @@ module WhirledPeas
           col_index, row_index = [index % dimensions.num_cols, index / dimensions.num_cols]
           col_index = dimensions.num_cols - col_index - 1 if settings.reverse_flow?
         else
-          col_index, row_index = [index / dimensions.num_cols, index % dimensions.num_cols]
+          col_index, row_index = [index / dimensions.num_rows, index % dimensions.num_rows]
           row_index = dimensions.num_rows - row_index - 1 if settings.reverse_flow?
         end
         [col_index, row_index]
