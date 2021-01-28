@@ -16,7 +16,7 @@ def print_usage(exit_code=0)
   puts '    --view-pending     interactively display and optionally save rendered output for each pending test'
   puts '    --view-failed      interactively display and optionally save rendered output for each faiing test'
   puts
-  puts 'If the file provide is a screen test, the supported options are'
+  puts 'If a screen test file is provided as the first argument, the supported options are'
   puts '    --run        run screen test for given file'
   puts '    --view       interactively display and optionally save the file\'s test output'
   puts '    --template   print out template tree for the test template'

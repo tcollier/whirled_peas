@@ -1,5 +1,3 @@
-require 'logger'
-
 require 'whirled_peas/errors'
 require 'whirled_peas/config'
 require 'whirled_peas/frame'

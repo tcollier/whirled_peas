@@ -1,4 +1,5 @@
 require 'json'
+require 'logger'
 
 require 'whirled_peas/graphics/debugger'
 require 'whirled_peas/graphics/renderer'
@@ -8,8 +9,29 @@ require 'whirled_peas/frame/event_loop'
 require 'whirled_peas/frame/producer'
 
 module WhirledPeas
+  # Support code for the command line script (`whirled_peas`) distributed with the gem.
   class Command
     DEFAULT_LOG_LEVEL = Logger::INFO
+
+    # This formatter expects a loggers to send `progname` in each log call. This value
+    # should be an all uppercase version of the module or class that is invoking the
+    # logger. Ruby's logger supports setting this value on a per-log statement basis
+    # when the log message is passed in through a block:
+    #
+    #   logger.<level>(progname, &block)
+    #
+    # E.g.
+    #
+    #   class Foo
+    #     def bar
+    #       logger.warn('FOO') { 'Something fishy happened in #bar' }
+    #     end
+    #   end
+    #
+    # The block format also has the advantage that the evaluation of the block only
+    # occurs if the message gets logged. So expensive to calculate debug statements
+    # will not impact the performance of the application if the log level is INFO or
+    # higher.
     DEFAULT_FORMATTER = proc do |severity, datetime, progname, msg|
       if msg.is_a?(Exception)
         msg = %Q(#{msg.class}: #{msg.to_s}\n    #{msg.backtrace.join("\n    ")})
@@ -17,6 +39,10 @@ module WhirledPeas
       "[#{severity}] #{datetime.strftime('%Y-%m-%dT%H:%M:%S.%L')} (#{progname}) - #{msg}\n"
     end
 
+    # Returns the name of the command as expected by the command line script. By convention,
+    # this name is snake case and the class name is camel case with the word `Command` appened,
+    # e.g. the command `do_something` would be implemented by `WhirledPeas::DoSomethingCommand`,
+    # which needs to inherit from this class.
     def self.command_name
       self.name.split('::').last.sub(/Command$/, '').gsub(/([a-z])([A-Z])/, '\1_\2').downcase
     end
@@ -34,17 +60,20 @@ module WhirledPeas
       @args = args
     end
 
+    # @return [true|false] true if all of the required options were provided
     def valid?
       @error_text = nil
       validate!
       @error_text.nil?
     end
 
+    # Display the validation error and print a usage statement
     def print_error
       puts @error_text if @error_text
       print_usage
     end
 
+    # Commands that inherit from this class must override this method
     def start
     end
 
@@ -54,11 +83,14 @@ module WhirledPeas
       puts "Usage: #{$0} #{self.class.command_name}"
     end
 
+    # Commands that inherit from this class can override this method to validate
+    # command line options
     def validate!
       # Set @error_text if the options are not valid
     end
   end
 
+  # List title fonts installed on the user's system and print sample text in each.
   class TitleFontsCommand < Command
     def start
       require 'whirled_peas/utils/title_font'
@@ -71,6 +103,9 @@ module WhirledPeas
     end
   end
 
+  # Abstract command that expects a config file as an argument and then requires the
+  # specified file. All implementing classes must call `super` if they override `start`
+  # or `validate!`
   class ConfigCommand < Command
     def start
       require config
@@ -81,14 +116,18 @@ module WhirledPeas
     attr_reader :config
 
     def validate!
-      if args.length == 0
+      # Note that the main script consumes the <command> argument from ARGV, so we
+      # expect the config file to be at index 0.
+      config_file = args.first
+      if config_file.nil?
         @error_text = "#{self.class.command_name} requires a config file"
-      elsif !File.exist?(args[0])
-        @error_text = "File not found: #{args[0]}"
-      elsif args[0][-3..-1] != '.rb'
+      elsif !File.exist?(config_file)
+        @error_text = "File not found: #{config_file}"
+      elsif config_file[-3..-1] != '.rb'
         @error_text = 'Config file should be a .rb file'
       else
-        @config = args[0][0] == '/' ? args[0] : File.join(Dir.pwd, args[0])
+        # We think we have a valid ruby config file, set the absolute path to @config
+        @config = config_file[0] == '/' ? config_file : File.join(Dir.pwd, config_file)
       end
     end
 
@@ -97,6 +136,7 @@ module WhirledPeas
     end
   end
 
+  # Start the animation
   class StartCommand < ConfigCommand
     LOGGER_ID = 'MAIN'
 
@@ -114,7 +154,7 @@ module WhirledPeas
         begin
           WhirledPeas.config.driver.start(producer)
         rescue => e
-          logger.warn(LOGGER_ID) { 'Driver exited with error, terminating producer...' }
+          logger.warn(LOGGER_ID) { 'Driver exited with error...' }
           logger.error(LOGGER_ID) { e }
           raise
         end
@@ -122,6 +162,9 @@ module WhirledPeas
     end
   end
 
+  # Run the driver, but print out the name, duration, and arguments of each frame.
+  # This can a useful way to debug the driver or to get the name and arguments of a
+  # frame to feed to the `play_frame` command
   class ListFramesCommand < ConfigCommand
     def start
       super
@@ -132,6 +175,8 @@ module WhirledPeas
     end
   end
 
+  # Display the single rendered frame with the specified arguments. If the `--template`
+  # argument is provided, print out the template tree instead of the rendered frame.
   class PlayFrameCommand < ConfigCommand
     def start
       super
@@ -157,6 +202,7 @@ module WhirledPeas
 
     def validate!
       super
+      # Recall that the main script consumed the first argument from ARGV
       if !@error_text.nil?
         return
       elsif args.length < 2
@@ -176,6 +222,8 @@ module WhirledPeas
     end
   end
 
+  # Display the single rendered frame from the loading template. If the `--template`
+  # argument is provided, print out the template tree instead of the rendered frame.
   class LoadingCommand < ConfigCommand
     def start
       super

@@ -5,6 +5,8 @@ require_relative 'painter'
 
 module WhirledPeas
   module Graphics
+    # Abstract Painter for containers. Containers (as the name implies) contain other child
+    # elements and must delegate painting of the children to the children themselves.
     class ContainerPainter < Painter
       PADDING = ' '
 
@@ -13,38 +15,65 @@ module WhirledPeas
         @children = []
       end
 
+      # Paint the common attributes of containers (e.g. border and background color). Any
+      # class that inherits from this one should call `super` at the start of its #paint
+      # method, before painting its children.
       def paint(canvas, left, top, &block)
         return unless canvas.writable?
         return unless needs_printing?
         canvas_coords = coords(left, top)
+
+        # Paint the border, background color, and scrollbar starting from the top left
+        # border position, moving down row by row until we reach the bottom border
+        # position
         stroke_left = canvas_coords.border_left
         stroke_top = canvas_coords.border_top
+
+        # All strokes will have the same formatting options
         formatting = [*settings.border.color, *settings.bg_color]
+
+        # Paint the top border if the settings call for it
         if settings.border.top?
           canvas.stroke(stroke_left, stroke_top, top_border_stroke(canvas_coords), formatting, &block)
           stroke_top += 1
         end
+        # Precalculate the middle border container grids with more than 1 row
         middle_border = dimensions.num_rows > 1 ? middle_border_stroke(canvas_coords) : ''
+
+        # Paint each grid row by row
         dimensions.num_rows.times do |row_num|
+          # In a grid with N rows, we will need to paint N - 1 inner horizontal borders.
+          # This code treats the inner horizontal border as the top of each row except for
+          # the first one.
           if row_num > 0 && settings.border.inner_horiz?
             canvas.stroke(stroke_left, stroke_top, middle_border, formatting, &block)
             stroke_top += 1
           end
+
+          # Paint the interior of each row (horizontal borders, veritical scroll bar and
+          # background color for the padding and content area)
           canvas_coords.inner_grid_height.times do |row_within_cell|
             canvas.stroke(stroke_left, stroke_top, content_line_stroke(canvas_coords, row_within_cell), formatting, &block)
             stroke_top += 1
           end
+
+          # Paint the horizontal scroll bar is the settings call for it
           if settings.scrollbar.horiz?
             canvas.stroke(stroke_left, stroke_top, bottom_scroll_stroke(canvas_coords), formatting, &block)
             stroke_top += 1
           end
         end
+
+        # Paint the bottom border if the settings call for it
         if settings.border.bottom?
           canvas.stroke(stroke_left, stroke_top, bottom_border_stroke(canvas_coords), formatting, &block)
           stroke_top += 1
         end
       end
 
+      # Tightly manage access to the children (rather than simply exposing the underlying
+      # array). This allows subclasses to easily modify behavior based on that element's
+      # specific settings.
       def add_child(child)
         children << child
       end
@@ -65,6 +94,8 @@ module WhirledPeas
 
       attr_reader :children
 
+      # Determine if there is anything to print for the container (this does not accont for
+      # children, just the border, scrollbar, and background color)
       def needs_printing?
         return true if settings.bg_color
         return true if settings.border.outer?
@@ -73,10 +104,15 @@ module WhirledPeas
         settings.scrollbar.horiz? || settings.scrollbar.vert?
       end
 
+      # Return an object that allows easy access to important coordinates within the container,
+      # e.g. the left position where the left border is printed
       def coords(left, top)
         ContainerCoords.new(dimensions, settings, left, top)
       end
 
+      # @return [Array<Integer>] a two-item array, the first being the amount of horizontal
+      #   spacing to paint *before the first* child and the second being the amount of spacing
+      #   to paint *between each* child
       def horiz_justify_offset(containing_width)
         if settings.align_center?
           [(dimensions.content_width - containing_width) / 2, 0]
@@ -96,6 +132,9 @@ module WhirledPeas
         end
       end
 
+      # @return [Array<Integer>] a two-item array, the first being the amount of vertical
+      #   spacing to paint *above the first* child and the second being the amount of spacing
+      #   to paint *between each* child
       def vert_justify_offset(containing_height)
         if settings.valign_middle?
           [(dimensions.content_height - containing_height) / 2, 0]
@@ -115,6 +154,16 @@ module WhirledPeas
         end
       end
 
+      # Return a stroke for one line of the container
+      #
+      # @param left_border [String] the character to print as the first character if there
+      #   is a left border
+      # @param junc_border [String] the character to print as the junction between two grid
+      #   columns if there is an inner vertical border
+      # @param right_border [String] the character to print as the last character if there
+      #   is a right border
+      # @block [String] the block should yield a string that represents the interior
+      #   (including padding) of a grid cell
       def line_stroke(left_border, junc_border, right_border, &block)
         stroke = ''
         stroke += left_border if settings.border.left?
@@ -126,6 +175,7 @@ module WhirledPeas
         stroke
       end
 
+      # Return the stroke for the top border
       def top_border_stroke(canvas_coords)
         line_stroke(
           settings.border.style.top_left,
@@ -136,6 +186,7 @@ module WhirledPeas
         end
       end
 
+      # Return the stroke for an inner horizontal border
       def middle_border_stroke(canvas_coords)
         line_stroke(
           settings.border.style.left_junc,
@@ -146,6 +197,7 @@ module WhirledPeas
         end
       end
 
+      # Return the stroke for the bottom border
       def bottom_border_stroke(canvas_coords)
         line_stroke(
           settings.border.style.bottom_left,
@@ -156,6 +208,7 @@ module WhirledPeas
         end
       end
 
+      # Return the stroke for a grid row between any borders
       def content_line_stroke(canvas_coords, row_within_cell)
         line_stroke(
           settings.border.style.left_vert,
@@ -180,6 +233,7 @@ module WhirledPeas
         end
       end
 
+      # Return the stroke for the horizontal scroll bar
       def bottom_scroll_stroke(canvas_coords)
         line_stroke(
           settings.border.style.left_vert,
@@ -197,6 +251,7 @@ module WhirledPeas
         end
       end
 
+      # Contants to paint scrollbars
       GUTTER = ' '
       HORIZONTAL = %w[▗ ▄ ▖]
       VERTICAL = %w[
@@ -205,16 +260,33 @@ module WhirledPeas
         ▝
       ]
 
+      # Determine the character to paint the horizontal scroll bar with for the given column
+      #
+      # @see #scroll_char for more details
       def horiz_scroll_char(col_count, viewable_col_count, first_visible_col, curr_col)
         scroll_char(col_count, viewable_col_count, first_visible_col, curr_col, HORIZONTAL)
       end
 
+      # Determine the character to paint the vertical scroll bar with for the given row
+      #
+      # @see #scroll_char for more details
       def vert_scroll_char(row_count, viewable_row_count, first_visible_row, curr_row)
         scroll_char(row_count, viewable_row_count, first_visible_row, curr_row, VERTICAL)
       end
 
       private
 
+      # Determine which character to paint a for a scrollbar
+      #
+      # @param total_count [Integer] total number of rows/columns in the content
+      # @param viewable_count [Integer] number of rows/columns visible in the viewport
+      # @param first_visible [Integer] zero-based index of the first row/column that is visible
+      #   in the viewport
+      # @param curr [Integer] zero-based index of the row/column (relative to the first visible
+      #   row/column) that the painted character is being requested for
+      # @param chars [Array<String>] an array with three 1-character strings, the frist is the
+      #   "second half" scrollbar character, the second is the "full" scrollbar character, and
+      #   the third is the "first half" scrollbar character.
       def scroll_char(total_count, viewable_count, first_visible, curr, chars)
         return GUTTER unless total_count > 0 && viewable_count > 0
         # The scroll handle has the exact same relative size and position in the scroll gutter
@@ -239,6 +311,25 @@ module WhirledPeas
         #    |                             *                   *
         #    +---------1---------2---------3*********4*********+
         #                                  |...........********|
+        #
+        # Returning to the first example, we can match up the arguments to this method to the
+        # diagram
+        #
+        #                       total_count = 50
+        #    |<----------------------------------------------->|
+        #    |                                                 |
+        #    |                veiwable_count = 20              |
+        #    |               |<----------------->|             |
+        #    ↓               ↓                   ↓             ↓
+        #    +---------1-----****2*********3******---4---------+
+        #    |               *                   *             |
+        #    |   hidden      *     viewable      *   hidden    |
+        #    |               *                   *             |
+        #    +---------1-----****2*********3******---4---------+
+        #                    |......****?***.....|
+        #                    ↑          ↑
+        #      first_visible = 16       |
+        #                             curr = 11
 
         # The first task of determining how much of the handle is visible in a row/column is to
         # calculate the range (as a precentage of the total) of viewable items
