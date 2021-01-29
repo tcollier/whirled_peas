@@ -28,7 +28,7 @@ module WhirledPeas
       BRIGHT_OFFSET = 60
 
       class << self
-        def with_screen(output, width: nil, height: nil, &block)
+        def with_screen(output=STDOUT, width: nil, height: nil, &block)
           require 'highline'
           unless width && height
             width, height = HighLine.new.terminal.terminal_size
