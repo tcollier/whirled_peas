@@ -119,6 +119,7 @@ end
 #   through all frames (defaults to `:linear`)
 # @param effect [Symbol] (optional) how to apply the easing function (defaults
 #   to `:in_out`, also available are `:in` and `:out`)
+# @yield [Frameset] instance that provides `#add_frame(name, args:)`
 def frameset(duration, easing:, effect:, &block)
 end
 ```
