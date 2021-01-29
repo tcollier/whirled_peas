@@ -1115,16 +1115,15 @@ Usage: screen_test [file] [options]
 If not file or options are provide, all tests are run
 
 If no file is provided, the supported options are
---help print this usage statement and exit
---view-pending interactively display and optionally save rendered output for each pending test
---view-failed interactively display and optionally save rendered output for each faiing test
+    --help             print this usage statement and exit
+    --view-pending     interactively display and optionally save rendered output for each pending test
+    --view-failed      interactively display and optionally save rendered output for each faiing test
 
-If the file provide is a screen test, the supported options are
---run run screen test for given file
---view interactively display and optionally save the file's test output
---template print out template tree for the test template
---debug render the test template without displying it, printing out debug information
-
+If a screen test file is provided as the first argument, the supported options are
+    --run        run screen test for given file
+    --view       interactively display and optionally save the file's test output
+    --template   print out template tree for the test template
+    --debug      render the test template without displying it, printing out debug information
 ```
 
 ## Contributing
