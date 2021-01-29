@@ -93,16 +93,33 @@ def start(producer)
 end
 ```
 
-The producer provides a single method
+The producer provides the following methods
 
 ```ruby
-# Send frame events to the UI
+# Add a frame to be displayed
 #
 # @param name [String] application defined name for the frame. The template factory will be provided this name
 # @param duration [Number] time in seconds this frame should be displayed for (defaults to 1 frame)
 # @param args [Hash<Symbol, Object>] key value pairs to send as arguments to the template factory
 def add_frame(name, duration:, args:)
-  # implementation
+end
+
+# Create and yield a frameset instance that allows applications to add multiple frames to play over the
+# given duration. Adding frames to the yielded frameset will result in playback that is eased by the
+# gvien `easing` and `effect` arguments (default is `:linear` easing)
+def frameset(duration, easing:, effect:, &block)
+end
+```
+
+A frameset instance provides one method
+
+```ruby
+# Add a frame to be displayed, the duration will be determine by the number of frames in the frameset along
+# with the duration and easing of the frameset
+#
+# @param name [String] application defined name for the frame. The template factory will be provided this name
+# @param args [Hash<Symbol, Object>] key value pairs to send as arguments to the template factory
+def add_frame(name, args:)
 end
 ```
 

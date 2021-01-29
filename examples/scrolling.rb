@@ -42,7 +42,7 @@ end
 class Application
   def start(producer)
     producer.frameset(5, easing: :bezier) do |fs|
-      53.times { |i| fs.add_frame('intro', { top: -i }) }
+      53.times { |i| fs.add_frame('intro', args: { top: -i }) }
     end
     producer.add_frame('hold', duration: 1, args: { top: -52})
   end

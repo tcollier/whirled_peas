@@ -10,7 +10,7 @@ module WhirledPeas
         @frames = []
       end
 
-      def add_frame(name, args={})
+      def add_frame(name, args: {})
         frames << [name, args]
       end
 

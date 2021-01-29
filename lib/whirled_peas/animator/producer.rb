@@ -17,7 +17,7 @@ module WhirledPeas
 
       def add_frame(name, duration: nil, args: {})
         frameset(duration || 1 / refresh_rate) do |fs|
-          fs.add_frame(name, args)
+          fs.add_frame(name, args: args)
         end
       end
 
