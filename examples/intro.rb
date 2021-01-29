@@ -40,13 +40,13 @@ class TemplateFactory
   end
 end
 
-class Driver
+class Application
   def start(producer)
-    producer.send_frame('intro', duration: 5)
+    producer.add_frame('intro', duration: 5)
   end
 end
 
 WhirledPeas.configure do |config|
   config.template_factory = TemplateFactory.new
-  config.driver = Driver.new
+  config.application = Application.new
 end

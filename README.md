@@ -40,9 +40,8 @@ Or install it yourself as:
 
 A Whirled Peas application consists of the following pieces
 
-- The driver (required) - the code that is to be visualized, it emits lightweight frame events through a producer
-- The main template factory (required) - builds templates to convert frame events from the driver into terminal graphics
-- A loading screen template factory (optional) - builds templates to display while content is loading
+- The application (required) - the code that is to be visualized, it emits lightweight frame events through a producer
+- The main template factory (required) - builds templates to convert frame events from the application into terminal graphics
 
 These pieces are configured as following
 
@@ -62,15 +61,15 @@ class TemplateFactory
   end
 end
 
-class Driver
+class Application
   def start(producer)
-    producer.send_frame('starting', args: { name: 'World' })
+    producer.add_frame('starting', args: { name: 'World' })
     # ...
   end
 end
 
 WhirledPeas.configure do |config|
-  config.driver = Driver.new
+  config.application = Application.new
   config.template_factory = TemplateFactory.new
 end
 ```
@@ -81,31 +80,9 @@ Then the visualizer is started on the command line with
 $ whirled_peas play visualize.rb
 ```
 
-The optional loading screen can be configured like
+### Application
 
-```ruby
-class LoadingTemplateFactory
-  def build
-    WhirledPeas.template do |composer|
-      composer.add_box('Loading') do |_, settings|
-        settings.set_margin(top: 15)
-        settings.align = :center
-        settings.full_border(color: :blue, style: :double)
-        "Loading..."
-      end
-    end
-  end
-end
-
-WhirledPeas.configure do |config|
-  # ...
-  config.loading_template_factory = LoadingTemplateFactory.new
-end
-```
-
-### Driver
-
-The driver is the application code to be visualized. This is typically a lightweight wrapper around an existing application that conforms to the signature below.
+The application is code to be visualized that integrates with Whirled Peas by providing the signature below
 
 ```ruby
 # Start the application and pass frame events to the producer to be rendered by the UI
@@ -124,7 +101,7 @@ The producer provides a single method
 # @param name [String] application defined name for the frame. The template factory will be provided this name
 # @param duration [Number] time in seconds this frame should be displayed for (defaults to 1 frame)
 # @param args [Hash<Symbol, Object>] key value pairs to send as arguments to the template factory
-def send_frame(name, duration:, args:)
+def add_frame(name, duration:, args:)
   # implementation
 end
 ```
@@ -136,39 +113,35 @@ end
 Simple application that loads a set of numbers and looks for a pair that adds up to 1,000
 
 ```ruby
-class Driver
+class Application
   def start(producer)
     numbers = File.readlines('/path/to/numbers.txt').map(&:to_i)
-    producer.send_frame('load-numbers', duration: 3, args: { numbers: numbers })
+    producer.add_frame('load-numbers', duration: 3, args: { numbers: numbers })
     numbers.sort!
-    producer.send_frame('sort-numbers', duration: 3, args: { numbers: numbers })
+    producer.add_frame('sort-numbers', duration: 3, args: { numbers: numbers })
     low = 0
     high = numbers.length - 1
     while low < high
       sum = numbers[low] + numbers[high]
       if sum == 1000
-        producer.send_frame('found-pair', duration: 5, args: { low: low, high: high, sum: sum })
+        producer.add_frame('found-pair', duration: 5, args: { low: low, high: high, sum: sum })
         return
       elsif sum < 1000
-        producer.send_frame('too-low', args: { low: low, high: high, sum: sum })
+        producer.add_frame('too-low', args: { low: low, high: high, sum: sum })
         low += 1
       else
-        producer.send_frame('too-high', args: { low: low, high: high, sum: sum })
+        producer.add_frame('too-high', args: { low: low, high: high, sum: sum })
         high -= 1
       end
     end
-    producer.send_frame('no-solution', duration: 5)
+    producer.add_frame('no-solution', duration: 5)
   end
 end
 ```
 
 ### Template Factory
 
-To render the frame events sent by the driver, the application requires a template factory. This factory will be called for each frame event, with the frame name and the arguments supplied by the driver. A template factory can be an instance of ruby class and thus can maintain state. Whirled Peas provides a few basic building blocks to make simple, yet elegant terminal-based UIs.
-
-#### Loading Template Factory
-
-`WhirledPeas.configure` takes an optional template factory to build a loading screen. This instance must implement `#build` (taking no arguments). The template returned by that method will be painted while the event loop is waiting for frames. The factory method will be called once per refresh cycle, so it's possible to implement animation.
+To render the frame events sent by the application, the application requires a template factory. This factory will be called for each frame event, with the frame name and the arguments supplied by the application. A template factory can be an instance of ruby class and thus can maintain state. Whirled Peas provides a few basic building blocks to make simple, yet elegant terminal-based UIs.
 
 #### Building Blocks
 
@@ -258,7 +231,7 @@ The available settigs are
 | `padding`    | Set the (left, top, right, bottom) padding of the element                        | `0`        | `Box`, `Grid`         | No                   |
 | `position`   | Set the (left, top) position of the element relative to parent content area      | `0`        | `Box`, `Grid`         | No                   |
 | `scrollbar`  | Display a scroll bar for vertical or horizontal scrolling                        |            | `Box`                 | No                   |
-| `sizing`     | Sizing model (`:content` or `:border`) used in conjunction with `width`/`hieght` | `:content` | `Box`                 | No                   |
+| `sizing`     | Sizing model (`:content` or `:border`) used in conjunction with `width`/`height` | `:content` | `Box`                 | No                   |
 | `title_font` | Font used for "large" text (see [Large Text](#large-text), ignores `underline`)  |            | `Text`                | No                   |
 | `underline`  | `true` underlines the font                                                       | `false`    | `Box`, `Grid`, `Text` | Yes                  |
 | `width`      | Override the calculated width of an element's content area                       |            | `Box`, `Grid`         | No                   |
@@ -817,14 +790,14 @@ Usage: whirled_peas help <command>
 Play an animation from an application or prerecorded file
 
 ```
-# Usage: whirled_peas play <config/fgz file>
+# Usage: whirled_peas play <config/wpz file>
 
 # Play animation directly from app
 % whirled_peas play my_app.rb
 # Animation plays
 
 # Play animation from previously recorded file
-% whirled_peas play my_animation.fgz
+% whirled_peas play my_animation.wpz
 # Animation plays
 ```
 
@@ -834,8 +807,8 @@ Record animation to a file
 
 ```
 # Usage: whirled_peas record <config file> <output file>
-% whirled_peas record my_app.rb my_animation.fgz
-# Record animation to my_animation.fgz
+% whirled_peas record my_app.rb my_animation.wpz
+# Record animation to my_animation.wpz
 ```
 
 #### `still`

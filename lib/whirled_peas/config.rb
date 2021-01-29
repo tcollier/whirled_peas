@@ -44,16 +44,6 @@ module WhirledPeas
       @application
     end
 
-    def driver
-      puts 'Using legacy `driver` config var'
-      @application
-    end
-
-    def driver=(application)
-      puts 'Using legacy `driver=` config var'
-      @application = application
-    end
-
     def template_factory
       unless @template_factory
         raise ConfigurationError, 'template_factory must be configured'

@@ -8,13 +8,15 @@ module WhirledPeas
       end
 
       def start
-        require 'whirled_peas/frame/debug_consumer'
-        require 'whirled_peas/frame/producer'
-
         super
 
-        Frame::Producer.produce(Frame::DebugConsumer.new) do |producer|
-          config.driver.start(producer)
+        require 'whirled_peas/animator/debug_consumer'
+        require 'whirled_peas/animator/producer'
+
+        Animator::Producer.produce(
+          Animator::DebugConsumer.new, WhirledPeas.config.refresh_rate
+        ) do |producer|
+          config.application.start(producer)
         end
       end
     end

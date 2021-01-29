@@ -39,15 +39,16 @@ class TemplateFactory
   end
 end
 
-class Driver
+class Application
   def start(producer)
-    53.times do |i|
-      producer.send_frame('intro', duration: 0.3, args: { top: -i })
+    producer.frameset(5, easing: :bezier) do |fs|
+      53.times { |i| fs.add_frame('intro', { top: -i }) }
     end
+    producer.add_frame('hold', duration: 1, args: { top: -52})
   end
 end
 
 WhirledPeas.configure do |config|
   config.template_factory = TemplateFactory.new
-  config.driver = Driver.new
+  config.application = Application.new
 end

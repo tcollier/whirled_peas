@@ -11,16 +11,17 @@ module WhirledPeas
       def start
         super
 
-        require 'whirled_peas/frame/event_loop'
-        require 'whirled_peas/frame/producer'
+        require 'whirled_peas/device/screen'
+        require 'whirled_peas/graphics/renderer'
+        require 'whirled_peas/utils/ansi'
 
-        logger = build_logger
-        consumer = Frame::EventLoop.new(
-          config.template_factory,
-          logger: logger
-        )
-        Frame::Producer.produce(consumer, logger) do |producer|
-          producer.send_frame(frame, duration: 5, args: frame_args)
+        Utils::Ansi.with_screen do |width, height|
+          rendered = Graphics::Renderer.new(
+            WhirledPeas.config.template_factory.build(frame, frame_args),
+            width,
+            height
+          ).paint
+          Device::Screen.new(10000).handle_renders([rendered])
         end
       end
     end

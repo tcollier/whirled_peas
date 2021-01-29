@@ -1,11 +1,12 @@
 require 'bundler/setup'
 require 'whirled_peas'
-require 'whirled_peas/frame/event_loop'
-require 'whirled_peas/frame/producer'
+require 'whirled_peas/animator/producer'
+require 'whirled_peas/animator/renderer_consumer'
+require 'whirled_peas/device/screen'
 require 'whirled_peas/graphics/debugger'
 require 'whirled_peas/graphics/renderer'
-require 'whirled_peas/graphics/screen'
 require 'whirled_peas/settings/text_color'
+require 'whirled_peas/utils/ansi'
 require 'whirled_peas/utils/formatted_string'
 
 module WhirledPeas
@@ -270,12 +271,13 @@ module WhirledPeas
       end
 
       def render_screen(template_factory, output)
-        screen = Graphics::Screen.new(output: output, width: SCREEN_WIDTH, height: SCREEN_HEIGHT)
-        consumer = Frame::EventLoop.new(
-          template_factory, screen: screen, refresh_rate: 100000
-        )
-        Frame::Producer.produce(consumer) do |producer|
-          producer.send_frame('test', args: {})
+        Utils::Ansi.with_screen(output, width: SCREEN_WIDTH, height: SCREEN_HEIGHT) do
+          rendered = Graphics::Renderer.new(
+            template_factory.build('test', {}),
+            SCREEN_WIDTH,
+            SCREEN_HEIGHT
+          ).paint
+          Device::Screen.new(10000, output: output).handle_renders([rendered])
         end
       end
     end

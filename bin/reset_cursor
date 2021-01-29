@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'whirled_peas'
+require 'whirled_peas/utils/ansi'
+
+module WhirledPeas
+  print Utils::Ansi.clear
+  print Utils::Ansi.cursor_visible(true)
+  STDOUT.flush
+end

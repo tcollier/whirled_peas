@@ -28,6 +28,19 @@ module WhirledPeas
       BRIGHT_OFFSET = 60
 
       class << self
+        def with_screen(output, width: nil, height: nil, &block)
+          require 'highline'
+          unless width && height
+            width, height = HighLine.new.terminal.terminal_size
+          end
+          yield width, height
+        ensure
+          output.print clear
+          output.print cursor_pos(top: height - 1)
+          output.print cursor_visible(true)
+          output.flush
+        end
+
         def cursor_pos(top: 0, left: 0)
           "#{ESC}[#{top + 1};#{left + 1}H"
         end

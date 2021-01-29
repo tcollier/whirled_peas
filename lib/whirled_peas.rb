@@ -1,6 +1,6 @@
-require 'whirled_peas/errors'
+require 'whirled_peas/animator'
 require 'whirled_peas/config'
-require 'whirled_peas/frame'
+require 'whirled_peas/errors'
 require 'whirled_peas/graphics'
 require 'whirled_peas/settings'
 require 'whirled_peas/utils'
