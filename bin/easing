@@ -6,7 +6,6 @@ require 'whirled_peas/animator/easing'
 
 module WhirledPeas
   NUM_POINTS = 60
-  ASPECT_RATIO = 4  # (N character width per 1 character height is a square)
 
   Animator::Easing::EASING.keys.each do |func|
     Animator::Easing::EFFECTS.each do |effect|

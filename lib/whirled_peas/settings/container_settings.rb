@@ -12,8 +12,6 @@ require_relative 'vert_alignment'
 module WhirledPeas
   module Settings
     class ContainerSettings < ElementSettings
-      attr_accessor :width, :height
-
       def align
         @_align || Alignment::DEFAULT
       end

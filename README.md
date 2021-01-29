@@ -172,6 +172,7 @@ A template is created with `WhirledPeas.template`, which yields a `Composer` obj
 A `Composer` provides the following methods to add child elements, each of these takes an optional string argument that is set as the name of the element (which can be useful when debugging).
 
 - `add_box` - yields a `Composer` for a `Box` and a `BoxSettings`, which will be added to the parent's children
+- `add_graph` - yields a `nil` and a `GraphSettings`, which will be added to the parent's children, the block should return an array of numbers
 - `add_grid` - yields a `Composer` for a `Grid` and a `GridSettings`, which will be added to the parent's children
 - `add_text` - yields `nil` and a `TextSettings`, which will be added to the parent's children
 
@@ -234,25 +235,26 @@ end
 Each element type has an associated settings type, which provide a custom set of options to format the output. Child settings will inherit from the parent, where applicable
 The available settigs are
 
-| Setting      | Description                                                                      | Default    | Availability          | Inherited            |
-| ------------ | -------------------------------------------------------------------------------- | ---------- | --------------------- | -------------------- |
-| `align`      | Justifies the content in the horizontal direction                                | `:left`    | `Box`, `Grid`         | No                   |
-| `bg_color`   | Background color (see [Colors](#colors))                                         |            | `Box`, `Grid`, `Text` | Yes                  |
-| `bold`       | `true` makes the font bold                                                       | `false`    | `Box`, `Grid`, `Text` | Yes                  |
-| `border`     | Set the border for the lements                                                   | none       | `Box`, `Grid`,        | Only style and color |
-| `color`      | Foreground text color (see [Colors](#colors))                                    |            | `Box`, `Grid`, `Text` | Yes                  |
-| `flow`       | Flow to display child elements (see [Display Flow](#display-flow))               | `:l2r`     | `Box`, `Grid`         | No                   |
-| `height`     | Override the calculated height of an element's content area                      |            | `Box`, `Grid`         | No                   |
-| `margin`     | Set the (left, top, right, bottom) margin of the element                         | `0`        | `Box`, `Grid`         | No                   |
-| `num_cols`   | Number of columns in the grid (must be set!)                                     |            | `Grid`                | No                   |
-| `padding`    | Set the (left, top, right, bottom) padding of the element                        | `0`        | `Box`, `Grid`         | No                   |
-| `position`   | Set the (left, top) position of the element relative to parent content area      | `0`        | `Box`, `Grid`         | No                   |
-| `scrollbar`  | Display a scroll bar for vertical or horizontal scrolling                        |            | `Box`                 | No                   |
-| `sizing`     | Sizing model (`:content` or `:border`) used in conjunction with `width`/`height` | `:content` | `Box`                 | No                   |
-| `title_font` | Font used for "large" text (see [Large Text](#large-text), ignores `underline`)  |            | `Text`                | No                   |
-| `underline`  | `true` underlines the font                                                       | `false`    | `Box`, `Grid`, `Text` | Yes                  |
-| `width`      | Override the calculated width of an element's content area                       |            | `Box`, `Grid`         | No                   |
-| `valign`     | Justifies the content in the vertical direction                                  | `:top`     | `Box`, `Grid`         | No                   |
+| Setting      | Description                                                                      | Default    | Availability | Inherited            |
+| ------------ | -------------------------------------------------------------------------------- | ---------- | ------------ | -------------------- |
+| `align`      | Justifies the content in the horizontal direction                                | `:left`    | `Container`  | No                   |
+| `axis_color` | Color used to paint the axes of the graph (see [Colors](#colors))                |            | `Graph`      | No                   |
+| `bg_color`   | Background color (see [Colors](#colors))                                         |            | all          | Yes                  |
+| `bold`       | `true` makes the font bold                                                       | `false`    | all          | Yes                  |
+| `border`     | Set the border for the lements                                                   | none       | `Container`, | Only style and color |
+| `color`      | Foreground text color (see [Colors](#colors))                                    |            | all          | Yes                  |
+| `flow`       | Flow to display child elements (see [Display Flow](#display-flow))               | `:l2r`     | `Container`  | No                   |
+| `height`     | Override the calculated height of an element's content area                      |            | all          | No                   |
+| `margin`     | Set the (left, top, right, bottom) margin of the element                         | `0`        | `Container`  | No                   |
+| `num_cols`   | Number of columns in the grid (must be set!)                                     |            | `Grid`       | No                   |
+| `padding`    | Set the (left, top, right, bottom) padding of the element                        | `0`        | `Container`  | No                   |
+| `position`   | Set the (left, top) position of the element relative to parent content area      | `0`        | `Container`  | No                   |
+| `scrollbar`  | Display a scroll bar for vertical or horizontal scrolling                        |            | `Box`        | No                   |
+| `sizing`     | Sizing model (`:content` or `:border`) used in conjunction with `width`/`height` | `:content` | `Box`        | No                   |
+| `title_font` | Font used for "large" text (see [Large Text](#large-text), ignores `underline`)  |            | `Text`       | No                   |
+| `underline`  | `true` underlines the font                                                       | `false`    | all          | Yes                  |
+| `width`      | Override the calculated width of an element's content area                       |            | all          | No                   |
+| `valign`     | Justifies the content in the vertical direction                                  | `:top`     | `Container`  | No                   |
 
 ##### Alignment
 

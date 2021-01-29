@@ -1,8 +1,10 @@
 require 'whirled_peas/graphics/box_painter'
 require 'whirled_peas/graphics/composer'
+require 'whirled_peas/graphics/graph_painter'
 require 'whirled_peas/graphics/grid_painter'
 require 'whirled_peas/graphics/text_painter'
 require 'whirled_peas/settings/box_settings'
+require 'whirled_peas/settings/graph_settings'
 require 'whirled_peas/settings/grid_settings'
 require 'whirled_peas/settings/text_settings'
 
@@ -26,47 +28,6 @@ module WhirledPeas
           names = Set.new
           100.times { names << described_class.next_name }
           expect(names.length).to eq(100)
-        end
-      end
-
-      describe '#add_text' do
-        subject(:composer) { described_class.new(parent) }
-
-        let(:parent) { BoxPainter.new('Parent', parent_settings) }
-        let(:parent_settings) { Settings::BoxSettings.new }
-
-        it 'adds a TextPainter as the child of the composed painter' do
-          composer.add_text('Child') { 'the-content' }
-          expect(parent.num_children).to eq(1)
-          parent.each_child do |child|
-            expect(child).to be_a(TextPainter)
-            expect(child.content).to eq(['the-content'])
-          end
-        end
-
-        it 'yields the merged TextSettings' do
-          yielded_settings = nil
-          composer.add_text('Child') do |_, settings|
-            yielded_settings = settings
-            'the-content'
-          end
-          expect(yielded_settings).to be_a(Settings::TextSettings)
-        end
-
-        it 'converts a float to a string' do
-          composer.add_text('Child') { 3.14 }
-          expect(parent.num_children).to eq(1)
-          parent.each_child do |child|
-            expect(child.content).to eq(['3.14'])
-          end
-        end
-
-        context 'when the value cannot be converted to a string' do
-          it 'raises an ArgumentError' do
-            expect do
-              composer.add_text('Child') { Object.new }
-            end.to raise_error(ArgumentError, 'Unsupported type for text: Object')
-          end
         end
       end
 
@@ -108,7 +69,7 @@ module WhirledPeas
               expect(child.num_children).to eq(1)
               child.each_child do |grand_child|
                 expect(grand_child).to be_a(TextPainter)
-                expect(grand_child.content).to eq(['explicit-content'])
+                expect(grand_child.content).to eq('explicit-content')
               end
             end
           end
@@ -122,10 +83,39 @@ module WhirledPeas
               child.each_child do |grand_child|
                 expect(grand_child).to be_a(TextPainter)
                 expect(grand_child.name).to eq('Child-Text')
-                expect(grand_child.content).to eq(['implicit-content'])
+                expect(grand_child.content).to eq('implicit-content')
               end
             end
           end
+        end
+      end
+
+      describe '#add_graph' do
+        subject(:composer) { described_class.new(parent) }
+
+        let(:parent) { BoxPainter.new('Parent', parent_settings) }
+        let(:parent_settings) { Settings::BoxSettings.new }
+
+        it 'adds a GraphPainter as the child of the composed painter' do
+          composer.add_graph('Child') do |_, settings|
+            settings.height = 10
+            [0, 1]
+          end
+          expect(parent.num_children).to eq(1)
+          parent.each_child do |child|
+            expect(child).to be_a(GraphPainter)
+            expect(child.content).to eq([0, 1])
+          end
+        end
+
+        it 'yields the merged GraphSettings' do
+          yielded_settings = nil
+          composer.add_graph('Child') do |_, settings|
+            settings.height = 10
+            yielded_settings = settings
+            [0, 1]
+          end
+          expect(yielded_settings).to be_a(Settings::GraphSettings)
         end
       end
 
@@ -136,7 +126,10 @@ module WhirledPeas
         let(:parent_settings) { Settings::GridSettings.new }
 
         it 'adds a GridPainter as the child of the composed painter' do
-          composer.add_grid('Child') { 'the-content' }
+          composer.add_grid('Child') do |_, settings|
+            settings.num_cols = 1
+            ['the-content']
+          end
           expect(parent.num_children).to eq(1)
           parent.each_child do |child|
             expect(child).to be_a(GridPainter)
@@ -147,6 +140,7 @@ module WhirledPeas
           yielded_composer = nil
           yielded_settings = nil
           composer.add_grid('Child') do |child_composer, settings|
+            settings.num_cols = 1
             yielded_composer = child_composer
             yielded_settings = settings
           end
@@ -159,15 +153,16 @@ module WhirledPeas
 
         context 'with a painter expliclitly added to the child composer' do
           it 'does not add another child' do
-            composer.add_grid('Child') do |child|
-              child.add_text { 'explicit-content' }
+            composer.add_grid('Child') do |composer, settings|
+              settings.num_cols = 1
+              composer.add_text { 'explicit-content' }
               ['implicit-content']
             end
             parent.each_child do |child|
               expect(child.num_children).to eq(1)
               child.each_child do |grand_child|
                 expect(grand_child).to be_a(TextPainter)
-                expect(grand_child.content).to eq(['explicit-content'])
+                expect(grand_child.content).to eq('explicit-content')
               end
             end
           end
@@ -175,15 +170,59 @@ module WhirledPeas
 
         context 'with nothing expliclitly added to the child composer' do
           it 'adds the text returned from the block as a TextPainter to the child' do
-            composer.add_grid('Child') { ['implicit-content'] }
+            composer.add_grid('Child') do |_, settings|
+              settings.num_cols = 1
+              ['implicit-content']
+            end
             parent.each_child do |child|
               expect(child.num_children).to eq(1)
               child.each_child do |grand_child|
                 expect(grand_child).to be_a(TextPainter)
                 expect(grand_child.name).to eq('Child-Text-0')
-                expect(grand_child.content).to eq(['implicit-content'])
+                expect(grand_child.content).to eq('implicit-content')
               end
             end
+          end
+        end
+      end
+
+      describe '#add_text' do
+        subject(:composer) { described_class.new(parent) }
+
+        let(:parent) { BoxPainter.new('Parent', parent_settings) }
+        let(:parent_settings) { Settings::BoxSettings.new }
+
+        it 'adds a TextPainter as the child of the composed painter' do
+          composer.add_text('Child') { 'the-content' }
+          expect(parent.num_children).to eq(1)
+          parent.each_child do |child|
+            expect(child).to be_a(TextPainter)
+            expect(child.content).to eq('the-content')
+          end
+        end
+
+        it 'yields the merged TextSettings' do
+          yielded_settings = nil
+          composer.add_text('Child') do |_, settings|
+            yielded_settings = settings
+            'the-content'
+          end
+          expect(yielded_settings).to be_a(Settings::TextSettings)
+        end
+
+        it 'converts a float to a string' do
+          composer.add_text('Child') { 3.14 }
+          expect(parent.num_children).to eq(1)
+          parent.each_child do |child|
+            expect(child.content).to eq('3.14')
+          end
+        end
+
+        context 'when the value cannot be converted to a string' do
+          it 'raises an ArgumentError' do
+            expect do
+              composer.add_text('Child') { Object.new }
+            end.to raise_error(ArgumentError, 'Unsupported type for text: Object')
           end
         end
       end

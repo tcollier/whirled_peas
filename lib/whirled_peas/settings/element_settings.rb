@@ -13,6 +13,11 @@ module WhirledPeas
         child
       end
 
+      attr_accessor :width, :height
+
+      def validate!
+      end
+
       def bg_color
         @_bg_color || BgColor::DEFAULT
       end

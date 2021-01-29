@@ -1,14 +1,12 @@
 require 'whirled_peas/utils/formatted_string'
 require 'whirled_peas/utils/title_font'
 
-require_relative 'painter'
-require_relative 'text_dimensions'
+require_relative 'content_dimensions'
+require_relative 'content_painter'
 
 module WhirledPeas
   module Graphics
-    class TextPainter < Painter
-      attr_reader :content
-
+    class TextPainter < ContentPainter
       def paint(canvas, left, top, &block)
         return unless canvas.writable?
         formatting = [*settings.color, *settings.bg_color]
@@ -16,17 +14,15 @@ module WhirledPeas
         if settings.underline? && settings.title_font.nil?
           formatting << Utils::Ansi::UNDERLINE
         end
-        content.each.with_index do |line, index|
+        content_lines.each.with_index do |line, index|
           canvas.stroke(left, top + index, line, formatting, &block)
         end
       end
 
-      def dimensions
-        TextDimensions.new(content)
-      end
+      private
 
-      def content=(content)
-        @content = if settings.title_font
+      def content_lines
+        @content_lines = if settings.title_font
           Utils::TitleFont.to_s(
             content, settings.title_font
           ).split("\n")
