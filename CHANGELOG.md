@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.0 - 2021-01-29
+
+BREAKING: `Frameset#add_frame` signature changed
+
+- [1c28947](https://github.com/tcollier/whirled_peas/tree/1c28947980eedce034d2596732ee4860717904c5): Add graph support
+
 ## v0.8.0 - 2021-01-29
 
 BREAKING: `Producer` now responds to `#add_frame` instead of `#send_frame`
