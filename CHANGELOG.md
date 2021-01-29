@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.8.0 - 2021-01-29
+
+BREAKING: `Producer` now responds to `#add_frame` instead of `#send_frame`
+
+- [67fdc17](https://github.com/tcollier/whirled_peas/tree/67fdc172434cb97f31ca20a674f28aefec6babb3): Add easing functions for frame transitions
+- [b888f2e](https://github.com/tcollier/whirled_peas/tree/b888f2e7a3b7c3341300326b417641cc8cf2e89b): Add record and playback functionality to command line tool
+
 ## v0.7.1 - 2021-01-27
 
 - [b98781d](https://github.com/tcollier/whirled_peas/tree/b98781de23a24b596955f25cfc48936c0cc1efac): Fix num_cols bug for vertical grid flow
