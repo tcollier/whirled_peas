@@ -232,29 +232,28 @@ end
 
 #### Settings
 
-Each element type has an associated settings type, which provide a custom set of options to format the output. Child settings will inherit from the parent, where applicable
-The available settigs are
+Each element type has an associated settings type, which provide a custom set of options to format the output. Child settings will inherit from the parent, where applicable. The table below lists all settings along with which element types the settings can be applied to (`Grid` and `Box` are containers)
 
 | Setting      | Description                                                                      | Default    | Availability | Inherited            |
 | ------------ | -------------------------------------------------------------------------------- | ---------- | ------------ | -------------------- |
-| `align`      | Justifies the content in the horizontal direction                                | `:left`    | `Container`  | No                   |
+| `align`      | Justifies the content in the horizontal direction                                | `:left`    | containers   | No                   |
 | `axis_color` | Color used to paint the axes of the graph (see [Colors](#colors))                |            | `Graph`      | No                   |
 | `bg_color`   | Background color (see [Colors](#colors))                                         |            | all          | Yes                  |
 | `bold`       | `true` makes the font bold                                                       | `false`    | all          | Yes                  |
-| `border`     | Set the border for the lements                                                   | none       | `Container`, | Only style and color |
+| `border`     | Set the border for the lements                                                   | none       | containers,  | Only style and color |
 | `color`      | Foreground text color (see [Colors](#colors))                                    |            | all          | Yes                  |
-| `flow`       | Flow to display child elements (see [Display Flow](#display-flow))               | `:l2r`     | `Container`  | No                   |
+| `flow`       | Flow to display child elements (see [Display Flow](#display-flow))               | `:l2r`     | containers   | No                   |
 | `height`     | Override the calculated height of an element's content area                      |            | all          | No                   |
-| `margin`     | Set the (left, top, right, bottom) margin of the element                         | `0`        | `Container`  | No                   |
+| `margin`     | Set the (left, top, right, bottom) margin of the element                         | `0`        | containers   | No                   |
 | `num_cols`   | Number of columns in the grid (must be set!)                                     |            | `Grid`       | No                   |
-| `padding`    | Set the (left, top, right, bottom) padding of the element                        | `0`        | `Container`  | No                   |
-| `position`   | Set the (left, top) position of the element relative to parent content area      | `0`        | `Container`  | No                   |
+| `padding`    | Set the (left, top, right, bottom) padding of the element                        | `0`        | containers   | No                   |
+| `position`   | Set the (left, top) position of the element relative to parent content area      | `0`        | containers   | No                   |
 | `scrollbar`  | Display a scroll bar for vertical or horizontal scrolling                        |            | `Box`        | No                   |
 | `sizing`     | Sizing model (`:content` or `:border`) used in conjunction with `width`/`height` | `:content` | `Box`        | No                   |
 | `title_font` | Font used for "large" text (see [Large Text](#large-text), ignores `underline`)  |            | `Text`       | No                   |
 | `underline`  | `true` underlines the font                                                       | `false`    | all          | Yes                  |
 | `width`      | Override the calculated width of an element's content area                       |            | all          | No                   |
-| `valign`     | Justifies the content in the vertical direction                                  | `:top`     | `Container`  | No                   |
+| `valign`     | Justifies the content in the vertical direction                                  | `:top`     | containers   | No                   |
 
 ##### Alignment
 
