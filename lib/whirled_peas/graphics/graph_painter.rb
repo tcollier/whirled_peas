@@ -45,7 +45,9 @@ module WhirledPeas
         @plot_lines = Array.new(inner_height) { '' }
         scaled.each.with_index do |y, x_index|
           @plot_lines.each.with_index do |row, row_index|
-            y_index = inner_height - row_index - 1
+            bottom_half_index = 2 * (inner_height - row_index - 1)
+            top_half_index = bottom_half_index + 1
+
             asc, next_y = if scaled.length == 1
               [true, y]
             elsif x_index == scaled.length - 1
@@ -56,11 +58,11 @@ module WhirledPeas
               [true, scaled[x_index + 1]]
             end
             if asc
-              top_half = (y...next_y).include?(2 * y_index + 1)
-              bottom_half = (y...next_y).include?(2 * y_index)
+              top_half = y == top_half_index || (y...next_y).include?(top_half_index)
+              bottom_half = y == bottom_half_index || (y...next_y).include?(bottom_half_index)
             else
-              top_half = (next_y...y).include?(2 * y_index + 1)
-              bottom_half = (next_y...y).include?(2 * y_index)
+              top_half = y == top_half_index || (next_y...y).include?(top_half_index)
+              bottom_half = y == bottom_half_index || (next_y...y).include?(bottom_half_index)
             end
             row << if top_half && bottom_half
               '█'
