@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.1 - 2021-01-29
+
+- [c35b134](https://github.com/tcollier/whirled_peas/tree/c35b134e1340b8b5f1d1fb0e6e56dc2a99b52e94): Improve graph plots
+
 ## v0.9.0 - 2021-01-29
 
 BREAKING: `Frameset#add_frame` signature changed
