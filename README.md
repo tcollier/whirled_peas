@@ -270,6 +270,23 @@ Each element type has an associated settings type, which provide a custom set of
 | `width`      | Override the calculated width of an element's content area                       |            | all          | No                   |
 | `valign`     | Justifies the content in the vertical direction                                  | `:top`     | containers   | No                   |
 
+##### Themes
+
+The template builder (`WhirledPeas.template`) takes an optional `theme` argument. You can provide the name of a predefined theme (run `whirled_peas themes` to see a list with samples) or define you own with the following
+You can define your own theme
+
+```ruby
+WhirledPeas.define_theme(:my_theme) do |theme|
+  theme.bg_color = :bright_white
+  theme.color = :blue
+  theme.border_color = :bright_green
+  theme.axis_color = :bright_red
+  theme.title_font = :default
+end
+```
+
+Theme settings will be used as default settings throughout the template, however theme settings can be overridden on any element.
+
 ##### Alignment
 
 The `align` setting takes one of several values
@@ -1024,6 +1041,7 @@ Available commands:
     play      Play an animation from an application or prerecorded file
     record    Record animation to a file
     still     Show the specified still frame
+    themes    List all themes with sample template rendered in the theme
 ```
 
 #### `debug`
@@ -1110,6 +1128,19 @@ Show the specified still frame
 # Usage: whirled_peas still <config file> <frame> [args as a JSON string]
 % whirled_peas still my_app.rb greeting '{"name":"World"}'
 # Still frame is displayed
+```
+
+#### `themes`
+
+List all themes and display a small sample screen in each. Running this with no extra command line arguments will display all the built-in themes. Adding the path to a Whirled Peas configuration file will inlcude any themes defined in that configuration.
+
+```
+# Usage: whirled_peas themes [config file]
+% whirled_peas themes
+# Display all system themes
+
+% whirled_peas themes my_app.rb
+# Display app-defined themes and all system themes
 ```
 
 ## Development

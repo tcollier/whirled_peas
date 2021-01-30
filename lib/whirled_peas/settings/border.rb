@@ -51,7 +51,19 @@ module WhirledPeas
         end
       end
 
+      def self.inherit(parent)
+        border = new(parent.theme)
+        border.inherit(parent)
+        border
+      end
+
+      attr_reader :theme
+
       attr_writer :left, :top, :right, :bottom, :inner_horiz, :inner_vert
+
+      def initialize(theme)
+        @theme = theme
+      end
 
       def left?
         @left == true
@@ -82,20 +94,29 @@ module WhirledPeas
       end
 
       def style
-        @style || Styles::DEFAULT
+        @_style || Styles::DEFAULT
       end
 
       def style=(val)
-        @style = Styles.validate!(val)
+        @_style = Styles.validate!(val)
       end
 
       def color=(val)
-        @color = TextColor.validate!(val)
+        @_color = TextColor.validate!(val)
       end
 
       def color
-        @color || TextColor::DEFAULT
+        @_color || theme.border_color
       end
+
+      def inherit(parent)
+        @_style = parent._style
+        @_color = parent._color
+      end
+
+      protected
+
+      attr_reader :_style, :_color
     end
   end
 end

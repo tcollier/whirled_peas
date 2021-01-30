@@ -96,7 +96,7 @@ module WhirledPeas
       end
 
       def border
-        @_border ||= Border.new
+        @_border ||= Border.new(theme)
       end
 
       def flow=(flow)
@@ -212,7 +212,7 @@ module WhirledPeas
       def inherit(parent)
         super
         return unless parent.is_a?(ContainerSettings)
-        set_border(color: parent.border.color, style: parent.border.style)
+        @_border = Border.inherit(parent.border)
       end
 
       protected

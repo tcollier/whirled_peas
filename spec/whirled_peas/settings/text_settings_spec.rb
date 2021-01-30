@@ -1,4 +1,5 @@
 require 'whirled_peas/settings/text_settings'
+require 'whirled_peas/settings/theme'
 require 'whirled_peas/utils/title_font'
 
 module WhirledPeas
@@ -7,7 +8,9 @@ module WhirledPeas
       it_behaves_like 'an ElementSettings'
 
       describe '#title_font' do
-        subject(:settings) { described_class.new }
+        subject(:settings) { described_class.new(theme) }
+
+        let(:theme) { instance_double(Settings::Theme) }
 
         before do
           allow(Utils::TitleFont)

@@ -7,6 +7,7 @@ require 'whirled_peas/settings/box_settings'
 require 'whirled_peas/settings/graph_settings'
 require 'whirled_peas/settings/grid_settings'
 require 'whirled_peas/settings/text_settings'
+require 'whirled_peas/settings/theme'
 
 module WhirledPeas
   module Graphics
@@ -35,7 +36,8 @@ module WhirledPeas
         subject(:composer) { described_class.new(parent) }
 
         let(:parent) { BoxPainter.new('Parent', parent_settings) }
-        let(:parent_settings) { Settings::BoxSettings.new }
+        let(:parent_settings) { Settings::BoxSettings.new(theme) }
+        let(:theme) { instance_double(Settings::Theme) }
 
         it 'adds a BoxPainter as the child of the composed painter' do
           composer.add_box('Child') { 'the-content' }
@@ -94,7 +96,8 @@ module WhirledPeas
         subject(:composer) { described_class.new(parent) }
 
         let(:parent) { BoxPainter.new('Parent', parent_settings) }
-        let(:parent_settings) { Settings::BoxSettings.new }
+        let(:parent_settings) { Settings::BoxSettings.new(theme) }
+        let(:theme) { instance_double(Settings::Theme) }
 
         it 'adds a GraphPainter as the child of the composed painter' do
           composer.add_graph('Child') do |_, settings|
@@ -123,7 +126,8 @@ module WhirledPeas
         subject(:composer) { described_class.new(parent) }
 
         let(:parent) { GridPainter.new('Parent', parent_settings) }
-        let(:parent_settings) { Settings::GridSettings.new }
+        let(:parent_settings) { Settings::GridSettings.new(theme) }
+        let(:theme) { instance_double(Settings::Theme) }
 
         it 'adds a GridPainter as the child of the composed painter' do
           composer.add_grid('Child') do |_, settings|
@@ -190,7 +194,8 @@ module WhirledPeas
         subject(:composer) { described_class.new(parent) }
 
         let(:parent) { BoxPainter.new('Parent', parent_settings) }
-        let(:parent_settings) { Settings::BoxSettings.new }
+        let(:parent_settings) { Settings::BoxSettings.new(theme) }
+        let(:theme) { instance_double(Settings::Theme) }
 
         it 'adds a TextPainter as the child of the composed painter' do
           composer.add_text('Child') { 'the-content' }

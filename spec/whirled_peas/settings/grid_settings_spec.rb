@@ -1,4 +1,5 @@
 require 'whirled_peas/settings/grid_settings'
+require 'whirled_peas/settings/theme'
 
 module WhirledPeas
   module Settings
@@ -6,7 +7,9 @@ module WhirledPeas
       it_behaves_like 'a ContainerSettings'
 
       context 'non-inherited attributes' do
-        let(:parent) { described_class.new }
+        let(:parent) { described_class.new(theme) }
+
+        let(:theme) { instance_double(Settings::Theme) }
 
         specify do
           parent.num_cols = 8

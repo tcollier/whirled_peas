@@ -2,7 +2,7 @@ require 'whirled_peas'
 
 class TemplateFactory
   def build(*)
-    WhirledPeas.template do |composer|
+    WhirledPeas.template(:test) do |composer|
       composer.add_grid('Alignment') do |composer, settings|
         settings.num_cols = 1
         settings.full_border

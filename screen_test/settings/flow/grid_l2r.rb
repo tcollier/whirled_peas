@@ -2,7 +2,7 @@ require 'whirled_peas'
 
 class TemplateFactory
   def build(*)
-    WhirledPeas.template do |composer, settings|
+    WhirledPeas.template(:test) do |composer, settings|
       composer.add_grid do |_, settings|
         settings.flow = :l2r
         settings.full_border

@@ -20,7 +20,7 @@ class TemplateFactory
     bright_white
   ]
   def build(*)
-    WhirledPeas.template do |composer|
+    WhirledPeas.template(:test) do |composer|
       composer.add_grid('Colors') do |composer, settings|
         settings.num_cols = 1
         COLORS.each.with_index do |color, index|

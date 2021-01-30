@@ -8,18 +8,22 @@ module WhirledPeas
   module Settings
     class ElementSettings
       def self.inherit(parent)
-        child = self.new
+        child = self.new(parent.theme)
         child.inherit(parent)
         child
       end
 
-      attr_accessor :width, :height
+      attr_accessor :theme, :width, :height
+
+      def initialize(theme)
+        @theme = theme
+      end
 
       def validate!
       end
 
       def bg_color
-        @_bg_color || BgColor::DEFAULT
+        @_bg_color || theme.bg_color
       end
 
       def bg_color=(color)
@@ -35,7 +39,7 @@ module WhirledPeas
       end
 
       def color
-        @_color || TextColor::DEFAULT
+        @_color || theme.color
       end
 
       def color=(color)

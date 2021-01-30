@@ -15,8 +15,16 @@ module WhirledPeas
     yield config
   end
 
-  def self.template(&block)
+  def self.template(theme_name=nil, &block)
     require 'whirled_peas/graphics/composer'
-    Graphics::Composer.build(&block)
+    Graphics::Composer.build(theme_name, &block)
+  end
+
+  def self.define_theme(name, &block)
+    require 'whirled_peas/settings/theme'
+    require 'whirled_peas/settings/theme_library'
+    theme = Settings::Theme.new
+    yield theme
+    Settings::ThemeLibrary.add(name, theme)
   end
 end

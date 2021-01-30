@@ -2,7 +2,7 @@ require 'whirled_peas'
 
 class TemplateFactory
   def build(*)
-    WhirledPeas.template do |composer|
+    WhirledPeas.template(:test) do |composer|
       composer.add_box('Container') do |composer, settings|
         composer.add_box do |composer, settings|
           settings.flow = :t2b

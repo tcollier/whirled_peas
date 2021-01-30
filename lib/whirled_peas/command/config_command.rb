@@ -8,9 +8,8 @@ module WhirledPeas
     class ConfigCommand < Base
       def start
         require config_file
-      rescue => e
+      rescue LoadError
         puts "Error loading #{config_file}"
-        puts e.message
         exit(1)
       end
 

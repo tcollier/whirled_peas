@@ -1,4 +1,5 @@
 require 'whirled_peas/settings/box_settings'
+require 'whirled_peas/settings/theme'
 
 module WhirledPeas
   module Settings
@@ -6,7 +7,9 @@ module WhirledPeas
       it_behaves_like 'a ContainerSettings'
 
       context 'validated attributes' do
-        subject(:settings) { described_class.new }
+        subject(:settings) { described_class.new(theme) }
+
+        let(:theme) { instance_double(Settings::Theme) }
 
         specify do
           expect { subject.sizing = :garbage }.to raise_error(ArgumentError, 'Unsupported sizing model: :garbage')
@@ -14,7 +17,9 @@ module WhirledPeas
       end
 
       context 'non-inherited attributes' do
-        let(:parent) { ContainerSettings.new }
+        let(:parent) { ContainerSettings.new(theme) }
+
+        let(:theme) { instance_double(Settings::Theme) }
 
         specify do
           parent.set_scrollbar(horiz: true, vert: true)

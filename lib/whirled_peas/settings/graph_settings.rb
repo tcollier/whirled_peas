@@ -5,7 +5,7 @@ module WhirledPeas
   module Settings
     class GraphSettings < ElementSettings
       def axis_color
-        @_axis_color || color
+        @_axis_color || theme.axis_color
       end
 
       def axis_color=(color)

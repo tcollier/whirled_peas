@@ -2,7 +2,7 @@ require 'whirled_peas'
 
 class TemplateFactory
   def build(*)
-    WhirledPeas.template do |composer, settings|
+    WhirledPeas.template(:test) do |composer, settings|
       settings.flow = :t2b
       composer.add_text('Bold') do |_, settings|
         settings.bold = true

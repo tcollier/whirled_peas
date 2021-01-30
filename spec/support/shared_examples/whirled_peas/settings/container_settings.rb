@@ -3,6 +3,7 @@ require 'whirled_peas/settings/color'
 require 'whirled_peas/settings/container_settings'
 require 'whirled_peas/settings/display_flow'
 require 'whirled_peas/settings/sizing'
+require 'whirled_peas/settings/theme'
 
 module WhirledPeas
   module Settings
@@ -10,7 +11,9 @@ module WhirledPeas
       it_behaves_like 'an ElementSettings'
 
       context 'validated attributes' do
-        subject(:settings) { described_class.new }
+        subject(:settings) { described_class.new(theme) }
+
+        let(:theme) { instance_double(Settings::Theme) }
 
         specify do
           expect { subject.align = :garbage }.to raise_error(ArgumentError, 'Unsupported alignment: :garbage')
@@ -62,11 +65,13 @@ module WhirledPeas
       end
 
       context 'inherited attributes' do
-        let(:parent) { ContainerSettings.new }
+        let(:parent) { ContainerSettings.new(theme) }
+
+        let(:theme) { instance_double(Settings::Theme) }
 
         it 'works with a parent that is an ElementSettings' do
           expect do
-            described_class.inherit(ElementSettings.new)
+            described_class.inherit(ElementSettings.new(theme))
           end.to_not raise_error
         end
 
@@ -79,7 +84,9 @@ module WhirledPeas
       end
 
       context 'non-inherited attributes' do
-        let(:parent) { ContainerSettings.new }
+        let(:parent) { ContainerSettings.new(theme) }
+
+        let(:theme) { instance_double(Settings::Theme) }
 
         specify do
           parent.align = Alignment::CENTER

@@ -5,6 +5,7 @@ require 'whirled_peas/command/help'
 require 'whirled_peas/command/play'
 require 'whirled_peas/command/record'
 require 'whirled_peas/command/still'
+require 'whirled_peas/command/themes'
 
 module WhirledPeas
   class CommandLine
@@ -15,7 +16,8 @@ module WhirledPeas
       Command::Help,
       Command::Play,
       Command::Record,
-      Command::Still
+      Command::Still,
+      Command::Themes
     ].map.with_object({}) { |c, h| h[c.command_name] = c }
 
     def initialize(args)

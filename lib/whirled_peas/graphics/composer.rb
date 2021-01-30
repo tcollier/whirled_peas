@@ -2,6 +2,7 @@ require 'whirled_peas/settings/box_settings'
 require 'whirled_peas/settings/graph_settings'
 require 'whirled_peas/settings/grid_settings'
 require 'whirled_peas/settings/text_settings'
+require 'whirled_peas/settings/theme_library'
 
 require_relative 'box_painter'
 require_relative 'graph_painter'
@@ -25,8 +26,10 @@ module WhirledPeas
         "Element-#{@counter}"
       end
 
-      def self.build
-        settings = Settings::BoxSettings.new
+      def self.build(theme_name=nil, &block)
+        theme_name ||= Settings::ThemeLibrary.default_name
+        theme = Settings::ThemeLibrary.get(theme_name)
+        settings = Settings::BoxSettings.new(theme)
         template = BoxPainter.new('TEMPLATE', settings)
         composer = Composer.new(template)
         value = yield composer, settings

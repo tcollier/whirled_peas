@@ -6,6 +6,8 @@ require 'whirled_peas/device/screen'
 require 'whirled_peas/graphics/debugger'
 require 'whirled_peas/graphics/renderer'
 require 'whirled_peas/settings/text_color'
+require 'whirled_peas/settings/theme'
+require 'whirled_peas/settings/theme_library'
 require 'whirled_peas/utils/ansi'
 require 'whirled_peas/utils/formatted_string'
 
@@ -45,6 +47,17 @@ module WhirledPeas
       # Return all screen test files
       def self.test_files
         Dir.glob(File.join(base_dir, SCREEN_TEST_DIR, '**', '*.rb'))
+      end
+
+      def self.define_test_theme
+        return if @defined_theme_library
+        theme = Settings::Theme.new
+        theme.color = :bright_white
+        theme.bg_color = :black
+        theme.border_color = :bright_white
+        theme.axis_color = :bright_white
+        Settings::ThemeLibrary.add(:test, theme)
+        @defined_theme_library = true
       end
 
       # Run all screen tests that exist in the screen test directory
@@ -112,7 +125,7 @@ module WhirledPeas
             when 'q'
               exit
             when 'n'
-              return
+              next
             end
             tester.ask_pending
             num_attempted += 1
@@ -263,6 +276,7 @@ module WhirledPeas
       end
 
       def with_template_factory(&block)
+        self.class.define_test_theme
         require full_test_file
         raise 'TemplateFactory must be defined' unless defined?(TemplateFactory)
         yield TemplateFactory.new
