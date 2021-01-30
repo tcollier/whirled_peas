@@ -15,6 +15,5 @@ module WhirledPeas
     def warn(*)
     end
   end
-
   private_constant :NullLogger
 end

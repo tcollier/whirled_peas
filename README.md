@@ -276,7 +276,7 @@ The template builder (`WhirledPeas.template`) takes an optional `theme` argument
 You can define your own theme
 
 ```ruby
-WhirledPeas.define_theme(:my_theme) do |theme|
+WhirledPeas.register_theme(:my_theme) do |theme|
   theme.bg_color = :bright_white
   theme.color = :blue
   theme.border_color = :bright_green

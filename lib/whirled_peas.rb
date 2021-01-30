@@ -20,7 +20,7 @@ module WhirledPeas
     Graphics::Composer.build(theme_name, &block)
   end
 
-  def self.define_theme(name, &block)
+  def self.register_theme(name, &block)
     require 'whirled_peas/settings/theme'
     require 'whirled_peas/settings/theme_library'
     theme = Settings::Theme.new

@@ -1,6 +1,6 @@
 require 'whirled_peas'
 
-WhirledPeas.define_theme(:theme_test) do |theme|
+WhirledPeas.register_theme(:theme_test) do |theme|
   theme.bg_color = :bright_white
   theme.color = :blue
   theme.border_color = :bright_green
