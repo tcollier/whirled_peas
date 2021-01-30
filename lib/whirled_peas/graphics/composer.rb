@@ -71,6 +71,10 @@ module WhirledPeas
         painter.add_child(child)
       end
 
+      def add_component(component)
+        component.compose(self, settings)
+      end
+
       def add_box(name=self.class.next_name, &block)
         child_settings = Settings::BoxSettings.inherit(painter.settings)
         child = BoxPainter.new(name, child_settings)

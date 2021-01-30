@@ -73,7 +73,7 @@ module WhirledPeas
       def border_value(border)
         values = non_defaults(
           border,
-          Border.new,
+          Border.new(settings.theme),
           %i[left? top? right? bottom? inner_horiz? inner_vert? style color]
         )
         return if values == ''

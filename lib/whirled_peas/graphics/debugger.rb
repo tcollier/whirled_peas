@@ -18,13 +18,7 @@ module WhirledPeas
         info << "#{indent + '  '}- Settings"
         info << Settings::Debugger.new(painter.settings).debug(indent + '    ')
         if painter.is_a?(TextPainter)
-          content = if painter.content.length > 1
-            '<multiline>'
-          elsif painter.content.first.length > 12
-            "#{painter.content.first[0..9]}...".inspect
-          else
-            painter.content.first.inspect
-          end
+          content = painter.content
           info << "#{indent + '  '}- Content(value=#{content})"
         elsif painter.is_a?(ContainerPainter)
           info << "#{indent + '  '}- Children"

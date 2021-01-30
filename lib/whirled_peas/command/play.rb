@@ -38,8 +38,9 @@ module WhirledPeas
               config.application.start(producer)
             end
           end
-        rescue LoadError
-          puts "Error loading #{config_file}"
+        rescue LoadError => e
+          puts e
+          puts e.backtrace.join("\n")
           exit(1)
         end
 

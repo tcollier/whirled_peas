@@ -2,6 +2,7 @@ require 'whirled_peas/utils/formatted_string'
 
 require_relative 'container_coords'
 require_relative 'painter'
+require_relative 'scrollbar_helper'
 
 module WhirledPeas
   module Graphics
@@ -216,16 +217,12 @@ module WhirledPeas
           settings.border.style.right_vert,
         ) do
           if settings.scrollbar.vert?
-            if dimensions.children_height <= canvas_coords.grid_height
-              scrollbar_char = GUTTER
-            else
-              scrollbar_char = vert_scroll_char(
-                dimensions.children_height + dimensions.padding_height,
-                canvas_coords.inner_grid_height,
-                -canvas_coords.offset_content_top,
-                row_within_cell
-              )
-            end
+            scrollbar_char = ScrollbarHelper.vert_char(
+              dimensions.children_height + dimensions.padding_height,
+              canvas_coords.inner_grid_height,
+              canvas_coords.top - canvas_coords.offset_content_top,
+              row_within_cell
+            )
             PADDING * canvas_coords.inner_grid_width + scrollbar_char
           else
             PADDING * canvas_coords.inner_grid_width
@@ -241,120 +238,13 @@ module WhirledPeas
           settings.border.style.right_vert,
         ) do
           canvas_coords.inner_grid_width.times.map do |col_within_cell|
-            horiz_scroll_char(
+            ScrollbarHelper.horiz_char(
               dimensions.children_width + dimensions.padding_width,
               canvas_coords.inner_grid_width,
-              -canvas_coords.offset_content_left,
+              canvas_coords.left - canvas_coords.offset_content_left,
               col_within_cell
             )
           end.join
-        end
-      end
-
-      # Contants to paint scrollbars
-      GUTTER = ' '
-      HORIZONTAL = %w[▗ ▄ ▖]
-      VERTICAL = %w[
-        ▗
-        ▐
-        ▝
-      ]
-
-      # Determine the character to paint the horizontal scroll bar with for the given column
-      #
-      # @see #scroll_char for more details
-      def horiz_scroll_char(col_count, viewable_col_count, first_visible_col, curr_col)
-        scroll_char(col_count, viewable_col_count, first_visible_col, curr_col, HORIZONTAL)
-      end
-
-      # Determine the character to paint the vertical scroll bar with for the given row
-      #
-      # @see #scroll_char for more details
-      def vert_scroll_char(row_count, viewable_row_count, first_visible_row, curr_row)
-        scroll_char(row_count, viewable_row_count, first_visible_row, curr_row, VERTICAL)
-      end
-
-      private
-
-      # Determine which character to paint a for a scrollbar
-      #
-      # @param total_count [Integer] total number of rows/columns in the content
-      # @param viewable_count [Integer] number of rows/columns visible in the viewport
-      # @param first_visible [Integer] zero-based index of the first row/column that is visible
-      #   in the viewport
-      # @param curr [Integer] zero-based index of the row/column (relative to the first visible
-      #   row/column) that the painted character is being requested for
-      # @param chars [Array<String>] an array with three 1-character strings, the frist is the
-      #   "second half" scrollbar character, the second is the "full" scrollbar character, and
-      #   the third is the "first half" scrollbar character.
-      def scroll_char(total_count, viewable_count, first_visible, curr, chars)
-        return GUTTER unless total_count > 0 && viewable_count > 0
-        # The scroll handle has the exact same relative size and position in the scroll gutter
-        # that the viewable content has in the total content area. For example, a content area
-        # that is 50 columns wide with a view port that is 20 columns wide might look like
-        #
-        #    +---------1-----****2*********3******---4---------+
-        #    |               *                   *             |
-        #    |   hidden      *     viewable      *   hidden    |
-        #    |               *                   *             |
-        #    +---------1-----****2*********3******---4---------+
-        #
-        # The scoll gutter, would look like
-        #
-        #                    |......********.....|
-        #
-        # Scrolling all the way to the right results in
-        #
-        #    +---------1---------2---------3*********4*********+
-        #    |                             *                   *
-        #    |            hidden           *     viewable      *
-        #    |                             *                   *
-        #    +---------1---------2---------3*********4*********+
-        #                                  |...........********|
-        #
-        # Returning to the first example, we can match up the arguments to this method to the
-        # diagram
-        #
-        #                       total_count = 50
-        #    |<----------------------------------------------->|
-        #    |                                                 |
-        #    |                veiwable_count = 20              |
-        #    |               |<----------------->|             |
-        #    ↓               ↓                   ↓             ↓
-        #    +---------1-----****2*********3******---4---------+
-        #    |               *                   *             |
-        #    |   hidden      *     viewable      *   hidden    |
-        #    |               *                   *             |
-        #    +---------1-----****2*********3******---4---------+
-        #                    |......****?***.....|
-        #                    ↑          ↑
-        #      first_visible = 16       |
-        #                             curr = 11
-
-        # The first task of determining how much of the handle is visible in a row/column is to
-        # calculate the range (as a precentage of the total) of viewable items
-        viewable_start = first_visible.to_f / total_count
-        viewable_end = (first_visible + viewable_count).to_f / total_count
-
-        # Always use the same length for the scroll bar so it does not give an inchworm effect
-        # as it scrolls along.
-        #
-        # Also, double the value now to get granularity for half width
-        # scrollbar characters.
-        scrollbar_length = ((2 * viewable_count ** 2).to_f / total_count).ceil
-        scrollbar_start = ((2 * first_visible * viewable_count).to_f / total_count).floor
-
-        first_half = (scrollbar_start...scrollbar_start + scrollbar_length).include?(2 * curr)
-        second_half = (scrollbar_start...scrollbar_start + scrollbar_length).include?(2 * curr + 1)
-
-        if first_half && second_half
-          chars[1]
-        elsif first_half
-          chars[2]
-        elsif second_half
-          chars[0]
-        else
-          GUTTER
         end
       end
     end
