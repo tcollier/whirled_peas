@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.0 - 2021-01-29
+
+- [3063a2b](https://github.com/tcollier/whirled_peas/tree/3063a2becb7680b5e320a1733b3da933e6c65210): Add built-in and user-defined themes
+
 ## v0.9.1 - 2021-01-29
 
 - [c35b134](https://github.com/tcollier/whirled_peas/tree/c35b134e1340b8b5f1d1fb0e6e56dc2a99b52e94): Improve graph plots
