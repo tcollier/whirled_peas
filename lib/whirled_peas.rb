@@ -7,24 +7,28 @@ require 'whirled_peas/utils'
 require 'whirled_peas/version'
 
 module WhirledPeas
-  def self.config
-    @config ||= Config.new
-  end
+  class << self
+    def configure(&block)
+      yield config
+    end
 
-  def self.configure(&block)
-    yield config
-  end
+    def template(theme_name=nil, &block)
+      require 'whirled_peas/graphics/composer'
+      Graphics::Composer.build(theme_name, &block)
+    end
 
-  def self.template(theme_name=nil, &block)
-    require 'whirled_peas/graphics/composer'
-    Graphics::Composer.build(theme_name, &block)
-  end
+    def register_theme(name, &block)
+      require 'whirled_peas/settings/theme'
+      require 'whirled_peas/settings/theme_library'
+      theme = Settings::Theme.new
+      yield theme
+      Settings::ThemeLibrary.add(name, theme)
+    end
 
-  def self.register_theme(name, &block)
-    require 'whirled_peas/settings/theme'
-    require 'whirled_peas/settings/theme_library'
-    theme = Settings::Theme.new
-    yield theme
-    Settings::ThemeLibrary.add(name, theme)
+    private
+
+    def config
+      @config ||= Config.new
+    end
   end
 end
