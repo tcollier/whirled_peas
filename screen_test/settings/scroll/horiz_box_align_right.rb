@@ -8,10 +8,8 @@ class TemplateFactory
         settings.align = :right
         settings.scrollbar.horiz = true
         settings.width = 5
-        composer.add_box('Inner') do |composer, settings|
-          settings.set_position(left: -4)
-          'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        end
+        settings.content_start.left = -4
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
       end
     end
   end

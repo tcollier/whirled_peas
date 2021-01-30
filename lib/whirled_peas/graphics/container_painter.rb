@@ -216,13 +216,13 @@ module WhirledPeas
           settings.border.style.right_vert,
         ) do
           if settings.scrollbar.vert?
-            if dimensions.children_height <= canvas_coords.grid_height || children.first.settings.position.top > 0
+            if dimensions.children_height <= canvas_coords.grid_height
               scrollbar_char = GUTTER
             else
               scrollbar_char = vert_scroll_char(
                 dimensions.children_height + dimensions.padding_height,
                 canvas_coords.inner_grid_height,
-                -children.first.settings.position.top,
+                -canvas_coords.offset_content_top,
                 row_within_cell
               )
             end
@@ -244,7 +244,7 @@ module WhirledPeas
             horiz_scroll_char(
               dimensions.children_width + dimensions.padding_width,
               canvas_coords.inner_grid_width,
-              -children.first.settings.position.left,
+              -canvas_coords.offset_content_left,
               col_within_cell
             )
           end.join

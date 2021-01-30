@@ -55,8 +55,8 @@ module WhirledPeas
       private
 
       def paint_horizontally(canvas, canvas_coords, &block)
-        stroke_left = canvas_coords.content_left
-        stroke_top = canvas_coords.content_top
+        stroke_left = canvas_coords.offset_content_left
+        stroke_top = canvas_coords.offset_content_top
         children_width = 0
         each_child { |c| children_width += c.dimensions.outer_width }
         left_offset, spacing_offset = horiz_justify_offset(children_width)
@@ -76,8 +76,8 @@ module WhirledPeas
       end
 
       def paint_vertically(canvas, canvas_coords, &block)
-        stroke_left = canvas_coords.content_left
-        stroke_top = canvas_coords.content_top
+        stroke_left = canvas_coords.offset_content_left
+        stroke_top = canvas_coords.offset_content_top
         children_height = 0
         each_child { |c| children_height += c.dimensions.outer_height }
         top_offset, spacing_offset = vert_justify_offset(children_height)

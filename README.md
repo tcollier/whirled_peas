@@ -249,26 +249,26 @@ end
 
 Each element type has an associated settings type, which provide a custom set of options to format the output. Child settings will inherit from the parent, where applicable. The table below lists all settings along with which element types the settings can be applied to (`Grid` and `Box` are containers)
 
-| Setting      | Description                                                                      | Default    | Availability | Inherited            |
-| ------------ | -------------------------------------------------------------------------------- | ---------- | ------------ | -------------------- |
-| `align`      | Justifies the content in the horizontal direction                                | `:left`    | containers   | No                   |
-| `axis_color` | Color used to paint the axes of the graph (see [Colors](#colors))                |            | `Graph`      | No                   |
-| `bg_color`   | Background color (see [Colors](#colors))                                         |            | all          | Yes                  |
-| `bold`       | `true` makes the font bold                                                       | `false`    | all          | Yes                  |
-| `border`     | Set the border for the lements                                                   | none       | containers,  | Only style and color |
-| `color`      | Foreground text color (see [Colors](#colors))                                    |            | all          | Yes                  |
-| `flow`       | Flow to display child elements (see [Display Flow](#display-flow))               | `:l2r`     | containers   | No                   |
-| `height`     | Override the calculated height of an element's content area                      |            | all          | No                   |
-| `margin`     | Set the (left, top, right, bottom) margin of the element                         | `0`        | containers   | No                   |
-| `num_cols`   | Number of columns in the grid (must be set!)                                     |            | `Grid`       | No                   |
-| `padding`    | Set the (left, top, right, bottom) padding of the element                        | `0`        | containers   | No                   |
-| `position`   | Set the (left, top) position of the element relative to parent content area      | `0`        | containers   | No                   |
-| `scrollbar`  | Display a scroll bar for vertical or horizontal scrolling                        |            | `Box`        | No                   |
-| `sizing`     | Sizing model (`:content` or `:border`) used in conjunction with `width`/`height` | `:content` | `Box`        | No                   |
-| `title_font` | Font used for "large" text (see [Large Text](#large-text), ignores `underline`)  |            | `Text`       | No                   |
-| `underline`  | `true` underlines the font                                                       | `false`    | all          | Yes                  |
-| `width`      | Override the calculated width of an element's content area                       |            | all          | No                   |
-| `valign`     | Justifies the content in the vertical direction                                  | `:top`     | containers   | No                   |
+| Setting         | Description                                                                      | Default    | Availability | Inherited            |
+| --------------- | -------------------------------------------------------------------------------- | ---------- | ------------ | -------------------- |
+| `align`         | Justifies the content in the horizontal direction                                | `:left`    | containers   | No                   |
+| `axis_color`    | Color used to paint the axes of the graph (see [Colors](#colors))                |            | `Graph`      | No                   |
+| `bg_color`      | Background color (see [Colors](#colors))                                         |            | all          | Yes                  |
+| `bold`          | `true` makes the font bold                                                       | `false`    | all          | Yes                  |
+| `border`        | Set the border for the lements                                                   | none       | containers,  | Only style and color |
+| `color`         | Foreground text color (see [Colors](#colors))                                    |            | all          | Yes                  |
+| `flow`          | Flow to display child elements (see [Display Flow](#display-flow))               | `:l2r`     | containers   | No                   |
+| `height`        | Override the calculated height of an element's content area                      |            | all          | No                   |
+| `margin`        | Set the (left, top, right, bottom) margin of the element                         | `0`        | containers   | No                   |
+| `num_cols`      | Number of columns in the grid (must be set!)                                     |            | `Grid`       | No                   |
+| `padding`       | Set the (left, top, right, bottom) padding of the element                        | `0`        | containers   | No                   |
+| `content_start` | Set the (left, top, right, bottom) position of children                          | `0`        | containers   | No                   |
+| `scrollbar`     | Display a scroll bar for vertical or horizontal scrolling                        |            | `Box`        | No                   |
+| `sizing`        | Sizing model (`:content` or `:border`) used in conjunction with `width`/`height` | `:content` | `Box`        | No                   |
+| `title_font`    | Font used for "large" text (see [Large Text](#large-text), ignores `underline`)  |            | `Text`       | No                   |
+| `underline`     | `true` underlines the font                                                       | `false`    | all          | Yes                  |
+| `width`         | Override the calculated width of an element's content area                       |            | all          | No                   |
+| `valign`        | Justifies the content in the vertical direction                                  | `:top`     | containers   | No                   |
 
 ##### Themes
 
@@ -473,11 +473,19 @@ The `valign` setting takes one of several values
 ┗━━━━━━━━━┛
 ```
 
-##### Position
+##### Content Start
 
-Position settings dictate the relative position from where the painter would have preferred to place the container. Negative numbers move the container left/up and positive numbers move it right/down. To set these values, use
+Content start settings dictate the relative position from the content area where the children will get painted. Positive values for `left`/`top` result in moving the children leftward/downward, negative values shift children rightward/upward. Setting `right` or `bototm` will result in the end of the children to be painted relative to the right/bottom of the content area.
 
-- `set_position(left:, top:)`
+To set these values, use
+
+- `content_start(left:, top:, right:, bottom:)`
+- `content_start.left=`
+- `content_start.top=`
+- `content_start.right=`
+- `content_start.bottom=`
+
+Note: setting `left` and `right` or `top` and `bottom` is not supported
 
 ##### Sizing Model
 

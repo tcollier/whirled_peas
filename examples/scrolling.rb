@@ -18,7 +18,7 @@ class TemplateFactory
         composer.add_box('Inner') do |composer, settings|
           settings.flow = :t2b
           settings.set_padding(left: HPADDING, right: HPADDING, top: VPADDING, bottom: VPADDING)
-          settings.set_position(top: top)
+          settings.content_start.top = top
           ITEM_COUNT.times do |i|
             composer.add_text { "%2d" % i }
           end
@@ -31,7 +31,7 @@ class TemplateFactory
         settings.set_scrollbar(horiz: true)
         settings.width = 12
         composer.add_box('Inner') do |composer, settings|
-          settings.set_position(left: top)
+          settings.content_start.left = top
           ITEM_COUNT.times.map { |i| (i % 10).to_s }.join
         end
       end

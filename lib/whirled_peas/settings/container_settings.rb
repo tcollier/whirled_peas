@@ -175,13 +175,20 @@ module WhirledPeas
         @_padding ||= Padding.new
       end
 
-      def set_position(left: nil, top: nil)
-        position.left = left if left
-        position.top = top if top
+      def set_content_start(left: nil, top: nil, right: nil, bottom: nil)
+        if left && right
+          raise ArgumentError, 'Setting left and right content_start is not supported'
+        elsif top && bottom
+          raise ArgumentError, 'Setting top and bottom content_start is not supported'
+        end
+        content_start.left = left if left
+        content_start.top = top if top
+        content_start.right = right if right
+        content_start.bottom = bottom if bottom
       end
 
-      def position
-        @_position ||= Position.new
+      def content_start
+        @_content_start ||= Position.new
       end
 
       def set_scrollbar(horiz: nil, vert: nil)

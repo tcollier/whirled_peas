@@ -6,11 +6,10 @@ class TemplateFactory
       settings.set_padding(left: 5, top: 5)
       composer.add_box do |composer, settings|
         settings.full_border(color: :green)
-        composer.add_grid do |_, settings|
-          settings.set_position(left: 3)
+        settings.content_start.right = 3
+        composer.add_box do |_, settings|
           settings.full_border(color: :red)
-          settings.num_cols = 1
-          %w[12345 22344 33333 44322 54321]
+          %w[12345 22344 33333 44322 54321].join("\n")
         end
       end
     end
