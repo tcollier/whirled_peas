@@ -479,7 +479,7 @@ Content start settings dictate the relative position from the content area where
 
 To set these values, use
 
-- `content_start(left:, top:, right:, bottom:)`
+- `set_content_start(left:, top:, right:, bottom:)`
 - `content_start.left=`
 - `content_start.top=`
 - `content_start.right=`
