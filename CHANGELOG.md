@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.0 - 2021-01-30
+
+- [c1f3d94](https://github.com/tcollier/whirled_peas/tree/c1f3d944a35305c3032681db13ffd6142a7e19e4): Add component support
+
 ## v0.10.0 - 2021-01-29
 
 - [3063a2b](https://github.com/tcollier/whirled_peas/tree/3063a2becb7680b5e320a1733b3da933e6c65210): Add built-in and user-defined themes
