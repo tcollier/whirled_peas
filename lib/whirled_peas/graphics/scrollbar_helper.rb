@@ -15,18 +15,18 @@ module WhirledPeas
       private_constant :SCROLL_HANDLE_SCALE
 
       class << self
-        # Determine the character to paint the horizontal scroll bar with for the given column
+        # Return the characters to paint the horizontal scroll bar with for the given column
         #
-        # @see #scroll_char for more details
-        def horiz_char(col_count, viewable_col_count, first_visible_col, curr_col)
-          scroll_char(col_count, viewable_col_count, first_visible_col, curr_col, HORIZONTAL)
+        # @see #scroll_chars for more details
+        def horiz(col_count, viewable_col_count, first_visible_col)
+          scroll_chars(col_count, viewable_col_count, first_visible_col, HORIZONTAL)
         end
 
-        # Determine the character to paint the vertical scroll bar with for the given row
+        # Return the characters to paint the vertical scroll bar with for the given row
         #
-        # @see #scroll_char for more details
-        def vert_char(row_count, viewable_row_count, first_visible_row, curr_row)
-          scroll_char(row_count, viewable_row_count, first_visible_row, curr_row, VERTICAL)
+        # @see #scroll_chars for more details
+        def vert(row_count, viewable_row_count, first_visible_row)
+          scroll_chars(row_count, viewable_row_count, first_visible_row, VERTICAL)
         end
 
         private
@@ -37,15 +37,16 @@ module WhirledPeas
         # @param viewable_count [Integer] number of rows/columns visible in the viewport
         # @param first_visible [Integer] zero-based index of the first row/column that is visible
         #   in the viewport
-        # @param curr [Integer] zero-based index of the row/column (relative to the first visible
-        #   row/column) that the painted character is being requested for
-        # @param chars [Array<String>] an array with three 1-character strings, the frist is the
-        #   "second half" scrollbar character, the second is the "full" scrollbar character, and
-        #   the third is the "first half" scrollbar character.
-        def scroll_char(total_count, viewable_count, first_visible, curr, chars)
-          return chars[0] if total_count == 0
-          return chars[0] if viewable_count == 0
-          return chars[0] if viewable_count >= total_count
+        # @param chars [Array<String>] an array with four 1-character strings, the frist is the
+        #   gutter (i.e. no scrolbar handle visible), then the "second half" scrollbar character,
+        #   then second is the "first half" scrollbar character, and finally the "full"
+        def scroll_chars(total_count, viewable_count, first_visible, chars)
+          # Start by initializing the scroll back to to all gutters
+          scrollbar = Array.new(viewable_count) { chars[0] }
+
+          return scrollbar if total_count == 0
+          return scrollbar if viewable_count == 0
+          return scrollbar if viewable_count >= total_count
 
           # The scroll handle has the exact same relative size and position in the scroll gutter
           # that the viewable content has in the total content area. For example, a content area
@@ -92,31 +93,32 @@ module WhirledPeas
           # Always use the same length for the scrollbar so it does not give an inchworm effect
           # as it scrolls along. This will calculate the "ideal" length of the scroll bar if we
           # could infinitely divide a character.
-          scrollbar_length = (viewable_count ** 2).to_f / total_count
+          length = (viewable_count ** 2).to_f / total_count
 
           # Round the length to the nearst "scaled" value
-          scrollbar_length = (SCROLL_HANDLE_SCALE * scrollbar_length).round.to_f / SCROLL_HANDLE_SCALE
+          length = (SCROLL_HANDLE_SCALE * length).round.to_f / SCROLL_HANDLE_SCALE
 
           # Ensure we have a scrollbar!
-          scrollbar_length = 1.0 / SCROLL_HANDLE_SCALE if scrollbar_length == 0
+          length = 1.0 / SCROLL_HANDLE_SCALE if length == 0
 
           # Find the "ideal" position of where the scrollbar should start.
-          scrollbar_start = first_visible * viewable_count.to_f / total_count
+          start = first_visible * viewable_count.to_f / total_count
 
           # Round the start to the nearest "scaled" value
-          scrollbar_start = (SCROLL_HANDLE_SCALE * scrollbar_start).round.to_f / SCROLL_HANDLE_SCALE
+          start = (SCROLL_HANDLE_SCALE * start).round.to_f / SCROLL_HANDLE_SCALE
 
           # Make sure we didn't scroll off the page!
-          scrollbar_start -= scrollbar_length if scrollbar_start == viewable_count
+          start -= length if start == viewable_count
 
-          # Create "scaled" indexes for the subdivided current character
-          curr_0 = curr
-          curr_1 = curr + 1.0 / SCROLL_HANDLE_SCALE
+          (start.floor..[(start + length).floor, viewable_count - 1].min).each do |curr_0|
+            curr_1 = curr_0 + 1.0 / SCROLL_HANDLE_SCALE
 
-          first_half = scrollbar_start <= curr_0 && curr_0 < scrollbar_start + scrollbar_length ? 2 : 0
-          second_half = scrollbar_start <= curr_1 && curr_1 < scrollbar_start + scrollbar_length ? 1 : 0
+            first_half = start <= curr_0 && curr_0 < start + length ? 2 : 0
+            second_half = start <= curr_1 && curr_1 < start + length ? 1 : 0
 
-          chars[second_half | first_half]
+            scrollbar[curr_0] = chars[second_half | first_half]
+          end
+          scrollbar
         end
       end
     end

@@ -162,17 +162,32 @@ module WhirledPeas
             expect(dimensions.outer_width).to eq(12)
           end
         end
+      end
 
-        context 'when everything is set' do
-          before do
-            allow(margin).to receive(:left).and_return(3)
-            allow(margin).to receive(:right).and_return(5)
-            allow(border).to receive(:left?).and_return(true)
-            allow(border).to receive(:right?).and_return(true)
-            allow(padding).to receive(:left).and_return(7)
-            allow(padding).to receive(:right).and_return(9)
+      context 'when everything is set' do
+        before do
+          allow(margin).to receive(:left).and_return(3)
+          allow(margin).to receive(:right).and_return(5)
+          allow(border).to receive(:left?).and_return(true)
+          allow(border).to receive(:inner_vert?).and_return(true)
+          allow(border).to receive(:right?).and_return(true)
+          allow(padding).to receive(:left).and_return(7)
+          allow(padding).to receive(:right).and_return(9)
+        end
+
+        describe '#grid_width' do
+          it 'returns the width of the content plus left/right padding plus one' do
+            expect(dimensions.grid_width).to eq(24)
           end
+        end
 
+        describe '#inner_grid_width' do
+          it 'returns the width of the content plus left/right padding' do
+            expect(dimensions.inner_grid_width).to eq(23)
+          end
+        end
+
+        describe '#outer_width' do
           it 'is includes it all in the total' do
             expect(dimensions.outer_width).to eq(33)
           end
@@ -390,18 +405,34 @@ module WhirledPeas
               expect(dimensions.outer_height).to eq(32)
             end
           end
+        end
 
-          context 'when everything is set' do
-            before do
-              allow(margin).to receive(:top).and_return(3)
-              allow(margin).to receive(:bottom).and_return(5)
-              allow(border).to receive(:top?).and_return(true)
-              allow(border).to receive(:inner_horiz?).and_return(true)
-              allow(border).to receive(:bottom?).and_return(true)
-              allow(padding).to receive(:top).and_return(7)
-              allow(padding).to receive(:bottom).and_return(9)
+        context 'when everything is set' do
+          before do
+            allow(margin).to receive(:top).and_return(3)
+            allow(margin).to receive(:bottom).and_return(5)
+            allow(border).to receive(:top?).and_return(true)
+            allow(border).to receive(:inner_horiz?).and_return(true)
+            allow(border).to receive(:bottom?).and_return(true)
+            allow(padding).to receive(:top).and_return(7)
+            allow(padding).to receive(:bottom).and_return(9)
+          end
+
+          describe '#grid_height' do
+            before { allow(border).to receive(:inner_horiz?).and_return(true) }
+
+            it 'returns the height of the content plus top/bottom padding plus one' do
+              expect(dimensions.grid_height).to eq(20)
             end
+          end
 
+          describe '#inner_grid_height' do
+            it 'returns the height of the content plus top/bottom padding' do
+              expect(dimensions.inner_grid_height).to eq(19)
+            end
+          end
+
+          describe '#outer_height' do
             it 'is includes it all in the total' do
               expect(dimensions.outer_height).to eq(89)
             end

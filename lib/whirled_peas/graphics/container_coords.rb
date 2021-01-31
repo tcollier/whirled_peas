@@ -33,7 +33,7 @@ module WhirledPeas
       end
 
       def content_left(col_index=0)
-        padding_left + settings.padding.left + col_index * grid_width
+        padding_left + settings.padding.left + col_index * dimensions.grid_width
       end
 
       def offset_content_left(col_index=0)
@@ -48,7 +48,7 @@ module WhirledPeas
       end
 
       def content_top(row_index=0)
-        padding_top + settings.padding.top + row_index * grid_height
+        padding_top + settings.padding.top + row_index * dimensions.grid_height
       end
 
       def offset_content_top(row_index=0)
@@ -60,30 +60,6 @@ module WhirledPeas
         else
           content_top(row_index)
         end
-      end
-
-      def inner_grid_width
-        settings.padding.left +
-          dimensions.content_width +
-          settings.padding.right
-      end
-
-      def grid_width
-        (settings.border.inner_vert? ? 1 : 0) +
-          inner_grid_width +
-          (settings.scrollbar.vert? ? 1 : 0)
-      end
-
-      def inner_grid_height
-        settings.padding.top +
-          dimensions.content_height +
-          settings.padding.bottom
-      end
-
-      def grid_height
-        (settings.border.inner_horiz? ? 1 : 0) +
-          inner_grid_height +
-          (settings.scrollbar.horiz? ? 1 : 0)
       end
 
       private

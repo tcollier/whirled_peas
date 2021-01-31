@@ -35,11 +35,17 @@ module WhirledPeas
 
         # Paint the top border if the settings call for it
         if settings.border.top?
-          canvas.stroke(stroke_left, stroke_top, top_border_stroke(canvas_coords), formatting, &block)
+          canvas.stroke(stroke_left, stroke_top, top_border_stroke, formatting, &block)
           stroke_top += 1
         end
         # Precalculate the middle border container grids with more than 1 row
-        middle_border = dimensions.num_rows > 1 ? middle_border_stroke(canvas_coords) : ''
+        middle_border = dimensions.num_rows > 1 ? middle_border_stroke : ''
+
+        vert_scrollbar = settings.scrollbar.vert? ? ScrollbarHelper.vert(
+          dimensions.children_height + dimensions.padding_height,
+          dimensions.inner_grid_height,
+          canvas_coords.content_top - canvas_coords.offset_content_top,
+        ) : []
 
         # Paint each grid row by row
         dimensions.num_rows.times do |row_num|
@@ -53,8 +59,9 @@ module WhirledPeas
 
           # Paint the interior of each row (horizontal borders, veritical scroll bar and
           # background color for the padding and content area)
-          canvas_coords.inner_grid_height.times do |row_within_cell|
-            canvas.stroke(stroke_left, stroke_top, content_line_stroke(canvas_coords, row_within_cell), formatting, &block)
+          dimensions.inner_grid_height.times do |row_within_cell|
+            content_line = content_line_stroke(row_within_cell, vert_scrollbar)
+            canvas.stroke(stroke_left, stroke_top, content_line, formatting, &block)
             stroke_top += 1
           end
 
@@ -67,7 +74,7 @@ module WhirledPeas
 
         # Paint the bottom border if the settings call for it
         if settings.border.bottom?
-          canvas.stroke(stroke_left, stroke_top, bottom_border_stroke(canvas_coords), formatting, &block)
+          canvas.stroke(stroke_left, stroke_top, bottom_border_stroke, formatting, &block)
           stroke_top += 1
         end
       end
@@ -177,55 +184,49 @@ module WhirledPeas
       end
 
       # Return the stroke for the top border
-      def top_border_stroke(canvas_coords)
+      def top_border_stroke
         line_stroke(
           settings.border.style.top_left,
           settings.border.style.top_junc,
           settings.border.style.top_right
         ) do
-          settings.border.style.top_horiz * (canvas_coords.inner_grid_width + (settings.scrollbar.vert? ? 1 : 0))
+          settings.border.style.top_horiz * (dimensions.inner_grid_width + (settings.scrollbar.vert? ? 1 : 0))
         end
       end
 
       # Return the stroke for an inner horizontal border
-      def middle_border_stroke(canvas_coords)
+      def middle_border_stroke
         line_stroke(
           settings.border.style.left_junc,
           settings.border.style.cross_junc,
           settings.border.style.right_junc
         ) do
-          settings.border.style.middle_horiz * (canvas_coords.inner_grid_width + (settings.scrollbar.vert? ? 1 : 0))
+          settings.border.style.middle_horiz * (dimensions.inner_grid_width + (settings.scrollbar.vert? ? 1 : 0))
         end
       end
 
       # Return the stroke for the bottom border
-      def bottom_border_stroke(canvas_coords)
+      def bottom_border_stroke
         line_stroke(
           settings.border.style.bottom_left,
           settings.border.style.bottom_junc,
           settings.border.style.bottom_right
         ) do
-          settings.border.style.bottom_horiz * (canvas_coords.inner_grid_width + (settings.scrollbar.vert? ? 1 : 0))
+          settings.border.style.bottom_horiz * (dimensions.inner_grid_width + (settings.scrollbar.vert? ? 1 : 0))
         end
       end
 
       # Return the stroke for a grid row between any borders
-      def content_line_stroke(canvas_coords, row_within_cell)
+      def content_line_stroke(row_within_cell, vert_scrollbar)
         line_stroke(
           settings.border.style.left_vert,
           settings.border.style.middle_vert,
           settings.border.style.right_vert,
         ) do
           if settings.scrollbar.vert?
-            scrollbar_char = ScrollbarHelper.vert_char(
-              dimensions.children_height + dimensions.padding_height,
-              canvas_coords.inner_grid_height,
-              canvas_coords.top - canvas_coords.offset_content_top,
-              row_within_cell
-            )
-            PADDING * canvas_coords.inner_grid_width + scrollbar_char
+            PADDING * dimensions.inner_grid_width + vert_scrollbar[row_within_cell]
           else
-            PADDING * canvas_coords.inner_grid_width
+            PADDING * dimensions.inner_grid_width
           end
         end
       end
@@ -237,14 +238,11 @@ module WhirledPeas
           settings.border.style.middle_vert,
           settings.border.style.right_vert,
         ) do
-          canvas_coords.inner_grid_width.times.map do |col_within_cell|
-            ScrollbarHelper.horiz_char(
-              dimensions.children_width + dimensions.padding_width,
-              canvas_coords.inner_grid_width,
-              canvas_coords.left - canvas_coords.offset_content_left,
-              col_within_cell
-            )
-          end.join
+          ScrollbarHelper.horiz(
+            dimensions.children_width + dimensions.padding_width,
+            dimensions.inner_grid_width,
+            canvas_coords.content_left - canvas_coords.offset_content_left
+          ).join
         end
       end
     end

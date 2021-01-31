@@ -1,5 +1,6 @@
 require 'whirled_peas/settings/border'
 require 'whirled_peas/graphics/canvas'
+require 'whirled_peas/graphics/container_dimensions'
 require 'whirled_peas/graphics/container_coords'
 require 'whirled_peas/settings/container_settings'
 require 'whirled_peas/settings/margin'
@@ -12,7 +13,14 @@ module WhirledPeas
       subject(:coords) { described_class.new(dimensions, settings, 21, 17) }
 
       let(:dimensions) do
-        instance_double(ContainerDimensions, outer_width: 50, content_width: 23, content_height: 9)
+        instance_double(
+          ContainerDimensions,
+          outer_width: 50,
+          grid_width: 35,
+          content_width: 23,
+          grid_height: 15,
+          content_height: 9
+        )
       end
       let(:settings) do
         instance_double(
@@ -80,20 +88,6 @@ module WhirledPeas
         end
       end
 
-      describe '#grid_width' do
-        before { allow(border).to receive(:inner_vert?).and_return(true) }
-
-        it 'returns the width of the content plus left/right padding plus one' do
-          expect(coords.grid_width).to eq(35)
-        end
-      end
-
-      describe '#inner_grid_width' do
-        it 'returns the width of the content plus left/right padding' do
-          expect(coords.inner_grid_width).to eq(34)
-        end
-      end
-
       describe '#top' do
         it 'returns #start_top' do
           expect(coords.top).to eq(17)
@@ -136,20 +130,6 @@ module WhirledPeas
             # content_top (26) + row_index (2) * grid_height (15)
             expect(coords.content_top(2)).to eq(56)
           end
-        end
-      end
-
-      describe '#grid_height' do
-        before { allow(border).to receive(:inner_horiz?).and_return(true) }
-
-        it 'returns the height of the content plus top/bottom padding plus one' do
-          expect(coords.grid_height).to eq(15)
-        end
-      end
-
-      describe '#inner_grid_height' do
-        it 'returns the height of the content plus top/bottom padding' do
-          expect(coords.inner_grid_height).to eq(14)
         end
       end
     end

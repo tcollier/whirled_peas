@@ -31,6 +31,30 @@ module WhirledPeas
         end
       end
 
+      def inner_grid_width
+        settings.padding.left +
+          content_width +
+          settings.padding.right
+      end
+
+      def grid_width
+        (settings.border.inner_vert? ? 1 : 0) +
+          inner_grid_width +
+          (settings.scrollbar.vert? ? 1 : 0)
+      end
+
+      def inner_grid_height
+        settings.padding.top +
+          content_height +
+          settings.padding.bottom
+      end
+
+      def grid_height
+        (settings.border.inner_horiz? ? 1 : 0) +
+          inner_grid_height +
+          (settings.scrollbar.horiz? ? 1 : 0)
+      end
+
       def outer_width
         @outer_width ||= margin_width +
           outer_border_width +

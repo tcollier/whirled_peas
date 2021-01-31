@@ -4,51 +4,49 @@ module WhirledPeas
   module Graphics
     RSpec.describe ScrollbarHelper do
       shared_examples_for 'a scrollbar character' do |method, chars|
-        it 'returns the gutter when there is no content' do
-          4.times do |curr_index|
-            expect(described_class.send(method, 0, 4, 0, curr_index)).to eq(chars[0])
-          end
+        def expected(chars, *indexes)
+          indexes.map { |index| chars[index] }
         end
 
-        it 'returns the gutter when viewport is size = 0' do
-          expect(described_class.send(method, 4, 0, 0, 0)).to eq(chars[0])
+        it 'returns the gutter when there is no content' do
+          expect(described_class.send(method, 0, 4, 0)).to eq(expected(chars, 0, 0, 0, 0))
+        end
+
+        it 'returns an empty array when viewport is size = 0' do
+          expect(described_class.send(method, 4, 0, 0)).to eq([])
         end
 
         it 'returns the gutter when the viewport is as big as the content' do
-          4.times do |curr_index|
-            expect(described_class.send(method, 4, 4, 0, curr_index)).to eq(chars[0])
-          end
+          expect(described_class.send(method, 4, 4, 0)).to eq(expected(chars, 0, 0, 0, 0))
         end
 
         it 'returns the full scroll char at the start of a short list' do
-          expect(described_class.send(method, 26, 10, 0, 0)).to eq(chars[3])
+          expect(described_class.send(method, 16, 4, 0)).to eq(expected(chars, 3, 0, 0, 0))
         end
 
         it 'returns the full scroll char at the end of a short list' do
-          expect(described_class.send(method, 26, 10, 15, 9)).to eq(chars[3])
+          expect(described_class.send(method, 16, 4, 11)).to eq(expected(chars, 0, 0, 0, 3))
         end
 
         it 'returns the first half scrollbar at the start of long list' do
-          expect(described_class.send(method, 10000, 4, 0, 0)).to eq(chars[2])
+          expect(described_class.send(method, 10000, 4, 0)).to eq(expected(chars, 2, 0, 0, 0))
         end
 
         it 'returns the second half scrollbar at the end of long list' do
-          expect(described_class.send(method, 10000, 4, 9995, 3)).to eq(chars[1])
+          expect(described_class.send(method, 10000, 4, 9995)).to eq(expected(chars, 0, 0, 0, 1))
         end
 
         it 'returns the expected scrollbar' do
-          [chars[0], chars[1], chars[3], chars[2]].each.with_index do |expected_char, curr_index|
-            expect(described_class.send(method, 8, 4, 3, curr_index)).to eq(expected_char)
-          end
+          expect(described_class.send(method, 8, 4, 3)).to eq(expected(chars, 0, 1, 3, 2))
         end
       end
 
       describe '.horiz_char' do
-        it_behaves_like 'a scrollbar character', :horiz_char, ScrollbarHelper::HORIZONTAL
+        it_behaves_like 'a scrollbar character', :horiz, ScrollbarHelper::HORIZONTAL
       end
 
       describe '.vert_char' do
-        it_behaves_like 'a scrollbar character', :vert_char, ScrollbarHelper::VERTICAL
+        it_behaves_like 'a scrollbar character', :vert, ScrollbarHelper::VERTICAL
       end
     end
   end
