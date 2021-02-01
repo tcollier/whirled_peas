@@ -33,8 +33,6 @@ This component takes the following options
 
 #### Optional
 
-- `active_bg_color` - background color of the active item
-- `active_color` - text color of the active item
 - `flow` - `:l2r` or `:t2b`
 - `separator` - string used to separate items in the list, e.g. `", "` for a horizontal list or `"----"` for a vertical list
 - `viewport_size` - number of characters of the viewport in the flow direction
@@ -48,8 +46,6 @@ WhirledPeas.template do |composer, settings|
     component.separator = ', '
     component.active_index = active
     component.viewport_size = 27
-    component.active_color = :blue
-    component.active_bg_color = :bright_yellow
   end
 end
 ```

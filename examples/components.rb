@@ -13,8 +13,6 @@ class TemplateFactory
         component.separator = ', '
         component.active_index = active
         component.viewport_size = 27
-        component.active_color = :green
-        component.active_bg_color = :yellow
       end
     end
   end
