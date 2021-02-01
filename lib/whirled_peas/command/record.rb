@@ -21,9 +21,7 @@ module WhirledPeas
           width,
           height
         )
-        Animator::Producer.produce(
-          consumer, WhirledPeas.config.refresh_rate
-        ) do |producer|
+        Animator::Producer.produce(consumer) do |producer|
           config.application.start(producer)
         end
       end

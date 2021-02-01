@@ -7,8 +7,8 @@ module WhirledPeas
         @file = file
       end
 
-      def handle_renders(renders)
-        Utils::FileHandler.write(file, renders)
+      def handle_rendered_frames(rendered_frames)
+        Utils::FileHandler.write(file, rendered_frames)
       end
 
       private

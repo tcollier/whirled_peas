@@ -1,3 +1,5 @@
+require 'whirled_peas/device/rendered_frame'
+
 require_relative 'frame_command'
 
 module WhirledPeas
@@ -16,12 +18,14 @@ module WhirledPeas
         require 'whirled_peas/utils/ansi'
 
         Utils::Ansi.with_screen do |width, height|
-          rendered = Graphics::Renderer.new(
+          strokes = Graphics::Renderer.new(
             WhirledPeas.config.template_factory.build(frame, frame_args),
             width,
             height
           ).paint
-          Device::Screen.new(10000).handle_renders([rendered])
+          Device::Screen.new.handle_rendered_frames(
+            [Device::RenderedFrame.new(strokes, 0)]
+          )
         end
       end
     end

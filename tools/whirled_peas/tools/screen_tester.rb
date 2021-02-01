@@ -2,6 +2,7 @@ require 'bundler/setup'
 require 'whirled_peas'
 require 'whirled_peas/animator/producer'
 require 'whirled_peas/animator/renderer_consumer'
+require 'whirled_peas/device/rendered_frame'
 require 'whirled_peas/device/screen'
 require 'whirled_peas/graphics/debugger'
 require 'whirled_peas/graphics/renderer'
@@ -286,12 +287,14 @@ module WhirledPeas
 
       def render_screen(template_factory, output)
         Utils::Ansi.with_screen(output, width: SCREEN_WIDTH, height: SCREEN_HEIGHT) do
-          rendered = Graphics::Renderer.new(
+          strokes = Graphics::Renderer.new(
             template_factory.build('test', {}),
             SCREEN_WIDTH,
             SCREEN_HEIGHT
           ).paint
-          Device::Screen.new(10000, output: output).handle_renders([rendered])
+          Device::Screen.new(output: output).handle_rendered_frames(
+            [Device::RenderedFrame.new(strokes, 0)]
+          )
         end
       end
     end

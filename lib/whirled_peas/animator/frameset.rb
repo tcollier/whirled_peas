@@ -4,8 +4,8 @@ require_relative 'frame'
 module WhirledPeas
   module Animator
     class Frameset
-      def initialize(frame_slots, easing, effect)
-        @frame_slots = frame_slots
+      def initialize(duration, easing, effect)
+        @duration = duration
         @easing = Easing.new(easing, effect)
         @frames = []
       end
@@ -16,17 +16,22 @@ module WhirledPeas
 
       # Yield each frame in an "eased" order
       def each_frame(&block)
-        frame_slots.times do |i|
-          input = i.to_f / (frame_slots - 1)
-          eased_value = @easing.ease(input)
-          index = (eased_value * (frames.length - 1)).floor
-          yield *frames[index]
+        return if frames.length == 0
+        if frames.length == 1
+          frame, args = frames[0]
+          yield frame, duration, args
+        else
+          frames.each.with_index do |(frame, args), index|
+            curr_ease = @easing.invert(index.to_f / frames.length)
+            next_ease = @easing.invert((index + 1).to_f / frames.length)
+            yield frame, duration * (next_ease - curr_ease), args
+          end
         end
       end
 
       private
 
-      attr_reader :frame_slots, :easing, :frames
+      attr_reader :duration, :easing, :frames
     end
     private_constant :Frameset
   end

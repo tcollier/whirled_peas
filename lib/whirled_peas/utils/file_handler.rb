@@ -1,16 +1,19 @@
 require 'base64'
 require 'zlib'
 
+require 'whirled_peas/device/rendered_frame'
+
 module WhirledPeas
   module Utils
     module FileHandler
       module FileWriter
         VERSION = '1'
 
-        def self.write(fp, renders)
-          fp.puts renders.count
-          renders.each do |strokes|
-            encoded = Base64.encode64(strokes)
+        def self.write(fp, rendered_frames)
+          fp.puts rendered_frames.count
+          rendered_frames.each do |rendered_frame|
+            fp.puts rendered_frame.duration
+            encoded = Base64.encode64(rendered_frame.strokes)
             fp.puts encoded.count("\n")
             fp.puts encoded
           end
@@ -20,10 +23,12 @@ module WhirledPeas
 
       class FileReaderV1
         def self.read(fp)
-          num_renders = Integer(fp.readline.chomp, 10)
-          num_renders.times.map do
+          num_frames = Integer(fp.readline.chomp, 10)
+          num_frames.times.map do
+            duration = Float(fp.readline.chomp)
             num_strokes = Integer(fp.readline.chomp, 10)
-            Base64.decode64(num_strokes.times.map { fp.readline }.join)
+            strokes = Base64.decode64(num_strokes.times.map { fp.readline }.join)
+            Device::RenderedFrame.new(strokes, duration)
           end
         end
 
@@ -38,10 +43,10 @@ module WhirledPeas
       }
       private_constant :READERS
 
-      def self.write(file, renders)
+      def self.write(file, rendered_frames)
         Zlib::GzipWriter.open(file, Zlib::BEST_COMPRESSION) do |gz|
           gz.puts FileWriter::VERSION
-          FileWriter.write(gz, renders)
+          FileWriter.write(gz, rendered_frames)
         end
       end
 

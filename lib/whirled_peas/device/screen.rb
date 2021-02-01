@@ -3,24 +3,28 @@ require 'highline'
 module WhirledPeas
   module Device
     class Screen
-      def initialize(refresh_rate, output: STDOUT)
-        @refresh_rate = refresh_rate
+      def initialize(output: STDOUT)
         @output = output
       end
 
-      def handle_renders(renders)
-        renders.each do |strokes|
-          frame_at = Time.now
-          output.print(strokes)
+      def handle_rendered_frames(rendered_frames)
+        next_frame_at = nil
+        rendered_frames.each do |rendered_frame|
+          if next_frame_at.nil?
+            next_frame_at = Time.now + rendered_frame.duration
+          else
+            next_frame_at += rendered_frame.duration
+            next if next_frame_at < Time.now
+          end
+          output.print(rendered_frame.strokes)
           output.flush
-          next_frame_at = frame_at + 1.0 / refresh_rate
           sleep([0, next_frame_at - Time.now].max)
         end
       end
 
       private
 
-      attr_reader :refresh_rate, :output
+      attr_reader :output
     end
   end
 end

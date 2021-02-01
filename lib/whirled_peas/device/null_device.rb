@@ -1,7 +1,7 @@
 module WhirledPeas
   module Device
     class NullDevice
-      def handle_renders(*)
+      def handle_rendered_frames(*)
       end
     end
   end

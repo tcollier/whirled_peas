@@ -28,13 +28,11 @@ module WhirledPeas
           Utils::Ansi.with_screen do |width, height|
             consumer = Animator::RendererConsumer.new(
               WhirledPeas.config.template_factory,
-              Device::Screen.new(WhirledPeas.config.refresh_rate),
+              Device::Screen.new,
               width,
               height
             )
-            Animator::Producer.produce(
-              consumer, WhirledPeas.config.refresh_rate
-            ) do |producer|
+            Animator::Producer.produce(consumer) do |producer|
               config.application.start(producer)
             end
           end
@@ -60,9 +58,9 @@ module WhirledPeas
           require 'whirled_peas/utils/file_handler'
 
           Utils::Ansi.with_screen do
-            screen = Device::Screen.new(WhirledPeas.config.refresh_rate)
-            renders = Utils::FileHandler.read(wpz_file)
-            screen.handle_renders(renders)
+            screen = Device::Screen.new
+            rendered_frames = Utils::FileHandler.read(wpz_file)
+            screen.handle_rendered_frames(rendered_frames)
           end
         end
 

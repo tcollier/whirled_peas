@@ -94,7 +94,7 @@ module WhirledPeas
       end
 
       def style
-        @_style || theme.border_style
+        @_style || theme.border_style || Styles::BOLD
       end
 
       def style=(val)

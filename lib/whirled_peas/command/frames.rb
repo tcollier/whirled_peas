@@ -13,9 +13,7 @@ module WhirledPeas
         require 'whirled_peas/animator/debug_consumer'
         require 'whirled_peas/animator/producer'
 
-        Animator::Producer.produce(
-          Animator::DebugConsumer.new, WhirledPeas.config.refresh_rate
-        ) do |producer|
+        Animator::Producer.produce(Animator::DebugConsumer.new) do |producer|
           config.application.start(producer)
         end
       end

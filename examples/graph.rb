@@ -32,7 +32,7 @@ class TemplateFactory
               settings.color = :bright_blue
               settings.height = 15
               INNER_WIDTH.times.map do |i|
-                easing.ease(i.to_f / (INNER_WIDTH - 1))
+                easing.invert(i.to_f / (INNER_WIDTH - 1))
               end
             end
           end

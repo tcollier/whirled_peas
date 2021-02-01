@@ -2,9 +2,6 @@ require 'logger'
 
 module WhirledPeas
   class Config
-    # Refreshed rate measured in frames per second
-    DEFAULT_REFRESH_RATE = 30
-
     DEFAULT_LOG_LEVEL = Logger::INFO
     DEFAULT_LOG_FILE = 'whirled_peas.log'
 
@@ -35,7 +32,7 @@ module WhirledPeas
       "[#{severity}] #{datetime.strftime('%Y-%m-%dT%H:%M:%S.%L')} (#{progname}) - #{msg}\n"
     end
 
-    attr_writer :application, :template_factory, :refresh_rate, :log_level, :log_formatter, :log_file
+    attr_writer :application, :template_factory, :log_level, :log_formatter, :log_file
 
     def application
       unless @application
@@ -49,10 +46,6 @@ module WhirledPeas
         raise ConfigurationError, 'template_factory must be configured'
       end
       @template_factory
-    end
-
-    def refresh_rate
-      @refresh_rate || DEFAULT_REFRESH_RATE
     end
 
     def log_level
