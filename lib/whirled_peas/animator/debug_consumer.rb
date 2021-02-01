@@ -4,8 +4,8 @@ module WhirledPeas
       def add_frameset(frameset)
         require 'json'
 
-        frameset.each_frame do |frame, args|
-          puts [frame, *(JSON.generate(args) unless args.empty?)].join(' ')
+        frameset.each_frame do |frame, duration, args|
+          puts [frame, "duration=#{duration}", *(JSON.generate(args) unless args.empty?)].join(' ')
         end
       end
 
