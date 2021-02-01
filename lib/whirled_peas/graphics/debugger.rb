@@ -15,6 +15,7 @@ module WhirledPeas
           "#{indent}* #{painter.class}(#{painter.name})",
         ]
         info << "#{indent + '  '}- Dimensions(#{dimensions})"
+        info << "#{indent + '  '}- Theme=#{painter.settings.theme.inspect}" if indent == ''
         info << "#{indent + '  '}- Settings"
         info << Settings::Debugger.new(painter.settings).debug(indent + '    ')
         if painter.is_a?(TextPainter)

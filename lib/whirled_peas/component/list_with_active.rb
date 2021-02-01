@@ -1,7 +1,7 @@
 module WhirledPeas
   module Component
     class ListWithActive
-      attr_accessor :active_index, :active_color, :active_bg_color, :separator
+      attr_accessor :active_index, :separator
 
       attr_reader :items
 
@@ -75,8 +75,8 @@ module WhirledPeas
             composer.add_text { separator } if !separator.nil? && index > 0
             composer.add_text do |_, settings|
               if index == active_index
-                settings.bg_color = active_bg_color
-                settings.color = active_color
+                settings.bg_color = :highlight
+                settings.color = :highlight
               end
               item
             end

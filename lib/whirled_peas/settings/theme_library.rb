@@ -39,14 +39,20 @@ module WhirledPeas
             theme = Theme.new
             settings.each do |key, value|
               case key
-              when 'color'
-                theme.color = value
+              when 'axis_color'
+                theme.axis_color = value
               when 'bg_color'
                 theme.bg_color = value
               when 'border_color'
                 theme.border_color = value
-              when 'axis_color'
-                theme.axis_color = value
+              when 'border_style'
+                theme.border_style = value
+              when 'color'
+                theme.color = value
+              when 'highlight_bg_color'
+                theme.highlight_bg_color = value
+              when 'highlight_color'
+                theme.highlight_color = value
               when 'title_font'
                 theme.title_font = value
               else

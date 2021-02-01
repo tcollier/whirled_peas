@@ -1,5 +1,6 @@
 require 'whirled_peas/utils/ansi'
 
+require_relative 'bg_color'
 require_relative 'color'
 
 module WhirledPeas
@@ -16,6 +17,10 @@ module WhirledPeas
       GRAY = BLACK.bright
 
       DEFAULT = nil  # Use system defined default
+
+      def as_bg_color
+        BgColor.new(code + BgColor::BG_OFFSET, bright?)
+      end
     end
   end
 end

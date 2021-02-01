@@ -43,11 +43,11 @@ module WhirledPeas
       end
 
       def bright
-        bright? ? self : self.class.new(@code + Utils::Ansi::BRIGHT_OFFSET, true)
+        bright? ? self : self.class.new(code + Utils::Ansi::BRIGHT_OFFSET, true)
       end
 
       def hash
-        [@code, @bright].hash
+        [code, bright].hash
       end
 
       def ==(other)
@@ -56,12 +56,16 @@ module WhirledPeas
       alias_method :eq?, :==
 
       def to_s
-        @code.to_s
+        code.to_s
       end
 
       def inspect
-        "#{self.class.name.split('::').last}(code=#{@code}, bright=#{@bright})"
+        "#{self.class.name.split('::').last}(code=#{code}, bright=#{bright?})"
       end
+
+      private
+
+      attr_reader :code
     end
     private_constant :Color
   end

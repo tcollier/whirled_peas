@@ -1,13 +1,17 @@
 bright:
-  bg_color: :bright_white
-  color: :blue
-  border_color: :bright_blue
   axis_color: :red
+  bg_color: :bright_white
+  border_color: :bright_blue
+  border_style: :soft
+  color: :blue
   title_font: :default
 
 dark:
-  bg_color: :black
-  color: :white
-  border_color: :gray
   axis_color: :bright_white
+  bg_color: :black
+  border_color: :gray
+  border_style: :double
+  color: :white
+  highlight_bg_color: :bright_red
+  highlight_color: :black
   title_font: :swan

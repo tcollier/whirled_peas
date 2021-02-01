@@ -1,12 +1,12 @@
 require 'whirled_peas/utils/ansi'
 
 require_relative 'color'
+require_relative 'text_color'
 
 module WhirledPeas
   module Settings
     class BgColor < Color
       BG_OFFSET = 10
-      private_constant :BG_OFFSET
 
       BLACK = new(Utils::Ansi::BLACK + BG_OFFSET)
       RED = new(Utils::Ansi::RED + BG_OFFSET)
@@ -19,6 +19,10 @@ module WhirledPeas
       GRAY = BLACK.bright
 
       DEFAULT = nil  # Use system defined default
+
+      def as_text_color
+        TextColor.new(code - BG_OFFSET, bright?)
+      end
     end
   end
 end

@@ -27,7 +27,11 @@ module WhirledPeas
       end
 
       def bg_color=(color)
-        @_bg_color = BgColor.validate!(color)
+        if color == :highlight
+          @_bg_color = theme.highlight_bg_color
+        else
+          @_bg_color = BgColor.validate!(color)
+        end
       end
 
       def bold?
@@ -43,7 +47,11 @@ module WhirledPeas
       end
 
       def color=(color)
-        @_color = TextColor.validate!(color)
+        if color == :highlight
+          @_color = theme.highlight_color
+        else
+          @_color = TextColor.validate!(color)
+        end
       end
 
       def underline?

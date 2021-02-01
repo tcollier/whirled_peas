@@ -34,6 +34,8 @@ module WhirledPeas
       def debug_value(value)
         return if value.nil?
         case value
+        when Theme
+          nil
         when Position
           position_value(value)
         when Margin
