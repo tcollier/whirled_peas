@@ -32,7 +32,7 @@ module WhirledPeas
       def compose(composer, settings)
         %i[items active_index].each do |required_attr|
           if send(required_attr).nil?
-            raise ArugmentError, "Require field #{required_attr} missing"
+            raise ArgumentError, "Required field #{required_attr} missing"
           end
         end
 
