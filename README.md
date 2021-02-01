@@ -18,7 +18,7 @@
      ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝    ╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝
 ```
 
-Easily create terminal-based graphics to visualize the execution of your code. Whirled Peas offers templating inspired by HTML and CSS and provides a lightweight tie-in for your code to produce visual animations with these templates.
+Easily create terminal-based graphics to visualize the execution of your code. Whirled Peas offers templating inspired by HTML and CSS and provides a lightweight tie-in for your code to produce visual animations.
 
 ## Installation
 
@@ -41,9 +41,9 @@ Or install it yourself as:
 A Whirled Peas application consists of the following required pieces
 
 - [The application](doc/application.md) - the code that is to be visualized, it dictates the frame contents and playback speed
-- [The template factory](doc/template_factory.md) - builds templates to convert frame from the application into terminal graphics
+- [The template factory](doc/template_factory.md) - builds templates to convert frames from the application into terminal graphics
 
-These pieces are configured as following
+These pieces are configured as follows
 
 ```ruby
 # visualize.rb

@@ -1,11 +1,10 @@
 ## Screen Tests
 
-In addition to standard RSpec tests, WhirledPeas has custom tests for rendered templates. These files live in `screen_test/`. Each ruby file is expected to define a class named `TemplateFactory` that responds to `#build(name, args)` returning a template (the standard template factory role). Each file should also be accompanied by a `.frame` file with the same base name. This file will contain the output of the rendered screen and is considered the correct output when running tests.
+In addition to standard RSpec tests, WhirledPeas has custom tests for rendered templates. These files live in `screen_test/`. Each ruby file is expected to define a class named `TemplateFactory` that responds to `#build(name, args)` returning a template (this is the standard template factory role). Each file should also be accompanied by a `.frame` file with the same base name. This file will contain the output of the rendered screen and is considered the correct output when running tests. Use the `--view` flag to create the `.frame` file for an individual test or the `--view-pedning` flag to interactively create `.frame` files for all tests that do not have one.
 
 Note: viewing `.frame` files with `cat` works better than most other text editors.
 
 ```
-
 Usage: screen_test [file] [options]
 
 If not file or options are provide, all tests are run
