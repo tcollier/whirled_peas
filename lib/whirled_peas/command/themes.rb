@@ -64,7 +64,6 @@ module WhirledPeas
       def validate!
         super
         config_file = args.shift
-        @error_text = 'hi'
         unless config_file.nil?
           # We think we have a valid ruby config file, set the absolute path to @config
           @config_file = config_file[0] == '/' ? config_file : File.join(Dir.pwd, config_file)
