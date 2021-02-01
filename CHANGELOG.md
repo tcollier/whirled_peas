@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.1 - 2021-01-31
+
+- [36e48cf](https://github.com/tcollier/whirled_peas/tree/36e48cf6731706539c6c41ce0ef66e86c62380a5): Add highlight colors and border style to theme
+- [93b1034](https://github.com/tcollier/whirled_peas/tree/93b1034b9401fe9e31cd3199a5e2426d7a893ed6): Better handling of non-ascending graphs
+
 ## v0.11.0 - 2021-01-30
 
 - [c1f3d94](https://github.com/tcollier/whirled_peas/tree/c1f3d944a35305c3032681db13ffd6142a7e19e4): Add component support
