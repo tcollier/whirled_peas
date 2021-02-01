@@ -33,15 +33,17 @@ module WhirledPeas
           unless width && height
             width, height = HighLine.new.terminal.terminal_size
           end
+          output.print cursor_visible(false)
+          output.flush
           yield width, height
         ensure
           output.print clear
-          output.print cursor_pos(top: height - 1)
+          output.print cursor_pos(left: 0, top: height - 1)
           output.print cursor_visible(true)
           output.flush
         end
 
-        def cursor_pos(top: 0, left: 0)
+        def cursor_pos(left:, top:)
           "#{ESC}[#{top + 1};#{left + 1}H"
         end
 

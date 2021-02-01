@@ -7,6 +7,8 @@ module WhirledPeas
         new('')
       end
 
+      attr_reader :formatting
+
       def initialize(raw, formatting=nil)
         @raw = raw
         @formatting = [*formatting]
@@ -16,8 +18,8 @@ module WhirledPeas
         raw.length
       end
 
-      def [](index_or_range)
-        self.class.new(raw[index_or_range], foramtting)
+      def each_char(&block)
+        raw.chars.each(&block)
       end
 
       def blank?
@@ -58,7 +60,7 @@ module WhirledPeas
 
       private
 
-      attr_reader :raw, :formatting
+      attr_reader :raw
     end
   end
 end
