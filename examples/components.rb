@@ -21,9 +21,9 @@ end
 class Application
   def start(producer)
     producer.frameset(5, easing: :parametric) do |fs|
-      ITEMS.length.times { |i| fs.add_frame('intro', args: { active: i }) }
+      TemplateFactory::ITEMS.length.times { |i| fs.add_frame('intro', args: { active: i }) }
     end
-    producer.add_frame('hold', duration: 1, args: { active: ITEMS.length - 1 })
+    producer.add_frame('hold', duration: 1, args: { active: TemplateFactory::ITEMS.length - 1 })
   end
 end
 
