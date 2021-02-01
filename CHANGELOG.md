@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.12.0- 2021-01-31
+
+- [f218ed5](https://github.com/tcollier/whirled_peas/tree/f218ed5a8bbc20fc332a42ad9720467784a916e2): Optimize rendered frames
+
 ## v0.11.1 - 2021-01-31
 
 - [36e48cf](https://github.com/tcollier/whirled_peas/tree/36e48cf6731706539c6c41ce0ef66e86c62380a5): Add highlight colors and border style to theme
