@@ -11,13 +11,16 @@ module WhirledPeas
         @width = width
         @height = height
         @rendered_frames = []
+        @prev_pixel_grid = nil
       end
 
       def add_frameset(frameset)
         frameset.each_frame do |frame, duration, args|
           template = template_factory.build(frame, args)
-          strokes = Graphics::Renderer.new(template, width, height).paint
+          pixel_grid = Graphics::Renderer.new(template, width, height).paint
+          strokes = prev_pixel_grid.nil? ? pixel_grid.to_s : pixel_grid.diff(prev_pixel_grid)
           rendered_frames << Device::RenderedFrame.new(strokes, duration)
+          @prev_pixel_grid = pixel_grid
         end
       end
 
@@ -27,7 +30,7 @@ module WhirledPeas
 
       private
 
-      attr_reader :template_factory, :device, :width, :height, :rendered_frames
+      attr_reader :template_factory, :device, :width, :height, :rendered_frames, :prev_pixel_grid
     end
   end
 end

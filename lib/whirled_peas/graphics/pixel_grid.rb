@@ -14,6 +14,43 @@ module WhirledPeas
         end
       end
 
+      def pixel_at(col, row)
+        pixels[row][col]
+      end
+
+      def diff(other)
+        str = ''
+        formatting = nil
+        chars = ''
+        pixels.each.with_index do |row, row_index|
+          row.each.with_index do |pixel, col_index|
+            if pixel == other.pixel_at(col_index, row_index)
+              if chars != ''
+                str += Utils::FormattedString.new(chars, formatting).to_s
+                chars = ''
+                formatting = nil
+              end
+            elsif chars == ''
+              str += Utils::Ansi.cursor_pos(left: col_index, top: row_index)
+              chars = pixel.char
+              formatting = pixel.formatting
+            elsif formatting != pixel.formatting
+              str += Utils::FormattedString.new(chars, formatting).to_s
+              chars = pixel.char
+              formatting = pixel.formatting
+            else
+              chars += pixel.char
+            end
+          end
+        end
+        if chars != ''
+          str += chars
+          chars = ''
+          formatting = nil
+        end
+        str
+      end
+
       def to_s
         str = Utils::Ansi.cursor_pos(left: 0, top: 0) + Utils::Ansi.clear_down
         formatting = nil

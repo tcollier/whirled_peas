@@ -20,7 +20,7 @@ module WhirledPeas
         template.paint(Canvas.new(0, 0, width, height), 0, 0) do |left, top, fstring|
           pixel_grid.add_stroke(left, top, fstring)
         end
-        pixel_grid.to_s
+        pixel_grid
       end
 
       private
