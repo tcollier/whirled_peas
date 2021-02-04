@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.13.0- 2021-02-03
+
+- [c4feba9](https://github.com/tcollier/whirled_peas/tree/c4feba92c34cf39e6e12650bae701744dd5999d2): Only paint the diff
+- [fa871e5](https://github.com/tcollier/whirled_peas/tree/fa871e5e9a40feb33d68e8d213b8613e0dcdaa09): Don't require `active_index` for `ListWithActive`
+- [0417b66](https://github.com/tcollier/whirled_peas/tree/0417b66c4a143c7c0ca439699519853f07eb6ac3): Use :soft border as default and for built-in themes
+
 ## v0.12.0- 2021-01-31
 
 - [f218ed5](https://github.com/tcollier/whirled_peas/tree/f218ed5a8bbc20fc332a42ad9720467784a916e2): Optimize rendered frames
