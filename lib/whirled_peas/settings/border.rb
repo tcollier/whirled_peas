@@ -34,7 +34,7 @@ module WhirledPeas
           '╚', '═', '╩', '╝'
         )
 
-        DEFAULT = BOLD
+        DEFAULT = SOFT
 
         def self.validate!(style)
           return if style.nil?
@@ -94,7 +94,7 @@ module WhirledPeas
       end
 
       def style
-        @_style || theme.border_style || Styles::BOLD
+        @_style || theme.border_style || Styles::DEFAULT
       end
 
       def style=(val)

@@ -56,6 +56,7 @@ module WhirledPeas
         theme.color = :bright_white
         theme.bg_color = :black
         theme.border_color = :bright_white
+        theme.border_style = :bold
         theme.axis_color = :bright_white
         Settings::ThemeLibrary.add(:test, theme)
         @defined_theme_library = true

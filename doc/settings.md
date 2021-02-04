@@ -317,7 +317,17 @@ The border settings consist of 6 boolean values (border are either width 1 or no
 
 Available border styles are
 
-- `:bold` (default)
+- `:soft` (default)
+
+```
+╭──┬──╮
+│  │  │
+├──┼──┤
+│  │  │
+╰──┴──╯
+```
+
+- `:bold`
 
 ```
 ┏━━┳━━┓
@@ -335,16 +345,6 @@ Available border styles are
 ╠══╬══╣
 ║  ║  ║
 ╚══╩══╝
-```
-
-- `:soft`
-
-```
-╭──┬──╮
-│  │  │
-├──┼──┤
-│  │  │
-╰──┴──╯
 ```
 
 ### Display Flow

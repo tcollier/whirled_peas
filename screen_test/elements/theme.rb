@@ -4,6 +4,7 @@ WhirledPeas.register_theme(:theme_test) do |theme|
   theme.bg_color = :bright_white
   theme.color = :blue
   theme.border_color = :bright_green
+  theme.border_style = :bold
   theme.axis_color = :bright_red
   theme.title_font = :default
 end
