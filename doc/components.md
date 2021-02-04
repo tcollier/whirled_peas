@@ -28,11 +28,11 @@ This component takes the following options
 
 #### Required
 
-- `active_index` - the index of the active item
 - `items` - the array of items to be displayed in the box
 
 #### Optional
 
+- `active_index` - the index of the active item, the item at the position will be highlighted and moved to the _preferred_ position. For items in the middle of a long list, the _preferred_ position is roughly 2/3rds to the way to the right in the viewport.
 - `flow` - `:l2r` or `:t2b`
 - `separator` - string used to separate items in the list, e.g. `", "` for a horizontal list or `"----"` for a vertical list
 - `viewport_size` - number of characters of the viewport in the flow direction

@@ -30,7 +30,7 @@ module WhirledPeas
       end
 
       def compose(composer, settings)
-        %i[items active_index].each do |required_attr|
+        %i[items].each do |required_attr|
           if send(required_attr).nil?
             raise ArgumentError, "Required field #{required_attr} missing"
           end
@@ -40,21 +40,22 @@ module WhirledPeas
           settings.flow = flow
           settings.align = :left
           settings.full_border
+          curr_index = active_index || 0
           if flow == :l2r
             settings.width = viewport_size
-            active_start = separator.nil? ? 0 : active_index * separator.length
-            items.first(active_index).each do |item|
+            active_start = separator.nil? ? 0 : curr_index * separator.length
+            items.first(curr_index).each do |item|
               active_start += item.length
             end
-            active_size = items[active_index].length
+            curr_size = items[curr_index].length
           else
             settings.height = viewport_size
-            active_start = active_index + (separator.nil? ? 0 : active_index)
-            active_size = 1
+            active_start = curr_index + (separator.nil? ? 0 : curr_index)
+            curr_size = 1
           end
 
           if viewport_size < total_size
-            front_padding = (viewport_size - active_size) * 0.667
+            front_padding = (viewport_size - curr_size) * 0.667
             offset = (active_start - front_padding).round
             if offset < 0
               offset = 0
