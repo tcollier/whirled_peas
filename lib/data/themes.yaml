@@ -10,6 +10,6 @@ dark:
   bg_color: :black
   border_color: :gray
   color: :white
-  highlight_bg_color: :bright_red
+  highlight_bg_color: :bright_cyan
   highlight_color: :black
   title_font: :swan
